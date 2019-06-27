@@ -26,3 +26,9 @@ Alles :)
 
 Alle Inhalte unterliegen der [Creative-Commons-Lizenz Namensnennung -- Nicht kommerziell -- Keine Bearbeitungen 4.0 International](http://creativecommons.org/licenses/by-nc-nd/4.0/deed.de).
 Eine vollständige deutsche Übersetzung der Lizenz finden Sie [hier](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode.de).
+
+## PDF-Erstellung
+`latexmk -silent -lualatex -shell-escape -f`
+
+*Achtung! Unter Windows funktioniert Asymptote, das für die Erstellung der Grafiken verwendet wird, leider nicht wirklich sehr gut (zumindest in TeXLive 2018).
+Entsprechend werden hier keine dreidimensionalen Grafiken erzeugt.*

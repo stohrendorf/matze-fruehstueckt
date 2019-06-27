@@ -1,4 +1,9 @@
 #!/usr/bin/env perl
+
+$latex = 'latex  %O  --shell-escape %S';
+$pdflatex = 'pdflatex  %O  --shell-escape %S';
+$xelatex = 'xelatex  %O  --shell-escape %S';
+
 @default_files = ("matze_fruehstueckt.tex");
 
 sub makenlo2nls {
@@ -8,7 +13,7 @@ sub makenlo2nls {
 add_cus_dep( 'nlo', 'nls', 0, 'makenlo2nls' );
 
 # asy always succeeds...
-sub asy { system("asy -tex latex -noprc -f pdf '$_[0]'"); return 0; }
+sub asy { system("asy -tex latex -noprc -f pdf -noView '$_[0]'"); return 0; }
 add_cus_dep("asy","pdf",0,"asy");
 
 # $bibtex_use = 2;
