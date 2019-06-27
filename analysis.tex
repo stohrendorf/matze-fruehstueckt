@@ -1,0 +1,756 @@
+% !TeX root = matze_fruehstueckt.tex
+\chapter{Folgen und Reihen}
+
+\noindent\begin{center}
+    \begin{tabular}{cc}
+    	   \textbf{Folge}     &        \textbf{Reihe}         \\
+    	$(a_n),\; a_n = f(n)$ & $(s_n) = \sum_{k \leq n} a_k$
+    \end{tabular}
+\end{center}
+
+[Oft sind auch die Notationen $(a_n)_{n \in \mathbb{N}}$ oder einfacher $(a_n)_n$ zu finden; diese dienen der Spezifikation der Laufvariablen und als Unterscheidungsmerkmal zu normaler Klammerung.
+Gelegentlich taucht auch die Notation $\langle s_n \rangle$ auf.]
+
+\section{Folgen}
+
+\CheckedBox{} Beispiel vorhanden auf \cpageref{sec:bsp-Konvergenz-einer-Folge}.
+
+\subsection{Grundlagen}
+\begin{description}
+  \item [Explizit] $(a_n)$ mit $a_n = f(n)$
+  \item [Rekursiv] $(a_n)$ mit $a_n = f(a_{n-1}, a_{n-2}, a_{n-3}, \ldots)$; rekursive Folgen benötigen als Abbruchbedingung der Rekursion definierte Anfangswerte.
+  \item [Monoton wachsend/fallend] $a_{n+1} \geq a_n \; \forall n$ bzw.~$a_{n+1} \leq a_n \; \forall n$.
+        Falls~$>$ und~$<$ gemeint sind, spricht man von \emph{streng} monoton wachsend/fallend.
+  \item [Teilfolge] von $(a_n)$ ist eine Folge $(a_{s(n)})$ mit $s(n) < s(n+1)$, die eine Auswahl von Elementen beschreibt.
+        [Es muss also \emph{nicht} unbedingt $s(n+1) = s(n)+1$ gelten; bspw.~ist $s(n):=2^n$ gültig.]
+  \item [Nach oben beschränkt] \index{Folge}
+        $\exists S : a_n \leq S$
+  \item [Nach unten beschränkt]
+        $\exists S : a_n \geq S$
+  \item [Beschränkt] \index{beschränkt}\index{Folge!beschränkt}
+        $\exists S : \lvert a_n \rvert \leq S$
+  \item [Alternierend] \index{Folge!alternierend}
+        $\exists n_0 \forall n \geq n_0 : a_{s(n)} \cdot a_{s(n+1)} < 0$
+        [Im Normalfall ist $s(n)=n$ gemeint.]
+  \item [\noun{Cauchy}-Folge] \index{Cauchy-Folge}\index{Folge!Cauchy--}\index{Fundamentalfolge\index{Folge!Fundamental--}}
+        $\forall \varepsilon>0\; \exists n_0\; \forall m,n>n_0 : \lvert a_n-a_m \rvert < \varepsilon$;
+        [Auch \emph{Fundamentalfolge} genannt; siehe dazu auch \cref{chap:topologie} über Topologie auf \cpageref{chap:topologie}.]
+  \item [Häufungs-/Grenzwert] \index{Häufungswert}\index{Folge!Häufungswert} \index{Grenzwert}\index{Folge!Grenzwert}
+        Eine Zahl $h$ heißt Häufungswert, wenn sie $\forall \varepsilon>0 \; \exists n_0 \; \forall n \geq n_0 : \lvert h-a_{s(n)} \rvert < \varepsilon$ erfüllt.
+        Ist $h$ der einzige Häufungswert einer Folge, so ist er auch der Grenzwert der Folge; eine Folge mit mehreren Häufungswerten ist divergent.
+        [Siehe dazu auch die Notationen auf \cpageref{sec:intervalle}.]
+  \item [Konvergenz/Divergenz] \index{Divergenz}\index{Folge!Divergenz}\index{Konvergenz}\index{Folge!Konvergenz}
+        Eine Folge heißt konvergent, wenn sie einen Grenzwert besitzt, sonst divergent.
+  \item [Nullfolge] \index{Nullfolge}\index{Folge!Null--}
+        $a_n \to 0$
+  \item[Folgenraum] \index{Folgenraum}\index{Folge!Raum}
+        Die Menge aller Folgen über einem Körper $K \in \{\mathbb{R}, \mathbb{C}\}$ wird Folgenraum genannt und mit $\omega$ bezeichnet.
+        Der Folgenraum aller gegen~$0$ konvergierenden Folgen wird $c_0$ genannt; der Folgenraum aller konvergierenden Folgen wird $c$ genannt; der Folgenraum aller beschränkten Folgen wird $\ell^\infty$ genannt.
+  \item [Satz von \noun{Bolzano-Weierstraß}] \index{Bolzano-Weierstraß}\index{Folge!Bolzano-Weierstraß}
+        Jede Folge in~$\ell^\infty$ hat einen Häufungswert.
+  \item [(\noun{Bolzano}-)\noun{Cauchy}-Kriterium] \index{Cauchy-Kriterium}\index{Bolzano-Cauchy-Kriterium}\index{Kriterium!Bolzano-Cauchy--}
+        Jede \noun{Cauchy}-Folge liegt in~$c$.
+  \item[Majorantenkriterium] \index{Majorantenkriterium}\index{Folge!Majorantenkriterium}\index{Kriterium!Majoranten--}
+        Wenn $\lvert a_n \rvert \leq b_n\; \forall n$ gilt, so heißt $(b_n)$ Majorante von $(a_n)$, und  es gilt $(a_n) \in c \Rightarrow (b_n) \in c$.
+  \item [Absolute Konvergenz]
+        $(a_n)$ heißt absolut konvergent, wenn eine Majorante $(b_n) \in c$ mit $b_n>0$ existiert, für die $\forall n\geq n_0 : \lvert a_n \rvert < b_n$ gilt.
+  \item [Minorantenkriterium] \index{Minorantenkriterium}\index{Folge!Minorantenkriterium}\index{Kriterium!Minoranten--}
+        $(a_n) \notin c$ falls es eine Folge $(b_n) \notin c$ gibt, für die $\forall n\geq n_0 : a_n, b_n \geq 0 \land a_n  > b_n$ gilt.
+\end{description}
+
+[Statt $\lim_{n \to \infty} a_n \to a$ sind auch die Schreibweisen $a_n \xrightarrow{n\to\infty} a$ und, falls eindeutig, auch einfach $a_n \to a$ üblich.]
+
+Daraus folgen:
+\begin{enumerate}
+    \item Jeder Grenzwert ist ein Häufungswert.
+    \item Jede monotone Folge in~$\ell^\infty$ liegt auch in $c$.
+    \item $c_0 \subset c \subset \ell^\infty \subset \omega$
+\end{enumerate}
+
+\subsection{Rechenregeln}
+
+\index{Folge!Rechenregeln}
+\nopagebreak
+\[
+\begin{array}{c}
+	a_n\to a \\
+	b_n\to b
+\end{array}
+\Rightarrow
+\begin{cases}
+	a_n\pm b_n       & \to a\pm b                                                  \\[0.3333em]
+	a_n\cdot b_n     & \to a\cdot b                                                \\[0.3333em]
+	a_n / b_n        & \to a/b \quad \hbox{für $b_n \neq 0, \, b \neq 0$}          \\[0.3333em]
+	a_n \uparrow b_n & \to a \uparrow b \quad \hbox{für $a_n>0, \, a>0$}           \\[0.3333em]
+	a_n \uparrow c   & \to a^c \quad \hbox{für $a_n>0, \, a>0, \, c\in\mathbb{R}$}
+\end{cases}
+\]
+
+\begin{description}
+  \item [Arithmetisches Mittel] \index{arithmetisches Mittel}\index{Folge!arithmetisches Mittel}
+	$a_n \to a \;\Rightarrow\; \frac{1}{n}\sum a_n \rightarrow a$
+  \item [Geometrisches Mittel] \index{geometrisches Mittel}\index{Folge!geometrisches Mittel}
+	$a_n \to a, \, a_n>0 \;\Rightarrow\; \bigl( \prod a_n \bigr) \uparrow \frac{1}{n} \to a$
+  \item [Quetsch-/Sandwichlemma] \index{Quetschlemma}\index{Folge!Quetschlemma}\index{Sandwichlemma}\index{Folge!Sandwichlemma}
+	$a_n, b_n \to a\: \land \: a_n \leq x_n \leq b_n \; \forall n\geq n_0 \; \Rightarrow \; x_n\to a$
+  \item [Geometrische Folge] \index{geometrische Folge}\index{Folge!geometrische --}
+	$a_n = q^n$ liegt in~$c_0$ falls $\lvert q \rvert<1$ und ist sonst divergent.
+  \item [Polynom-Brüche]
+	Für $a_n = P(n)/Q(n)$ sieht man das Verhalten, wenn man $P$ und $Q$ durch die höchste Potenz von $n$ im Nenner kürzt.
+\end{description}
+
+
+
+\section{Reihen}
+
+\CheckedBox{} Beispiel vorhanden auf \cpageref{sec:bsp-Konvergenz-einer-Reihe}.
+
+\subsection{Grundlagen}
+\begin{description}
+    \item[Reihe] \index{Reihe}\index{Partialsumme}\index{Reihe!Partialsumme}
+        Eine Reihe $(s_n) := \bigl(\sum_{k \leq n} a_k\bigr)_n$ ist definiert als die Partialsummenfolge einer Folge $(a_n)$.
+    \item[Konvergenz/Divergenz] \index{Divergenz}\index{Reihe!Divergenz}\index{Konvergenz}\index{Reihe!Konvergenz}
+        Kann das Konvergenzverhalten von $(s_n)$ bestimmt werden, so gilt $(s_n) \in c \Rightarrow (a_n) \in c_0$.
+    \item [Harmonische Reihe] \index{Reihe!harmonische}
+        $q>1 \Rightarrow \bigl(\sum 1/n^q\bigr)_n \in c$
+    \item [Geometrische Reihe] \index{Reihe!geometrische}
+        $\lvert q \rvert<1 \Rightarrow \bigl(\sum q^n\bigr)_n \to 1/(1-q)$
+    \item [Endliche geometrische Reihe] \index{Reihe!geometrische!endliche}
+        $q\neq1 \Rightarrow \sum q^n = (1-q^{n+1})/(1-q)$
+    \item [\noun{Leibniz}kriterium] \index{Leibnizkriterium}\index{Reihe!Leibnizkriterium}
+        Ist $(a_n)$ alternierend, gilt $(s_n) \in c$ nur, wenn $(\lvert a_n \rvert) \in c_0$ und $(\lvert a_n \rvert)$ monoton ist.
+        [Ist $(a_n)$ nicht trivial alternierend, d.\,h.~$\exists n : a_n \cdot a_{n+1} > 0$, so muss $(a_n)$ zunächst geeignet umgeformt werden, indem aufeinanderfolgende positive bzw.~negative Folgeglieder aufsummiert werden.]
+    \item [Absolute Konvergenz] \index{Reihe!absolute Konvergenz}
+        $(s_n)$ heißt absolut konvergent, wenn $\bigl( \sum \lvert a_n \rvert \bigr) \in c$.
+\end{description}
+
+\subsection{Rechenregeln}
+
+\index{Reihe!Rechenregeln}
+Sind $\sum_{k \leq n} a_k \to a$, $\sum_{k \leq n} b_k \to b$ konvergente Reihen, so gilt:
+\begin{description}
+  \item [Addition] \index{Reihe!Addition}
+	$\sum_{k \leq n} a_k + \sum_{k \leq n} a_k = \sum_{k \leq n} (a_k+b_k) \;\to\; a+b$
+  \item [Skalierung] \index{Reihe!Multiplikation}\index{Reihe!Skalierung}
+	$\sum_{k \leq n} r \cdot a_k = r \cdot \sum_{k \leq n} a_k \;\to\; r \cdot a, \quad r\in\mathbb{R}$
+  \item [\noun{Cauchy}-Produkt] \index{Cauchy-Produkt}\index{Reihe!Cauchy-Produkt}\label{Cauchy-Produkt}
+	$\bigl(\sum_{k \leq n} a_k\bigr) \cdot \bigl(\sum_{k \leq n} b_k\bigr)
+	  = \sum_{m \leq n} \bigl( \sum_{k \leq m} a_k \cdot b_{m-k} \bigr)$
+  \item [\noun{Cauchy}-Produkt für absolut konvergente Reihen]
+	$\bigl(\sum_{k \leq n} a_k\bigr) \cdot \bigl(\sum_{k \leq n} b_k\bigr) \;\to\; a \cdot b$
+  \item [\noun{Cauchy}-\noun{Schwarz}-Ungleichung] \index{Cauchy-Schwarz-Ungleichung}\index{Reihe!Cauchy-Schwarz-Ungleichung}
+	$\bigl(\sum_{k \leq n} a_k \cdot b_k\bigr)^2
+        \leq \bigl(\sum_{k \leq n} a_k^2\bigr) \cdot \bigl(\sum_{k \leq n} b_k^2\bigr)$
+  \item [\noun{Minkowsky}-Ungleichung] \index{Minkowsky-Ungleichung}\index{Reihe!Minkowsky-Ungleichung}
+	$\sqrt[p]{\sum_{k \leq n} \lvert a_k + b_k \rvert^p}
+        \leq \sqrt[p]{\sum_{k \leq n} \lvert a_k \rvert^p} + \sqrt[p]{\sum_{k \leq n} \lvert b_k \rvert^p}, \quad p \geq 1$
+\end{description}
+
+\subsection{Kriterien}
+\begin{description}
+  \item [{Verdichtungskriterium}] \index{Verdichtungskriterium}\index{Reihe!Verdichtungskriterium}\index{Kriterium!Verdichtungs--}
+	Ist $(a_n) \in c_0$ monoton fallend, so gilt $\bigl( \sum a_n \bigr) \in c \Leftrightarrow \bigl( \sum s(n) \cdot a_{s(n)} \bigr) \in c$ mit $s(n):=2^n$.
+  \item [{Quotientenkriterium}] \index{Quotientenkriterium}\index{Reihe!Quotientenkriterium}\index{Kriterium!Quotienten--}
+	Sei $\lvert a_{n+1} / a_n \rvert \to q$, dann ist $\bigl( \sum a_n \bigr)$ absolut konvergent für $q<1$, divergent für $q>1$.
+	Keine Aussage falls $q=1$.
+  \item [{Wurzelkriterium}] \index{Wurzelkriterium}\index{Reihe!Wurzelkriterium}\index{Kriterium!Wurzel--}
+	Sei $\sqrt[n]{\lvert a_n \rvert} \to q$, dann ist $\bigl( \sum a_n \bigr)$ absolut konvergent für $q<1$, divergent für $q>1$.
+	Keine Aussage falls $q=1$.
+  \item [{Grenzwertkriterium}] \index{Grenzwertkriterium}\index{Reihe!Grenzwertkriterium}\index{Kriterium!Grenzwert--}
+	Sind $(a_n)$ und $(b_n)$ Folgen mit $0<\lim_{n\rightarrow\infty} a_n/b_n<\infty$ und $a_n, b_n>0$, so sind die Reihen entweder beide konvergent oder beide divergent.
+  \item [{Integralkriterium}] \index{Integralkriterium}\index{Reihe!Integralkriterium}\index{Kriterium!Integral--}
+	Ist $f(x)>0$ monoton fallend in $I:=\left[m,\infty\right[$, so zeigen $\sum_{k\geq m} f(k)$ und $\int_I f(x) \intd x$ dasselbe Konvergenzverhalten.
+\end{description}
+
+\begin{figure}[H]
+\centering
+\includegraphics{majorante-minorante.pdf}
+
+\caption{Majorante, Minorante und Quetschlemma}
+\end{figure}
+
+\section{Potenzreihen}
+
+
+\subsection{Definitionen}
+
+\index{Potenzreihe}
+Reihen der Form \[ P(x) := \sum_{n\geq0} a_n(x-x_0)^n \] heißen Potenzreihen.
+\begin{description}
+  \item [{Koeffizienten}] \index{Koeffizient|see{Potenzreihe}}
+	sind die $a_n$.
+  \item [{Entwicklungspunkt}] \index{Entwicklungspunkt}
+	ist das $x_0$.
+  \item [{Konvergenzbereich}] \index{Konvergenzbereich}\index{Potenzreihe!Konvergenzbereich}
+	$\{ x \mid P(x) \in c \}$
+  \item [{Konvergenzradius}] \index{Konvergenzradius}\index{Potenzreihe!Konvergenzradius}
+	Der Konvergenzradius $r$ wird bestimmt durch
+	\[ \frac{1}{r} = \limsup_{n\to\infty}\sqrt[n]{\lvert a_n \rvert}
+	\qquad\hbox{oder}\qquad
+	\frac{1}{r} = \lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right|
+	\]
+
+  \item [{Ableitungsregel}] \index{Ableitungsregel}\index{Potenzreihe!Ableitungsregel}
+	$f^{(n)}(x_0) = n!\cdot a_n$.
+	Daraus folgen $f'(x)=\sum_{n\geq1} na_n(x-x_0)^{n-1}$ und $f''(x) = \sum_{n\geq2} n(n-1)a_n(x-x_0)^{n-2}$, etc..
+    
+  \item[Polynomfunktion]
+    Eine Polynomfunktion hat den Konvergenzradius $\infty$; es sind nur endlich viele $a_n \neq 0$.
+  \item[Analytische Funktion]
+    Funktionen, die sich als Potenzreihe darstellen lassen, heißen \enquote{analytische Funktionen}.
+\end{description}
+
+\subsection{Wichtige Grenzwerte}
+
+\index{Grenzwerte}\index{Potenzreihe!Grenzwerte}
+\[
+  \sum_{n\geq0} x^n = \frac{1}{1-x},\; \lvert x \rvert < 1
+  \qquad
+  \sum_{n\geq0} \binom{r}{n} x^n = (1+x)^r,\; \vert x \rvert < 1
+\]
+
+\subsection{Rechenregeln}
+
+\index{Rechenregeln}\index{Potenzreihe!Rechenregeln}
+Mit $f(x) = \sum_{n\geq0} a_n x^n$ und $g(x)=\sum_{n\geq0} b_n x^n$:
+\[ f(x) \pm g(x) = \sum_{n\geq0} (a_n \pm b_n) x^n \]
+\[ f(x) \cdot g(x) = \sum_{n\geq0} c_n x^n \quad\hbox{mit}\quad c_n = \sum_{k \leq n} a_k b_{n-k} \]
+
+Siehe das \noun{Cauchy}-Produkt auf \cpageref{Cauchy-Produkt}.
+
+\[ f \circ g(x) = \sum_{n\geq0} a_n \Bigl( \sum_{k\geq0} b_k x^k \Bigr)^n \]
+
+Potenzreihen dürfen summandenweise differenziert und integriert werden. Dabei bleibt der Konvergenzradius unverändert.
+
+
+\section{Wichtige Potenzeihen}
+
+
+\subsection{\protect\noun{Taylor}reihe}
+
+\index{Taylorreihe}\index{Maclaurinsche Reihe}
+Das \noun{Taylor}polynom $n$-ten Grades der Funktion $f : \mathbb{R} \to \mathbb{R}$ bei $x_0$ ist definiert als 
+\begin{align*}
+	T_n(x) & = \sum_{k=0}^n \frac{f^{(k)}(x_0)}{k!} (x-x_0)^k                             \\
+	       & = f(x_0) + \frac{f'(x_0)}{1!} (x-x_0) + \frac{f''(x_0)}{2!} (x-x_0)^2+\cdots
+\end{align*}
+
+[Ist $x_0=0$, so spricht man auch von einer \noun{Maclaurin}schen Reihe.]
+
+Speziell im $\mathbb{R}^3$:
+\begin{align*}
+	T_n(x,y) & = \sum_{k=0}^n \frac{1}{k!} \Bigl(\frac{\partial}{\partial x}(x-x_0)+\frac{\partial}{\partial y}(y-y_0) \Bigr)^k \cdot f(x_0,y_0) \\
+	         & = f(x_0,y_0)                                                                                                                      \\
+	         & \qquad + \bigl( f_x(x_0,y_0) \cdot (x-x_0) + f_y(x_0,y_0) \cdot (y-y_0) \bigr)                                                    \\
+	         & \qquad + \frac{1}{2} \bigl( f_{xx}(x_0,y_0) \cdot (x-x_0)^2 + 2f_{xy}(x_0,y_0) \cdot (x-x_0)(y-y_0)                               \\
+	         & \qquad \qquad \qquad \qquad \qquad \qquad \qquad  + f_{yy}(x_0,y_0) \cdot (y-y_0)^2 \bigr)                                        \\
+	         & \qquad + \ldots
+\end{align*}
+
+Allgemein:
+\[ T_n(\vec x) = \sum_{k=0}^n \frac{1}{k!} \Bigl(\sum \frac{\partial}{\partial x_i}(x_i-\vec x_{0,i}) \Bigr)^k \cdot f(\vec x_0) \]
+
+
+\subsection{\protect\noun{Taylor}satz}
+
+\index{Satz!von Taylor}
+Ist $f$ in einer Umgebung $x_0$ hinreichend oft differenzierbar, so gilt $f(x)=T_n (x) + R_n (x)$, wobei das Restglied\index{Restglied} definiert ist als:
+\[ R_n (x) = \frac{f^{(n+1)}(\xi)}{(n+1)!} (x-x_0)^{n+1} \]
+wobei $\xi$ zwischen $x_0$ und $x$ liegt.
+
+\emph{Achtung!} Da $\xi$ i.\,d.\,R.~nicht bekannt ist, kann man das Restglied nur abschätzen!
+
+
+\subsection{\noun{Taylor}reihenentwicklungen}
+
+Bei rationalen Funktionen kann man eine \index{Partialbruchzerlegung}Partialbruchzerlegung versuchen, um auf folgende \noun{Taylor}reihen zu kommen (gilt nur für $\lvert z \rvert < 1$):
+\[
+  \frac{1}{1-z}=\sum_{n\geq0} z^n
+  \qquad
+  \frac{1}{1+z}=\sum_{n\geq0} (-1)^n z^n
+  \qquad
+  \frac{1}{(1-z)^{2}}=\sum_{n\geq0} (n+1)z^n
+\]
+
+
+\subsection{\protect\noun{Newton}-Verfahren}
+
+\index{Newton-Verfahren}\index{Nullstellenberechnung}zur näherungsweisen Bestimmung von Nullstellen:
+\[ x_{n+1}=x_{n}-\frac{f(x_{n})}{f'(x_{n})} \]
+
+
+
+\chapter{\label{chap:topologie}Grundlagen Topologie}
+An dieser Stelle wird oft von metrischen Räumen gesprochen, jedoch kann hier immer auch der Begriff \enquote{normierter Raum} verwendet werden; siehe \cpageref{metrischer-raum}.
+
+Sei $(M,d)$ ein metrischer Raum.
+\begin{description}
+    \item[Offene Kugel] $K_r(p) := \{ q \mid d(p,q)<r \},\; p \in M,\; r \in \mathbb R, \; r>0$ heißt offene Kugel um~$p$ mit Radius~$r$.
+    \item[Konvergenz] Sei $(p_k)$ eine Folge in~$M$ und $p \in M$, dann konvergiert $p_k$ gegen $p$ falls gilt:
+    \[
+    \lim_{k \to \infty} p_k = p
+    \iff
+    \forall \varepsilon>0
+    \;\exists k_0 \in \mathbb N
+    \;\forall k \geq k_0
+    :
+    \underbrace{d(p_k, p) < \varepsilon}_{= p_k \in K_\varepsilon(p)}
+    \]
+    \item[Abschluss] Sei $X \subset M$, dann heißt $\overline X := \{ p \in M \mid \exists (p_k) \in X : p_k \to p \}$ \emph{Abschluss von $X$}.
+    [In $\mathbb R$ sind z.\,B.~die Abschlüsse von (halb-)offenen Intervallen die entsprechenden abgeschlossenen Intervalle.]
+    
+    $X \subset M$ heißt abgeschlossen, falls $X = \overline X$ gilt.
+    \item[Inneres] Sei $X \subset M$, dann heißt $\mathring X := \{ p \in X \mid \exists r>0 : K_r(p) \subset X \}$ \emph{Inneres von $X$}.
+    [In $\mathbb R$ sind z.\,B.~die Inneren von Intervallen die entsprechenden (halb-)offenen Intervalle.]
+    
+    $X \subset M$ heißt offen, falls $X = \mathring X$ gilt.
+    \item[Rand] Sei $X \subset M$, dann heißt $\partial X := \overline X \setminus \mathring X$ \emph{Rand von $X$}.
+    [In $\mathbb R$ sind z.\,B.~die Ränder von beliebigen Intervallen die entsprechenden Grenzen.]
+    \item[\noun{Cauchy}-Folge] Eine Folge $(x_n)$ in $M$ heißt \noun{Cauchy}-Folge, wenn sie $\forall \varepsilon>0\; \exists n_0 \in \mathbb N\; \forall m,n > n_0 : d(x_m, x_n) < \varepsilon$ erfüllt.
+    [In $\mathbb R^2$ wird die durch $f(n)=(x_n)$ dargestellte \enquote{Kurve} z.\,B.~immer flacher.]
+    \item[Vollständigkeit] $(M,d)$ heißt vollständig, wenn sich für jedes Element eine \noun{Cauchy}-Folge finden lässt.
+    \item[Fixpunkt] Ein Punkt $x \in M$ heißt Fixpunkt für eine Abbildung $f : M \to M$, wenn $f(x)=x$ gilt.
+    \item[Kontraktion] Eine Abbildung $f : M \to M$ heißt Kontraktion, falls sie $\exists 0 < L < 1\; \forall x,y \in M : d(f(x), f(y)) \leq L \cdot d(x,y)$ erfüllt.
+    [Vgl.~\noun{Lipschitz}-Stetigkeit.]
+    \item[\noun{Banach}scher Fixpunktsatz] Sei $f$ eine Kontraktion auf $M$ mit genau einem Fixpunkt $p$ und $(x_n)$ eine Folge mit $x_n = f(x_{n-1})$ und $x_0 \in M$, dann gilt $\lim_{n \to \infty} x_n = p$.
+    \item[Stetig] Sei $(N,d_N)$ ein weiterer metrischer Raum, $f : M \to N$ und $p \in M$, dann heißt $f$ stetig in $p$ wenn für \emph{jede} Folge $(x_n)$ in $M$ gilt: $\lim_{k \to \infty} x_k \to p \Rightarrow f(x_k) \to f(p)$.
+    Ist $N \in \{\mathbb R, \mathbb C\}$ und $g : M \to N$, so sind $f+g$, $f \cdot g$, $f/g$ (für $g \neq 0$) und $f \circ g$ ebenfalls stetig; insbesondere sind Polynome in $\mathbb R^n$ stetig.
+    \item[Menge stetiger Funktionen] Die Menge der in $M$ stetig differenzierbaren Funktionen wird mit $\mathcal C(M)$ bezeichnet; sind die mindestens $n$-mal stetig differenzierbaren Funktionen gemeint, schreibt man $\mathcal C^n(M)$.
+\end{description}
+
+
+
+\section{Kurvendiskussion}
+\begin{description}
+  \item [Extremstellen] \index{Extremstelle}
+	$\{ x : f'(x)=0 \land f''(x) \neq 0 \} $
+  \item [Wendepunkte] \index{Wendepunkt}
+	$\{ x : f''(x) = 0 \land f'''(x) \neq 0 \} $
+  \item [Sattelpunkte] \index{Sattelpunkt}
+	$\{ x : f'(x) = 0 \land f''(x) = 0 \land f'''(x) \neq 0 \} $
+  \item [\noun{Lipschitz}-Stetigkeit] \index{stetig!Lipschitz--}\index{Lipschitz-Stetigkeit}
+	Eine Funktion $f$ heißt auf einem Intervall $[a;b]$ \noun{Lipschitz}-stetig, falls $\exists L\; \forall a \leq x_1,x_2 \leq b : \lvert f(x_2)-f(x_1) \rvert \leq L \cdot \lvert x_2-x_1 \rvert$.
+
+    [Ist $f'$ auf $[a;b]$ stetig, so ist $L=\max_{x\in[a;b]}|f'(x)|$.]
+
+  \item [Summenregel] \index{Ableitung!Summenregel}\index{Summenregel}
+	$\bigl(f(x)+g(x)\bigr)' = f'(x)+g'(x)$, allgemein $ \bigl(\sum f_i(x)\bigr)'= \sum f_i'(x) $
+  \item [Produktregel] \index{Ableitung!Produktregel}\index{Produktregel}
+	\begin{align*}
+		(f(x) \cdot g(x))'            & = f'(x)\cdot g(x) + f(x) \cdot g'(x) \\
+		(f(x) \cdot g(x) \cdot h(x))' & = f'(x)\cdot g(x)  \cdot h(x)        \\
+		                              & + f(x) \cdot g'(x) \cdot h(x)        \\
+		                              & + f(x) \cdot g(x)  \cdot h'(x)
+	\end{align*}
+	Allgemein: $ \bigl(\prod_{i=1}^n f_i(x)\bigr)' = \sum_{i=1}^n \bigl(f_i'(x) \cdot \prod_{j=1,j\neq i}^n f_i(x)\bigr) $
+  \item [Quotientenregel] \index{Ableitung!Quotientenregel}\index{Quotientenregel}
+	\[ \left(\frac{f(x)}{g(x)}\right)'=\frac{f'(x)\cdot g(x)-f(x)\cdot g'(x)}{\bigl(g(x)\bigr)^2} \]
+  \item [Kettenregel] \index{Ableitung!Kettenregel}\index{Kettenregel}
+	$\bigl(f \circ g(x)\bigr)'=f' \circ g(x) \cdot g'(x)$
+\end{description}
+
+\section{Grenzwerte}
+
+\index{Kurvendiskussion!Grenzwert}\index{Grenzwerte}\index{Grenzwerte|see{Kurvendiskussion}}
+Diese Regeln gelten auch für $x\to\pm\infty$.
+\begin{align*}
+	\lim_{x\to x_0}C\cdot f(x)                 & = C \cdot \lim_{x\to x_0}f(x)                                           \\
+	\lim_{x\to x_0}(f(x)\pm g(x))              & = \lim_{x\to x_0}f(x) \pm \lim_{x\to x_0}g(x)                           \\
+	\lim_{x\to x_0}(f(x)\cdot g(x))            & = \bigl(\lim_{x\to x_0}f(x)\bigr) \cdot \bigl(\lim_{x\to x_0}g(x)\bigr) \\
+	\lim_{x\to x_0} f(x)/g(x)                  & = \frac{\lim_{x\to x_0} f(x)}{\lim_{x\to x_0}g(x)},\; g(x)\neq0         \\
+	\lim_{x\to x_0}\sqrt[n]{f(x)}              & = \sqrt[n]{\lim_{x\to x_0}f(x)}                                         \\
+	\lim_{x\to x_0}\bigl(f(x)\bigr)^n          & = \bigl(\lim_{x\to x_0}f(x)\bigr)^n                                     \\
+	\lim_{x\to x_0}\bigl(C \uparrow f(x)\bigr) & = C \uparrow \bigl(\lim_{x\to x_0} f(x)\bigr)                           \\
+	\lim_{x\to x_0}\log_C\bigl(f(x)\bigr)      & = \log_C \bigl( \lim_{x\to x_0} f(x)\bigr)
+\end{align*}
+
+
+\chapter{Vektoranalysis}
+
+\section{Allgemeines}
+
+[Im Folgenden steht die aus dem $\mathbb{R}^2$ bekannte Notation $f'$, $f''$,\ldots~für Ableitungen stellvertretend für den Gradienten, die \noun{Jacobi}-Matrix, oder die \noun{Hesse}-Matrix; die jeweilige Bedeutung sollte aus dem Kontext hervorgehen.]
+
+\index{Skalarfeld}
+\index{Vektorfeld}
+\index{Feld!Skalar--}
+\index{Feld!Vektor--}
+\index{Gradientenfeld}
+\index{Potenzialfunktion}
+\index{Komponentenfunktion}
+\index{Ableitung!partiell}
+\index{partielle Ableitung}
+\index{Ableitung!Richtungs--}
+\index{Richtungsableitung}
+\index{Tangetialebene}
+\index{Ebene!Tangetial--}
+Eine Funktion $f:\mathbb{R}^n \to \mathbb{R}^m$ heißt \emph{Skalarfeld} falls $m=1$ bzw.~\emph{Vektorfeld} falls $m>1$.
+Eine stetig differenzierbare Vektorfunktion $ f : \mathbb{R}^n \to \mathbb{R}^n $ heißt \emph{Gradientenfeld}, wenn eine \emph{Potenzialfunktion} $F$ existiert mit $\grad F = f$.
+
+Bei Vektorfeldern wird für $f$ gerne die vektorielle Schreibweise $\vec f$ benutzt.
+Vektorfunktionen lassen sich als Vektor einzelner Komponentenfunktionen schreiben.
+Speziell für (skalare) Funktionen im $\mathbb{R}^3$ und $\mathbb{R}^4$ wird gerne geschrieben:
+\[
+    z = f(x,y) \qquad w = f(x,y,z)
+\]
+
+Die partielle Ableitung einer Funktion $f$ nach einer der unabhängigen Variablen $x_i$ wird geschrieben als:
+\[
+    \frac{\partial}{\partial x_i}f \qquad D_i f \qquad f_{x_i}
+\]
+
+Im Zusammenhang mit partiellen Ableitungen sind folgende Begriffe wichtig:
+\begin{description}
+  \item[Partiell differenzierbar]
+    Alle partiellen Ableitungen existieren.
+  \item[Stetig partiell differenzierbar]
+    Alle partiellen Ableitungen sind stetig.
+    Ist dies in einem Punkt $\vec x_0$ der Fall, so ist $f$ in $\vec x_0$ stetig.
+  \item[Satz von \noun{Schwarz}] \index{Satz!von Schwarz}\index{Schwarz!Satz von --}\label{satz-von-schwarz}
+    Existieren die $k$-ten Ableitungen und sind stetig, so darf die Reihenfolge der Differentiation bis zur $k$-ten Ableitung beliebig vertauscht werden.
+    [Für $k=2$ gilt damit z.\,B.~$f_{xy}=f_{yx}$.]
+  \item[Totale Diff'barkeit]
+    $\vec f : \mathbb{R}^n \to \mathbb{R}^m$ heißt total/vollständig differenzierbar in $\vec x_0$, wenn eine \noun{Jacobi}-Matrix (siehe \cpageref{eq:JacobiMatrix}) existiert mit
+    \[ \lim_{\vec x \to \vec x_0} \frac{f(\vec x) - f(\vec x_0) - J_f(\vec x_0)(\vec x-\vec x_0)}{\lVert\vec x-\vec x_0\rVert} = \vec 0 \]
+  \item[Richtungsableitung] 
+    im Punkt $\vec x_0$ in Richtung $\vec a$: $f'(\vec x_0) \cdot \frac{\vec a}{\lVert\vec a\rVert}$
+  \item[Tangentialebene]
+    im Punkt $\vec x_0$: $T_1(\vec x) = f(\vec x_0) + f'(\vec x_0)(\vec x - \vec x_0)$
+        
+\end{description}
+
+
+\subsection{Ableitungsregeln}
+Seien $f(x)$ und $g(x)$ beliebige Funktionen und $c$ eine Konstante, dann gilt analog wie für Funktionen $\mathbb{R} \to \mathbb{R}$ (hier steht $*$ für eine beliebige \enquote{multiplikative} Verknüpfung, also für eine einfache Multiplikation, oder ein Skalar- oder ein Vektorprodukt):
+\begin{align*}
+	c'               & = 0                             &  \\
+	(f+c)'           & = f'                            & \hbox{($\adiv$ und $\rot$ analog)} \\
+	(c\cdot f)'      & = c\cdot f'                     & \hbox{($\adiv$ und $\rot$ analog)} \\
+	(f+g)'           & = f' + g'                       & \hbox{($\adiv$ und $\rot$ analog)} \\
+	(f*g)'           & = f'*g + f*g'                   &  \\
+	\adiv(f \cdot g) & = f' \cdot g + f \cdot \adiv(g) &  \\
+	\rot(f\cdot g)   & = f' \times g + f\cdot\rot(g)   &
+\end{align*}
+
+\index{Gradient}
+\index{Nabla-Operator}
+\index{Rotation}
+\index{Divergenz}
+\index{Jacobi-Matrix}
+\index{Matrix!Jacobi--}
+\index{Volumenableitung}
+\index{Ableitung!Volumen--}
+Die Ableitung einer skalaren Funktion $\varphi : \mathbb{R}^m \to \mathbb{R}$ oder Vektorfunktion $f : \mathbb{R}^m \to \mathbb{R}^n,\; n>1$ wird dabei über den \emph{Gradienten} definiert.
+Der Gradient von $\varphi$ ist ein Vektorfeld, dessen Vektoren in die Richtung des stärksten Zuwachses von $\varphi$ zeigen; die Divergenz ist---wenn man z.\,B.~die Vektoren von $f$ als Indikator für Fließrichtung und -geschwindigkeit einer Flüssigkeit auffasst---die Summe aller Zu- und Abflüsse; die Rotation ist ein Maß für Rotationsgeschwindigkeit und Drehachse eines Körpers an einem bestimmten Punkt in einem \emph{Strömungsfeld}.
+Gradient, Divergenz und Rotation werden unter dem Begriff \emph{Volumenableitung} zusammengefasst; hierbei ist die durch \cref{eq:JacobiMatrix} definierte \noun{Jacobi}-Matrix als Standardableitung zu betrachten.
+\begin{align}
+\nabla  &:= \begin{pmatrix}
+    \frac{\partial}{\partial x_1} & \cdots & \frac{\partial}{\partial x_m}
+\end{pmatrix}^T \nonumber\\
+\varphi' = \grad \varphi &:= \nabla \varphi \nonumber\\
+                         & = \sum \frac{\partial}{\partial x_i} \varphi \cdot \vec e_i \nonumber\\
+                         & = \begin{pmatrix}
+                                 \frac{\partial}{\partial x_1} \varphi & \cdots & \frac{\partial}{\partial x_m} \varphi
+                             \end{pmatrix}^T \nonumber\\
+                f' = J_f &:= \begin{pmatrix}
+                                 f'_1(x) & \cdots & f'_n(x)
+                             \end{pmatrix}^T \label{eq:JacobiMatrix} \\
+                         & = \begin{pmatrix}
+                                 \frac{\partial}{\partial x_1} f_1 & \cdots & \frac{\partial}{\partial x_m} f_1 \\
+                                 \vdots                            & \ddots & \vdots                            \\
+                                 \frac{\partial}{\partial x_1} f_n & \cdots & \frac{\partial}{\partial x_m} f_n
+                             \end{pmatrix} \nonumber
+\end{align}
+
+[Beim Gradienten wird gelegentlich statt $\grad f = (\grad f)$ auch die Schreibweise $\grad_f$ verwendet; gleiches gilt für die Divergenz und Rotation.]
+
+\begin{align*}
+\adiv f &:= \langle \nabla, f \rangle = \nabla\cdot f & \hbox{(nur für $m=n$)} \\
+        & = \sum \frac{\partial}{\partial x_i} f_i \\
+        & = \spur(J_f) \\
+\rot f  &:= \nabla \times f & \hbox{(nur für $\mathbb{R}^3 \to \mathbb{R}^3$)} \nonumber \\
+        &= \veccc(\frac{\partial}{\partial x}; \frac{\partial}{\partial y}; \frac{\partial}{\partial z}) \times \veccc(f_1;f_2;f_3)
+         = \veccc(\frac{\partial}{\partial y} f_3 - \frac{\partial}{\partial z} f_2;
+                  \frac{\partial}{\partial z} f_1 - \frac{\partial}{\partial x} f_3;
+                  \frac{\partial}{\partial x} f_2 - \frac{\partial}{\partial y} f_1) \\
+       &= \det \begin{pmatrix}
+            \vec e_1                    & \vec e_2                    & \vec e_3 \\
+            \frac{\partial}{\partial x} & \frac{\partial}{\partial y} & \frac{\partial}{\partial z} \\
+            f_1                         & f_2                         & f_3
+          \end{pmatrix}
+\end{align*}
+
+\index{Laplace!-Operator}
+Die \emph{zweite} Ableitung ergibt sich durch wiederholte Anwendung des Nabla-Operators; der \noun{Laplace}-Operator ist definiert als:
+\[ \Delta := \nabla^2 \]
+Damit gilt:
+\begin{align}
+  \Delta \varphi & = \adiv \grad \varphi \nonumber \\
+                             & = \spur(H_\varphi) \nonumber \\
+                             & = \sum_{k=1}^n \frac{\partial^2 \varphi}{\partial x_k^2} \nonumber \\
+                             & = \varphi_{x_1 x_1} + \cdots + \varphi_{x_n x_n} \nonumber \\
+  H_\varphi = \varphi'' & := \Bigl( \frac{\partial \varphi}{\partial x_i \partial x_j} \Bigr),\quad 1 \leq i,j \leq n \label{eq:hesse-matrix} \\
+                        & = J_{\varphi'}^T \nonumber \\
+  H_\varphi & = \begin{pmatrix}
+            	f_{xx} & f_{xy} & f_{xz} \\
+            	f_{yx} & f_{yy} & f_{yz} \\
+            	f_{zx} & f_{zy} & f_{zz}
+            \end{pmatrix} & \hbox{(für $n=3$)} \nonumber
+\end{align}
+
+Die Definitheit der \noun{Hesse}-Matrix~(\cref{eq:hesse-matrix}) kann Aufschluss über die Art eines Extremums von $\varphi$ geben; siehe dazu das \noun{Hurwitz}-Kriterium auf \cpageref{sub:Hurwitz-Kriterium}.
+[Für zweimal stetig differenzierbare Funktionen ist $H_\varphi$ symmetrisch; siehe dazu den Satz von \noun{Schwarz}.]
+
+Es gelten folgende Bezeichnungen:
+\begin{center}
+\begin{tabular}{rl}
+	            $\adiv f > 0$ & Quelle      \\
+	$\forall_x : \adiv f = 0$ & Quellenfrei \\
+	            $\adiv f < 0$ & Senke       \\
+	 $\forall_x : \rot f = 0$ & Wirbelfrei
+\end{tabular}
+\end{center}
+
+
+\subsection{Stetigkeit}
+
+\index{stetig!mehrdimensional}
+Sei $U\subseteq\mathbb{R}^n$ eine offene Menge, $f : U\to\mathbb{R}^n$, $\vec x_0 \in U$.
+Dann heißt $f$ stetig in $\vec x_0$, wenn für alle Folgen $\vec x_n$ mit Grenzwert $\vec x_0$ gilt:
+\[ \lim_{n\to\infty} f(\vec x_n) = f\bigl(\lim_{n\to\infty} \vec x_n\bigr) = f(\vec x_0) \]
+[Formal: $\forall_{\langle \vec x_n \rangle} : \lim_{\vec x \to \vec x_0} f(\vec x) = \lim_{n\to\infty} f(\vec x_n)$.]
+
+
+\subsection{\label{sub:Epsilon-Umgebung}Epsilon-Umgebung}
+
+\index{Epsilon-Umgebung}
+Sei $\lVert * \rVert$ eine Norm im $\mathbb{R}^n$, dann heißt $U_\varepsilon(\vec x_0) = \{ \vec x \in \mathbb{R}^n : \lVert \vec x-\vec x_0 \rVert < \varepsilon \}$ eine Epsilon-Umgebung von $\vec x_0$ bzgl.~$\lVert*\rVert$. [$U_\varepsilon(\vec x_0)$ beschreibt also eine (deformierte) \enquote{Kugel} mit Radius $<\varepsilon$ um $\vec x_0$.]
+
+
+\subsection{Weiteres}
+
+Sei $D \subseteq \mathbb{R}^n$.
+\begin{description}
+  \item [{Innerer~Punkt}] \index{innerer Punkt}\index{Punkt!innerer}
+	$\vec x_0$ heißt innerer Punkt, wenn gilt:
+	$\exists_{\varepsilon>0} : U_{\varepsilon}(\vec x_0) \subseteq D$.
+	(D.\,h., $\vec x_0$ ist kein Randpunkt von $D$.)
+  \item [{Offene~Menge}] \index{offene Menge}\index{Menge!offen}
+	$D$ heißt offene Menge, wenn alle Punkte von $D$ innere Punkte sind.
+  \item [{Häufungspunkt}] \index{Häufungspunkt}
+	$\vec x$ heißt Häufungspunkt, wenn gilt:
+	$\forall_{\varepsilon>0} \exists_{\vec x_0 \neq \vec x} \in D : \vec x \in U_{\varepsilon}(\vec x_0)$
+	[Es gibt also immer eine Möglichkeit, eine Epsilon-Umgebung zu bilden, die $\vec x$ enthält, aber nicht als Zentrum hat.]
+  \item [{Abgeschlossen}] \index{abgeschlossen}
+	$D$ heißt abgeschlossen, wenn $D$ alle Häufungspunkte enthält.
+  \item [{Kompakt}] \index{kompakt}
+	$D$ heißt kompakt, wenn $D$ abgeschlossen und beschränkt ist.
+  \item [{Konvex}] \index{konvex}
+	$D$ heißt konvex, wenn $\forall_{a,b \in D} \forall_{ 0\leq\lambda\leq1 } : \lambda a+(1-\lambda)b\in D$ gilt.
+	In Worten: Die Verbindungslinie zwischen zwei Punkten $a$ und $b$ liegt komplett in $D$.
+\end{description}
+
+
+\begin{figure}[htb]
+\centering\includegraphics{analysis-func1.pdf}
+
+\caption{Funktion $\frac{1}{2} \cdot \cos(2\pi x) \cdot \sin(2\pi y)$}
+\end{figure}
+
+
+\section{Partielle Ableitungen}
+
+\subsection{Extrema}
+
+\index{Extremum!mehrdimensional}\CheckedBox{} Beispiel vorhanden auf \cpageref{sec:bsp-Mehrdimensionale-Extrema}.
+
+\begin{description}
+  \item [{Voraussetzung}]
+	Die Funktion muss zweimal stetig differenzierbar sein und auf einer offenen Teilmenge des $\mathbb{R}^{n}$ definiert sein.
+  \item [{Notwendige~Bedingung}]
+	$f'(a) = 0$
+  \item [{Kritischer~Punkt}] \index{kritischer Punkt}\index{Punkt!kritischer}
+	Ein Punkt $a$ heißt kritischer Punkt, wenn er die notwendige Bedingung erfüllt.
+  
+  \item [{Untersuchung~der~\noun{Hesse}-Matrix}]~
+
+	\CheckedBox{} Beispiel vorhanden auf \cpageref{sec:bsp-Extremwerte-einer-Funktion}.
+	\begin{enumerate}
+	  \item Berechne die kritischen Punkte $\vec a$.
+	  \item Ermittle für jeden kritischen Punkt die Definitheit von $H_f(\vec a)$.%
+	  \footnote{Siehe dazu das \noun{Hurwitz}-Kriterium auf \cpageref{sub:Hurwitz-Kriterium}.}
+	\end{enumerate}
+\end{description}
+
+\begin{center}
+\Tree[.{$H_f (\vec{a})$}
+	[.{pos.~definit} [.Min. ] ]
+	[.{neg.~definit} [.Max. ] ]
+	[.indefinit [.SP. ] ]
+	[.{pos.\\semi-definit} [.{Min.~$\lor$~SP.} ] ]
+	[.{neg.\\semi-definit} [.{Max.~$\lor$~SP.} ] ]
+]
+\end{center}
+\begin{description}
+  \item [{Höhenlinienmethode}] \index{Höhenlinienmethode}\index{Methode!Höhenlinien--}
+	Sei $\vec{x}_0$ der zu kritische Punkt, dann gilt für das Vorzeichen von $\lim_{\vec{x}\to\vec{x}_0}f(\vec{x})-f(\vec{x}_0)$:
+
+	\begin{itemize}
+	  \item Stets positiv: $\vec{x}_0$ ist Minimum.
+	  \item Stets negativ: $\vec{x}_0$ ist Maximum.
+	  \item Alternierend: $\vec{x}_0$ ist Sattelpunkt.
+	\end{itemize}
+\end{description}
+
+\subsection{Regressionsanalyse}
+
+\index{Regressionsanalyse}
+\begin{description}
+  \item [{Ziel}] Möglichst gute Näherung von Messwerten durch eine Kurve.
+  \item [{Wichtig}] Die Art der Kurve muss man vorher festlegen.
+\end{description}
+
+Für ein Polynom der Art $p(x) = \sum_{i=1}^n a_i x^{i-1}$ lassen sich die $a_i$ aus $m$ Messpunkten bestimmen durch das LGS:
+\[
+  \left(
+  \begin{array}{ccrc|c}
+    m          & \sum x_j       & \cdots & \sum x_j^n     & \sum y_j       \\
+    \sum x_j   & \sum x_j^2     & \cdots & \sum x_j^{n+1} & \sum x_j y_j   \\
+    \vdots     & \vdots         & \ddots & \vdots         & \vdots         \\
+    \sum x_j^n & \sum x_j^{n+1} & \cdots & \sum x_j^{2n}  & \sum x_j^n y_j
+  \end{array}
+  \right), \quad j=1,\ldots,m
+\]
+
+Die Lösung ergibt die $a_i$.
+
+Für eine Punktemenge im $\mathbb{R}^{2}$ ergibt sich mit der gesuchten Lösung $ax+b$: 
+\[
+  \begin{pmatrix}
+  	\sum_{k=1}^n x_k^2 & \sum_{k=1}^n x_k \\
+  	\sum_{k=1}^n x_k   & n
+  \end{pmatrix}
+  \cdot \vecc(a;b) = \vecc( \sum_{k=1}^n x_k y_k; \sum_{k=1}^n y_k )
+\]
+
+
+
+\subsection{Extrema mit Nebenbedingungen}
+
+\subsubsection{Untersuchung der \protect\noun{Hesse}-Matrix}
+
+\index{Extremum!mit Nebenbedingungen}
+\begin{description}
+  \item [{Nebenbedingung}]
+	muss implizit sein: $g(\vec x) = 0$
+  \item [{\noun{Lagrange}-Funktion}] \index{Lagrange-Funktion}\index{Lagrange-Multiplikator}
+	Mit $n$ Randbedingungen ist die \noun{Lagrange}-Funktion mit den \noun{Lagrange}-Multiplikatoren $\lambda_1,\ldots,\lambda_n$ definiert als:
+	\[ L(\vec x, g_1, \ldots, g_n, \vec\lambda) = f(\vec x) + \sum_{k=1}^n \lambda_k \cdot g_k(\vec x) \]
+	
+    [Die Multiplikatoren sollten möglichst früh eliminiert werden, da sie sonst keine weitere Bedeutung haben.]
+  \item [{Kritische~Punkte}]
+	Die ersten kritischen Punkte, die die Randbedingungen erfüllen, lassen sich finden mit
+	$ \grad L \stackrel{!}{=} 0 $, z.\,B.:
+	\[
+	  \grad L\bigl( (x,y),g,\lambda \bigr) =
+	  \veccc(
+	    f_x(x,y) + \lambda \cdot g_x(x,y);
+	    f_y(x,y) + \lambda \cdot g_y(x,y);
+	    g(x,y)                           )
+	  \stackrel{!}{=} 0
+	\]
+	
+	Weitere kritische Punkte müssen aus den Randbedingungen ermittelt werden:
+	\[
+	  \veccc(
+	    \grad g_1(\vec x);
+	    \vdots           ;
+	    \grad g_n(\vec x))
+	  \stackrel{!}{=} 0
+	\]
+
+  \item [{Untersuchung}]
+	Die kritischen Punkte müssen noch mit Hilfe der Höhenlinienmethode, der geränderten \noun{Hesse}-Matrix oder geometrischen Überlegungen überprüft werden.
+\end{description}
+
+\index{Matrix!Hesse--!gerändert}\index{Hesse-Matrix!gerändert}
+Falls die kritischen Punkte Extrema von $L$ sind, ist der Typ über eine geränderte Hesse-Matrix bestimmbar:
+\begin{align*}
+  D & = \det\begin{pmatrix}
+  	L_{xx} & L_{yx} & g_{x} \\
+  	L_{xy} & L_{yy} & g_{y} \\
+  	g_{x}  & g_{y}  & 0
+  \end{pmatrix}
+  (\vec{a}) \\
+  D & \begin{cases}
+  	<0 & \hbox{Minimum} \\
+  	>0 & \hbox{Maximum}
+  \end{cases}
+\end{align*}
+
+
+\section{Integration}
+
+Um $f : \mathbb{R}^n \to \mathbb{R}^n$ zu integrieren, müssen folgende Schritte durchgeführt werden:%
+\footnote{Siehe den Satz von \noun{Schwarz} auf \cpageref{satz-von-schwarz}.}
+\begin{enumerate}
+  \item Überprüfen, ob es eine Stammfunktion gibt:
+	\[ \frac{\partial}{\partial x_j} f_i = \frac{\partial}{\partial x_i} f_j, \quad 1 \leq i,j \leq n \]
+  \item Jede Funktion $f_1,\ldots,f_n$ integrieren:
+	\begin{enumerate}
+	  \item $ F_i = \int f_i(\vec x) \intd x_i + c(\vec x) $ (Hier darf $c$ nicht von $x_i$ abhängen.)
+	  \item $\frac{\partial}{\partial x_j} F_i(\vec x)$ mit $f_j(\vec x)$ für alle $i\neq j$ vergleichen, um $\frac{\partial}{\partial x_j} c(\vec x)$ zu erhalten.
+	  \item $\frac{\partial}{\partial x_j} c(\vec x)$ integrieren, um $c(\vec x)$ zu erhalten.
+	\end{enumerate}
+\end{enumerate}
+
+
+\Todo{Kurvenintegral (06.05.2013)}
+
+\Todo{Gebietsintegrale (07.05.2013--13.05.2013)}
+
+
+\chapter{Gewöhnliche Differenzialgleichungen}
+
+\section{Triviale gewöhnliche Differenzialgleichung}
+\begin{description}
+    \item[DGL] $y' = f(x)$
+    \item[Bedingung] $y : [a,b] \to \mathbb R$ stetig
+    \item[Lösung] $y = y_0 + \int_{x_0}^x f(t) \intd t$
+\end{description}
+
+\section{Trennung der Veränderlichen}
+\begin{description}
+    \item[DGL] $y' = f(x) \cdot g(y)$
+    \item[Bedingung] $f,g$ stetig, $g \neq 0$, $F(x)$ Stammfunktion von $f(x)$ und $G(y)$ Stammfunktion von $1/g(y)$
+    \item[Lösung] $A(x) - B(y) = c, \quad c \in \mathbb R$
+\end{description}
+
+\Todo{DGL 1.~Ordnung, AWP, Picard-Lindelöff (21.05.2013)}
+
+\Todo{DGL: TdV (27.05.2013)}
+
+\Todo{Lineare DGL (28.05.2013--03.06.2013)}
+
+\Todo{Exakte DGL (04.06.2013)}
+
+\Todo{Lineare DGL 2.~Ordnung (10.06.2013--11.06.2013)}
+
+\Todo{Fundamentalsystem (11.06.2013)}
+
+\section{Typen}
+
+\begin{description}
+  \item [{Bernoullisch}]~
+	\[ y' = f(x) \cdot y + g(x) \cdot y^\alpha,\; \alpha \neq 0 \]
+  \item [{Exakt}] (VdK)
+	\[ p(x,y) + q(x,y) \cdot y' = 0 \]
+  \item [{Jacobi}]~
+	\[ y' = f\left( \frac{ax+by+c}{\alpha x + \beta y + \gamma} \right) \]
+  \item [{Separierbar}] (TdV)
+	\[ y = f(y) \cdot g(x) \]
+  \item [{Linear}]~
+	\[ \sum_{i=0}^n a_i(x)\cdot y^{(i)} = 0 \]
+  \item [Ähnlichkeits-DGL]
+	\[ y' = f(y/x) \]
+\end{description}

@@ -1,0 +1,592 @@
+% !TeX root = matze_fruehstueckt.tex
+\chapter{Kombinatorik}
+
+Für vertiefende Erklärungen und Übungsaufgaben mit Lösungen empfiehlt sich \cite{Papula3}.
+
+
+\section{Grundlagen}
+\begin{description}
+  \item [{Variation}] \index{Permutation}\index{Variation}
+	oder \emph{Permutation} beschreibt die Möglichkeiten, $n$ Elemente unter Beachtung der Reihenfolge anzuordnen.
+	Man spricht von geordneten Stichproben.
+  \item [{Kombination}] \index{Kombination}
+	beschreibt die Möglichkeiten, $n$ Elemente \emph{ohne} Beachtung der Reihenfolge anzuordnen.
+	Man spricht von ungeordneten Stichproben.
+  \item [{Wiederholung}] \index{Ziehung}\index{Wiederholung}
+	wird auch als \emph{Ziehen mit Zurücklegen} beschrieben.
+  \item [{Anzahl~der~Ziehungen}] \index{Ordnung}
+	heißt Ordnung.
+\end{description}
+\begin{table}[htb]
+\centering{}%
+\begin{tabular}{rcc}
+    & \bfseries mit Wdh.
+    & \bfseries ohne Wdh. \\
+  \bfseries Kombination
+    & $\hbox{C}_{W}(n;k) = \vecc(n+k-1;k)$
+    & $\hbox{C}(n;k) = \vecc(n;k)$ \\[1.6667em]
+  \bfseries Variation
+    & $\hbox{V}_{W}(n;k)=n^k$
+    & $\hbox{V}(n;k) = n! / (n-k)!$
+\end{tabular}
+\caption{Kombinatorikfunktionen}
+\end{table}
+
+
+
+\subsection{Zufallsexperiment}
+
+\index{Zufallsexperiment}
+Bedingungen:
+\begin{itemize}
+  \item Das Experiment lässt sich unter gleichen Bedingungen beliebig oft wiederholen.
+  \item Es gibt mehrere sich gegenseitig ausschließende Ereignisse.
+	\begin{itemize}
+	  \item Diese Ereignisse heißen \index{Ereignis!Elementar--}\index{Elementarereignis}\emph{Elementarereignisse}.
+		Sie werden mit dem kleinen Omega bezeichnet: $\omega_{i}$.
+	  \item Die Menge aller Elementarereignisse heißt \index{Ereignismenge}\index{Menge!Ereignis--}\emph{Ergebnismenge}: $\Omega$.
+	  \item Eine Teilmenge $A$ von $\Omega$ heißt \index{Ereignis}\emph{Ereignis}.
+	  \item Die Potenzmenge von $\Omega$ heißt \index{Raum!Ereignis--}\index{Ereignisraum}\emph{Ereignisraum}.
+	\end{itemize}
+  \item Die Ereignisse lassen sich nicht mit Sicherheit voraussagen (\emph{zufallsbedingt}).
+\end{itemize}
+
+\subsubsection{\protect\noun{Laplace}-Experiment}
+
+\index{Laplace-Experiment}
+\begin{itemize}
+  \item Jedes Elementarereignis hat die Wahrscheinlichkeit $p(\omega_i) = 1 / \lvert\Omega\rvert$.
+  \item Die Wahrscheinlichkeit eines Ereignisses $A$ ist $\Pr(A) = \lvert A \rvert / \lvert\Omega\rvert$
+\end{itemize}
+
+\subsubsection{\protect\noun{Bernoulli}-Experiment}
+
+\index{Bernoulli-Experiment}\index{Experiment!Bernoulli--}
+Nur zwei sich gegenseitig ausschließende Ereignisse mit konstanten Wahrscheinlichkeiten.
+
+
+\subsection{Definitionen}
+\begin{description}
+  \item [{Gemeinsame~Wahrscheinlichkeit}] \index{Gemeinsame Wahrscheinlichkeit}\index{Wahrscheinlichkeit!gemeinsam}
+	$\Pr(A\cup B)=\Pr(A)+\Pr(B)-\Pr(A\cap B)$ (Wahrscheinlichkeit, dass $A$ \emph{oder} $B$ stattfinden.)
+  \item [{Stochastisch~unabhängig}] \index{stochastisch unabhängig}\index{unabhängig!stochastisch}
+	$\Pr(A\cap B)=\Pr(A)\cdot \Pr(B)$
+  \item [{Bedingte~Wahrscheinlichkeit}] \index{Bedingte Wahrscheinlichkeit}\index{Wahrscheinlichkeit!bedingt}
+	Wahrscheinlichkeit von $A$ unter der Bedingung, dass $B$ bereits stattgefunden hat:
+	\[
+	  \Pr(A \mid B) = \frac{\Pr(A \cap B)}{\Pr(B)}
+                    = \frac{\Pr(B \mid A) \cdot \Pr(A)}{ \sum \Pr(B \mid A_j) \cdot \Pr(A_j) }
+	\]
+
+  \item [{Totale~Wahrscheinlichkeit}] \index{Totale Wahrscheinlichkeit}\index{Wahrscheinlichkeit!totale}
+	(\noun{Bayes}sche Formel):
+	\[
+	  \Pr(B) = \sum \Pr(A_i) \cdot \Pr(B \mid A_i)
+	\]
+
+  \item [{Zufallsvariable}] \index{Zufallsvariable}
+	$X:\omega\to\mathbb{R}$, ist eine Funktion, welche jedem $\omega$ eine reelle Zahl zuordnet, welche irgend einen Sinn ergibt (bspw.~Gewinn pro Augenzahl beim Würfeln).
+  \item [{Wahrscheinlichkeitsfunktion}] \index{Wahrscheinlichkeitsfunktion}
+	Bei diskreten Verteilungen: $f(x)=\Pr(X=x)$ mit $\sum f(x)=1$.
+  \item [{Dichtefunktion}] \index{Dichtefunktion}
+	Bei stetigen Verteilungen: $f(x)$ wird vorgegeben.
+  \item [{Verteilungsfunktion}] \index{Verteilungsfunktion}
+	$F(x)=\Pr(X\leq x)$, die Aufsummierung der Wahrscheinlichkeiten von $-\infty$ bis zu einem $x$, bei stetigen $X$ ein Integral.
+	Die Verteilungsfunktion muss normiert sein, d.\,h.: $\lim_{x\to\infty} F(x) \stackrel{!}{=} 1$.
+  \item [{Erwartungswert}] \index{Erwartungswert}
+	Im Durchschnitt erwarteter Wert, $\mu = \E(X) = \sum x_{i} \cdot f(x_{i})$ bzw.~$\mu = \E(X) = \int_\mathbb{R} x \cdot f(x)\intd x$.
+  \item [{Mittelwert}] \index{Mittelwert}
+	Arithmetisches Mittel, $\bar{x} = \frac{1}{n} \sum_{1 \leq i \leq n} x_i$
+  \item [{Varianz}] \index{Varianz}
+	$\sigma^{2}=\Var(X)=\sum(x_{i}-\mu)^{2}f(x_{i})$ bzw.~$\sigma^{2}=\Var(X)=\int_\mathbb{R} (x-\mu)^{2}f(x)\intd x$.
+	\emph{Alternative} über Erwartungswert: $\Var(X)=\E(X^{2})-\E^2(X)$.
+  \item [{Standardabweichung}] \index{Standardabweichung}\index{Abweichung!Standard--}
+	$\sigma=\sqrt{\Var(X)}$
+  \item [{Lineare~Transformation}] \index{lineare Transformation}\index{Transformation!lineare}
+	Bekannt sind $a$, $b$ und $X$, dann gilt für $Z=aX+b$:
+	$\mu_{Z}=a\E(X)+b$ und $\Var(Z)=a^{2}\Var(X)$.
+  \item [{Kovarianz}] \index{Kovarianz}\index{Varianz!Ko--}
+	$\cov(X;Y):=\E(X\cdot Y)-\E(X)\cdot \E(Y)$
+  \item [{Korrelationskoeffizient}] \index{Korrelationskoeffizient}\index{Koeffizient!Korrelations--}
+	$\varrho_{XY} := \cov(X;Y) / \bigl( \sigma_X \cdot \sigma_Y \bigr)$
+\end{description}
+
+\Todo{Entscheidungsbäume}
+
+
+\subsection{Zentraler Grenzwertsatz}
+
+\index{Satz!zentraler Grenzwert--}\index{Grenzwertsatz!zentral}\index{zentraler Grenzwertsatz}
+Sind $X_1,\ldots,X_n$ stochastisch unabhängige Zufallsvariablen, welche die \emph{gleiche} Verteilungsfunktion mit \emph{gleichem} $\mu$ und $\sigma$ haben, so gilt für $n\to\infty$:
+\begin{align*}
+  \Pr \Bigl( \sum X_i \leq x \Bigr) & = \Phi\bigg( \frac{x-n\mu}{\sqrt{n}\sigma}\bigg )\\
+  \Var\Bigl( \sum X_i        \Bigr) & = n\sigma^{2}\\
+  \E  \Bigl( \sum X_i        \Bigr) & = n\mu
+\end{align*}
+
+
+\emph{Faustregel}: In der Regel für $n>30$ bereits anwendbar.
+
+
+\chapter{Verteilungen}
+
+
+\section{Gleichverteilung}
+
+\index{Verteilung!Gleich--}\index{Gleichverteilung}(stetig)
+
+Die Ereignisse haben über einem Intervall $[a;b]$ die gleiche Wahrscheinlichkeit.
+
+\begin{align*}
+  f(x) & =
+  \begin{cases}
+    \frac{1}{b-a} & x\in[a;b]\\
+		0 & \hbox{sonst}
+  \end{cases}\\
+  F(x) & =
+  \begin{cases}
+                  0 & x<a\\
+    \frac{x-a}{b-a} & x\in[a;b]\\
+		  1 & x>b
+  \end{cases}\\
+  \mu & =
+  \frac{b-a}{2}
+\end{align*}
+
+
+
+\section{Binomialverteilung}
+
+\index{Verteilung!binomial}\index{Binomialverteilung}
+($\Bin$, diskret, mit Wiederholung)
+
+Bei \noun{Bernoulli}-Experimenten. Mit $n$ als Anzahl der Versuche und $p=\Pr(A)$ ist die Wahrscheinlichkeit, dass $A$ in den $n$ Versuchen $k$-mal auftritt:
+\begin{align*}
+  f(k)       & = \vecc(n;k) p^k (1-p)^{n-k}\\
+  \mu        & = np\\
+  \sigma^{2} & = np(1-p)
+\end{align*}
+
+
+
+\subsection{Grenzwertsatz von \protect\noun{Moivre}-\protect\noun{Laplace}}
+
+Sei $X$ eine binomialverteilte Zufallsvariable, dann gilt:
+\begin{align*}
+  Z=\frac{X-\mu}{\sigma} & =\frac{X-np}{\sqrt{np(1-p)}}\\
+  \lim_{n\to\infty}Z     & =\Phi(u)
+\end{align*}
+
+
+
+\section{Geometrische Verteilung}
+
+\index{Geometrische Verteilung}\index{Verteilung!geometrisch}
+(diskret, mit Wiederholung)
+
+Wahrscheinlichkeit, dass nach $k$ Versuchen ein Ereignis mit Wahrscheinlichkeit $p$ eintritt:
+\begin{align*}
+  f(k)       & =(1-p)^{k}\cdot p\\
+  \mu        & =\frac{1-p}{p}\\
+  \sigma^{2} & =\frac{1-p}{p^{2}}
+\end{align*}
+
+
+
+\section{Hypergeometrische Verteilung}
+
+\index{Hypergeometrische Verteilung}\index{Verteilung!hypergeometrisch}
+($\Hyp(N;M)$, diskret, ohne Wiederholung)
+
+In einer Urne sind $N$ Kugeln, davon $M$ weiße und $N-M$ schwarze. Mit $n$ als Anzahl der Versuche ist die Wahrscheinlichkeit, dass $k$ weiße Kugeln gezogen werden:
+\begin{align*}
+  f(k)       & = \frac{\vecc(M;k) \cdot \vecc(N-M;n-k)}{\vecc(N;n)}\\
+  \mu        & = n\frac{M}{N}\\
+  \sigma^{2} & = \frac{nM(N-M)(N-n)}{N^{2}(N-1)}
+\end{align*}
+
+
+
+\section{\protect\noun{Poisson}-Verteilung}
+
+\index{Poisson-Verteilung}\index{Verteilung!Poisson}
+($\Ps(\mu)$, diskret, mit Wiederholung, bei seltenen Ereignissen)
+\begin{align*}
+  f(k)       & =\frac{\mu^{k}}{k!}\cdot e^{-\mu}\\
+  \sigma^{2} & =\mu
+\end{align*}
+
+
+\section{Normalverteilung}
+
+\index{Normalverteilung}\index{Verteilung!Normal--}
+($\N(\mu;\sigma^{2})$, stetig, mit Wiederholung, Tabelle auf \cpageref{tab:Standardnormalverteilung}, Tabelle der Quantile auf \cpageref{tab:Quantile-Standardnormalvtlg})
+\begin{align*}
+  f(x) & =\frac{1}{\sqrt{2\pi}\cdot\sigma}\cdot\exp\left(-\frac{1}{2}\left(\frac{x-\mu}{\sigma}\right)^{2}\right)\\
+       & =\varphi\left(\frac{x-\mu}{\sigma}\right)\\
+  F(x) & =\Phi\left(\frac{x-\mu}{\sigma}\right)
+\end{align*}
+
+\index{Normalverteilung!Standard--}\index{Verteilung!Normal--!Standard--}\index{Standardnormalverteilung}
+Falls $\mu=0$ und $\sigma=1$, dann handelt es sich um eine Standardnormalverteilung mit:
+\[ \varphi(x) = \frac{1}{\sqrt{2\pi}}\cdot\exp\left(-\frac{1}{2}x^{2}\right) \]
+
+Jede normalverteilte Zufallsvariable $X$ lässt sich in die Standardnormalverteilung $U$ umformen mit: \[ u=\frac{x-\mu}{\sigma} \]
+
+Ist eine Zufallsvariable normalverteilt, so schreibt man $X\sim\N(\mu,\sigma^{2})$, bei Standardnormalverteilung $X\sim\N(0,1)$.
+
+
+\section{Exponentialverteilung}
+
+\index{Exponentialverteilung}\index{Verteilung!Exponential--}
+($\Exp(\lambda)$, stetig, ohne Wiederholung)
+\begin{align*}
+  f(x) & =
+  \begin{cases}
+    \lambda e^{-\lambda x} & x\geq0\\
+    0                      & x<0
+  \end{cases}\\
+  F(x) & =
+  \begin{cases}
+    1-e^{-\lambda x} & x\geq0\\
+    0                & x<0
+  \end{cases}\\
+  \mu        & =\frac{1}{\lambda}\\
+  \sigma^{2} & =\frac{1}{\lambda^{2}}
+\end{align*}
+
+
+
+\section[Chi-Quadrat-Verteilung]{$\chi^{2}$-Verteilung}
+
+\index{Chi-Quadrat-Verteilung}\index{Verteilung!Chi-Quadrat}
+(Tabelle der Quantile auf \cpageref{tab:Quantile-Chi-Quadrat})
+
+Die Chi-Quadrat-Verteilung gibt die Verteilung der Varianz einer Stichprobe an.
+
+Seien $X_1,\ldots,X_n$ stochastisch unabhängige Zufallsvariablen mit $X_i\sim\N(0;1)$, dann gilt für $\chi^2=X_1^2+\ldots+X_n^2$ mit $n$ als Freiheitsgrad:
+\begin{align*}
+  f(z) & =
+  \begin{cases}
+  	A_n\cdot z \uparrow \frac{n-2}{2} \cdot e \uparrow -\frac{z}{2} & z\geq0 \\
+  	0                                                               & z<0
+  \end{cases}\\
+  F(z)       & =A_n \cdot \int_0^z u \uparrow \frac{n-2}{2} \cdot e \uparrow -\frac{u}{2} \intd u\\
+  \mu        & =n\\
+  \sigma^{2} & =2n
+\end{align*}
+
+
+Die \index{Normierungskonstante}Normierungskonstante $A_{n}$ berechnet sich als:
+\[ A_n = \frac{1}{2^{\frac{n}{2}} \cdot \Gamma \left(\frac{n}{2} \right)} \]
+
+
+\subsection{Gamma-Funktion}
+
+\index{Gamma-Funktion}
+Die Gamma-Funktion nach \noun{Legendre} ist die Verallgemeinerung der Fakultät für alle reellen Zahlen; mit $\alpha\in\mathbb{R}>0$, $n\in\mathbb{N}$ gilt:
+\begin{align*}
+  \Gamma(\alpha)                   & = \int_0^{\infty} x^{\alpha-1} \cdot e^{-x} \intd x\\
+  \Gamma\left(\frac{1}{2}\right)   & = \sqrt{\pi}\\
+  \Gamma(1)                        & = 1\\
+  \Gamma(\alpha+1)                 & = \alpha\cdot\Gamma(\alpha)\\
+  \Gamma(n+1)                      & = n!\\
+  \Gamma\left(n+\frac{1}{2}\right) & = \frac{(2n-1)!!}{2^n} \sqrt{\pi} = \frac{1\cdot3\cdot5\cdots(2n-1)}{2^n} \sqrt{\pi}
+\end{align*}
+
+
+
+\section[t-Verteilung nach \protect\noun{Student}]{$t$-Verteilung nach \protect\noun{Student}}
+
+\index{Verteilung!t-Vert.~nach Student}\index{t-Verteilung nach Student}
+(Tabelle der Quantile auf \cpageref{tab:Quantile-t-Verteilung})
+
+Schätzfunktion für die Verteilung der Abweichung vom \index{Stichprobenmittelwert}Stichprobenmittelwert zum realen Mittelwert bei normalverteilten Daten.
+
+
+\section{Mehrere Veränderliche}
+
+\[ \Pr(a_1 \leq X \leq a_2;\; b_1 \leq Y \leq b_2) = F(a_1; b_1) + F(a_2; b_2) - F(a_1; b_2) - F(a_2; b_1) \]
+
+\begin{description}
+  \item [{Randverteilung}] \index{Randverteilung}\index{Verteilung!Rand--}
+	\begin{align*}
+	  f_{1}(x) & =\int_\mathbb{R} f(x;y)\intd y\\
+	  f_{2}(y) & =\int_\mathbb{R} f(x;y)\intd x
+	\end{align*}
+  \item [{Verteilungsfunktion}] \index{Verteilungsfunktion!mehrdimensional}
+	\[ F(x;y)=\int\kern-5pt\int f(x;y)\intd x \intd y \]
+  \item [{Erwartungswert~und~Varianz}] \index{Erwartungswert!mehrdimensional}
+	\begin{align*}
+	  \E(X)     & =\int_\mathbb{R} x\cdot f_1(x)\intd x\\
+	  \E(X^{2}) & =\int_\mathbb{R} x^2 \cdot f_1(x)\intd x\\
+	  \Var(X)   & =\E(X^{2})-\E^2(X)
+	\end{align*}
+  \item [{Stochastisch~unabhängig}] \index{stochastisch unabhängig}\index{unabhängig!stochastisch}
+	$F(x;y)=F_{1}(x)\cdot F_{2}(y)$
+  \item [{Additionssatz}] \index{Additionssatz}\index{Satz!Additions--}
+	\begin{align*}
+	  \E\Bigl(\sum X_n\Bigr)   & =\sum\E(X_n)\\
+	  \Var\Bigl(\sum X_n\Bigr) & =\sum\Var(X_n)
+	\end{align*}
+  \item [{Multiplikationssatz}] \index{Multiplikationssatz}\index{Satz!Multiplikations--}
+	\[ \E\Bigl(\prod X_n\Bigr) = \prod\E(X_n) \]
+\end{description}
+
+\chapter{Statistik/Schätzungen}
+
+
+\section{Grundlagen}
+\begin{description}
+  \item [{Grundgesamtheit}] \index{Grundgesamtheit}
+	Gesamtheit gleichartiger Objekte, von denen ein bestimmtes \index{Merkmal}\emph{Merkmal} untersucht werden soll.
+	Das Merkmal wird durch eine Zufallsvariable~$X$ beschrieben.
+  \item [{Zufallsstichprobe}] \index{Stichprobe}\index{Zufallsstichprobe}
+	Auswahl von $n$ Elementen aus der Grundgesamtheit heißt (Zufalls-)Stichprobe vom Umfang $n$.
+  \item [{Realisierungen}] \index{Realisierung|see{Merkmalswert}}\index{Merkmalswert}
+	Merkmalswerte/Stichprobenwerte $x_1,\ldots,x_n$ der Stichprobe.
+  \item [{Häufigkeitsverteilung}] \index{Verteilung!Häufigkeit}\index{Häufigkeit}\index{Häufigkeit!relativ}\index{Häufigkeit!Verteilung}
+	Relative Häufigkeiten $h_i$ der nach Größe sortierten Stichprobenwerte.
+  \item [{Häufigkeitsfunktion}] \index{Häufigkeit!Funktion}
+	Grafische Darstellung als \index{Stabdiagramm}Stabdiagramm.
+	\[
+	  f(x) =
+	  \begin{cases}
+	    h_i & \hbox{falls $x=x_i$}\\
+	    0 & \hbox{sonst}
+	  \end{cases}
+	\]
+	\begin{center}
+	  \includegraphics{stabdiagramm.pdf}
+	\end{center}
+  \item [{Verteilungsfunktion}] \index{Verteilungsfunktion}\index{Verteilung!Funktion}
+	Grafische Darstellung als sog.~\enquote{\index{Treppenfunktion}Treppenfunktion}.
+	\[ F(x)=\sum_{x_i \leq x}f(x_i) \]
+	\begin{center}
+	  \includegraphics{treppenfunktion.pdf}
+	\end{center}
+  \item [{Klassierung}] \index{Klassierung}
+	bezeichnet die Zusammenfassung mehrerer Stichprobenwerte zu einer \emph{Klasse}. Die Klasse wird durch zwei Stichprobenwerte eindeutig eingegrenzt.
+  \item [{Histogramm}] \index{Histogramm}
+	Stellt eine Klassierung graphisch dar.
+	\begin{center}
+	  \includegraphics{histogramm.pdf}
+	\end{center}
+  \item [{Klassenmitte}] \index{Klassenmitte}
+	Durchschnitt der Klassengrenzen, wird mit $\tilde{x}_{i}$ bezeichnet.
+  \item [{Empirischer~Mittelwert}]
+	$\bar{x}=\frac{1}{n}\sum_{1 \leq i \leq n} x_i$, mit Häufigkeitsfunktion: $\bar{x} = \frac{1}{n}\sum_{1 \leq i \leq n} x_i\cdot f(x_i)$
+  \item [{Median}] \index{Median}
+	Mittlerer Wert, d.\,h., wenn die Messgrößen sortiert sind%
+	($x_{1}\leq x_{2}\leq\ldots\leq x_{n}$), ist der Median
+	\[
+	  \tilde{x}=\begin{cases}
+	    x_{((n+1)/2)}                                   & \hbox{für $n$ ungerade}\\
+	    \frac{1}{2} \bigl(x_{(n/2)} + x_{(n/2+1)}\bigr) & \hbox{für $n$ gerade}
+	  \end{cases}
+	\]
+	[Notfalls müssen die Messgrößen noch per Hand sortiert werden.]
+
+  \item [{Modalwert}] \index{Modalwert}
+	Wert mit der größten Wahrscheinlichkeit bzw.~Maximum der Dichtefunktion.
+  \item [{$p$-Quantil}] \index{p-Quantil}\index{Quantil!--p}
+	$x_{p}$ ist die Merkmalsausprägung, bei der die Summenhäufigkeitsfunktion gerade $p$ übersteigt ($p\in[0;1]$).
+  \item [{Empirische~Varianz}] \index{empirisch!Varianz}\index{Varianz!empirische --}
+	$s^2 = \frac{1}{n-1}\sum_{1 \leq i \leq n}(x_i-\bar{x})^2 = \frac{1}{n-1}\bigl(\sum_{1 \leq i \leq n} x_i^2 - n\bar{x}^{2}\bigr)$,
+	mit Häufigkeitsfunktion: $s^2 = \frac{n}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})^{2}\cdot f(x_{i})$
+  \item [{Empirische~Standardabweichung}] \index{empirisch!Standardabweichung}\index{Standardabweichung!empirisch}
+	$s=\sqrt{s^2}$
+  \item [{Empirischer~Variationskoeffizient}] \index{empirisch!Variationskoeffizient}\index{Variationskoeffizient!empirischer --}
+	$V := s / \bar{x}$
+  \item [{Empirische~Kovarianz}] \index{empirisch!Kovarianz}\index{Kovarianz!empirisch}
+	$\cov(X,Y) = s_{XY} := \frac{1}{n-1} \sum_{1 \leq i \leq n} (x_i - \bar{x})(y_i-\bar{y})$
+  \item [{Empirischer~Korrelationskoeffizient}] \index{empirisch!Korrelationskoeffizient}\index{Korrelationskoeffizient!empirisch}
+	$r_{XY} := \cov(X,Y) / (s_X \cdot s_Y)$
+  \item [{Regressionsgerade}] \index{Regressionsgerade}
+	$y = \hat{a}+\hat{b}x$ mit $\hat{b}=s_{XY} / s_{X}^{2}$ und $\hat{a} = \bar{y}-\hat{b}\bar{x}$
+\end{description}
+
+\section{Schätzfunktionen}
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{ccc}
+\bfseries Unbek.~Param. & \bfseries Schätzfkt.                                   & \bfseries Schätzwert \\ & & \\
+$\E(X)$                 & $\bar X = \frac{1}{n} \cdot \sum_{i=1}^n X_i$          & $\hat \mu = \bar x = \frac{1}{n} \cdot \sum_{i=1}^n x_i$ \\ & & \\
+$\Var(X)$               & $S^2 = \frac{1}{n-1} \cdot \sum_{i=1}^n(X_i-\bar X)^2$ & $\hat s^2 = s^2 = \frac{1}{n-1} \cdot \sum_{i=1}^n (x_i - \bar x)^2$ \\ & & \\
+$p$ der $\Bin$-Vtlg.    & $\hat P = \frac{X}{n}$                                 & $\hat p = h(A) = \frac{k}{n}$
+\end{tabular}
+
+\caption{Schätzfunktionen}
+\end{table}
+
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{rcc}
+\bfseries Verteilung & \bfseries Schätzwert & \bfseries Bemerkungen \\
+$\Bin(n;x)$       & $\hat p = k/n$               & $k$ ist die Anzahl der Erfolge bei $n$ Versuchen \\
+$\Ps(\mu;x)$      & $\hat{\mu}=\bar{x}$          & \\
+$\Exp(\lambda;x)$ & $\hat{\lambda}=\bar{x}^{-1}$ & \\
+\multirow{2}{*}{$\N(\mu;\sigma^{2})$} & $\hat{\mu} = \bar{x}$      & \\
+                                      & $\hat{\sigma}^2 = s^2$ & \\
+\end{tabular}
+
+\caption{Schätzwerte}
+\end{table}
+
+\begin{description}
+  \item [{Maximum-Likelihood-Methode}] \index{Maximum-Likelihood}\index{Verteilung!Maximum-Likelihood}
+	Sei $f$ eine Verteilungsfunktion sowie $\vartheta$ ein zu bestimmender Parameter, dann gilt zur Bestimmung von $\vartheta$:
+	\begin{align*}
+	  L=L(\vartheta)                              & :=\prod f(x_i, \vartheta)\\
+	  \frac{\partial L}{\partial\vartheta}        & \stackrel{!}{=}0\\
+	  \frac{\partial^2L}{\partial\vartheta^2} & <0
+	\end{align*}
+	Wahrscheinlich bietet sich die Logarithmierung von $L$ an: $L^{*}:=\ln(L)$.
+
+  \item [{Erwartungstreu}] \index{erwartungstreu}
+	Sei $\hat{\vartheta}$ der Schätzer für den Parameter, so gilt dieser als erwartungstreu, wenn $\E(\hat{\vartheta})=\vartheta$ gilt.
+  \item [{Konsistent}] \index{Konsistent}
+	Sei $\hat{\vartheta}$ der Schätzer für den Parameter, so gilt dieser als konsistent, wenn $\lim_{n\to\infty}\Var(\hat{\vartheta})=0$ gilt.
+\end{description}
+
+\section{Konfidenzintervalle}
+\begin{description}
+  \item [{Konfidenz-/Vertrauensniveau}] \index{Konfidenzniveau}\index{Vertrauensniveau}\index{Konfidenzintervall}
+	$\gamma=1-\alpha$
+  \item [{Tschebyscheff-Ungleichung}] \index{Ungleichung!Tschebyscheff}\index{Tschebyscheff-Ungleichung}
+	$\Pr(\lvert X-\mu \rvert \geq c)\leq\left(\frac{\sigma}{c}\right)^{2}$
+\end{description}
+
+\subsection*{Normalverteilung: $\mu$ unbekannt, $\sigma^{2}$ bekannt}
+
+\emph{($u$: Quantil der Normalverteilung, Tabelle auf \cpageref{tab:Quantile-Standardnormalvtlg})}
+
+
+\subsubsection*{Zweiseitige Abschätzung}
+\[ \bar{x}-u_{1-\nicefrac{\alpha}{2}}\frac{\sigma}{\sqrt{n}}\leq\mu\leq\bar{x}+u_{1-\nicefrac{\alpha}{2}}\frac{\sigma}{\sqrt{n}} \]
+
+\subsubsection*{Einseitige Abschätzung nach oben}
+\[ \bar{x}-u_{1-\alpha}\frac{\sigma}{\sqrt{n}}\leq\mu \]
+
+\subsubsection*{Einseitige Abschätzung nach unten}
+\[ \mu\leq\bar{x}+u_{1-\alpha}\frac{\sigma}{\sqrt{n}} \]
+
+\subsection*{Normalverteilung: $\mu$ unbekannt, $\sigma^{2}$ unbekannt}
+\emph{($t$: Quantil der t-Verteilung nach \noun{\emph{Student}}, Tabelle auf \cpageref{tab:Quantile-t-Verteilung})}
+
+\subsubsection*{Zweiseitige Abschätzung}
+\[ \bar{x}-t_{n-1;1-\nicefrac{\alpha}{2}}\frac{s}{\sqrt{n}}\leq\mu\leq\bar{x}+t_{n-1;1-\nicefrac{\alpha}{2}}\frac{s}{\sqrt{n}} \]
+
+\subsubsection*{Einseitige Abschätzung nach oben}
+\[ \bar{x}-t_{n-1;1-\alpha}\frac{s}{\sqrt{n}}\leq\mu \]
+
+\subsubsection*{Einseitige Abschätzung nach unten}
+\[ \mu\leq\bar{x}+t_{n-1;1-\alpha}\frac{s}{\sqrt{n}} \]
+
+\subsection*{Normalverteilung: $\sigma^{2}$ unbekannt}
+\emph{($\chi^{2}$: Quantile der Chi-Quadrat-Verteilung, Tabelle auf \cpageref{tab:Quantile-Chi-Quadrat})}
+
+\subsubsection*{Zweiseitige Abschätzung}
+\[ (n-1)\frac{s^{2}}{\chi_{n-1;1-\nicefrac{\alpha}{2}}^{2}}\leq\sigma^{2}\leq(n-1)\frac{s^{2}}{\chi_{n-1;\nicefrac{\alpha}{2}}^{2}} \]
+
+\subsubsection*{Einseitige Abschätzung nach oben}
+\[ (n-1)\frac{s^{2}}{\chi_{n-1;1-\alpha}^{2}}\leq\sigma^{2} \]
+
+\subsubsection*{Einseitige Abschätzung nach unten}
+\[ \sigma^{2}\leq(n-1)\frac{s^{2}}{\chi_{n-1;\alpha}^{2}} \]
+
+\subsection*{Binomialverteilung: $p$ unbekannt}
+\emph{($u$: Quantil der Normalverteilung, Tabelle auf \cpageref{tab:Quantile-Standardnormalvtlg})}
+
+Nur anwendbar für große Stichproben und $n\hat{p}(1-\hat{p})>9$.
+
+\subsubsection*{Zweiseitige Abschätzung}
+\[ \hat{p}-\frac{u_{1-\nicefrac{\alpha}{2}}}{n}\sqrt{n\hat{p}(1-p)}\leq p\leq\hat{p}+\frac{u_{1-\nicefrac{\alpha}{2}}}{n}\sqrt{n\hat{p}(1-p)} \]
+
+\subsubsection*{Einseitige Abschätzung nach oben}
+\[ \hat{p}-\frac{u_{1-\alpha}}{n}\sqrt{n\hat{p}(1-p)}\leq p \]
+
+\subsubsection*{Einseitige Abschätzung nach unten}
+\[ p\leq\hat{p}+\frac{u_{1-\alpha}}{n}\sqrt{n\hat{p}(1-p)} \]
+
+\section{Hypothesen}
+\begin{description}
+  \item [{Nullhypothese}] \index{Hypothese}\index{Hypothese!Null--}\index{Nullhypothese}
+	$H_0$, enthält immer das Gleichheitszeichen ($=$ bzw.~$\leq$). Nicht verwerfbar wenn durch Stichprobe gestützt.
+  \item [{Alternativhypothese}] \index{Hypothese!Alternativ--}\index{Alternativhypothese}
+	$H_1$
+  \item [{Signifikanzniveau}] \index{Signifikanzniveau}
+	Wahrscheinlichkeit für den Fehler 1.~Art.
+  \item [{Fehler~1.~Art}] \index{Fehler!1.~Art}
+	$H_0$ wird trotz Richtigkeit mit Wahrscheinlichkeit $\alpha$ abgelehnt.
+  \item [{Fehler~2.~Art}] \index{Fehler!2.~Art}
+	$H_0$ wird trotz Falschheit mit Wahrscheinlichkeit $\beta$ \emph{nicht} abgelehnt.
+  \item [{Operationscharakteristik}] \index{Annahmewahrscheinlichkeit}\index{Operationscharakteristik}
+	Annahmewahrscheinlichkeit für $H_0$: $\beta=\beta(\vartheta_{1})$, bzw.~Wahrscheinlichkeit für
+	Fehler 2.~Art wenn $H_0$ eigentlich abzulehnen wäre.
+  \item [{Gütefunktion}] \index{Ablehnwahrscheinlichkeit}\index{Gütefunktion}
+	Ablehnwahrscheinlichkeit für $H_0$: $g(\vartheta_{1})=1-\beta(\vartheta_{1})$, bzw.~Wahrscheinlichkeit für
+	Fehler 1.~Art wenn $H_0$ zutrifft.
+	\[ g(\mu) = 1-\Phi\left(u_{1-\frac{\alpha}{2}}+\frac{\sqrt{n}}{\sigma}(\mu_{0}-\mu)\right)+\Phi\left(-u_{1-\frac{\alpha}{2}}+\frac{\sqrt{n}}{\sigma}(\mu_{0}-\mu)\right) \]
+\end{description}
+
+$H_0:\mu=\mu_0$, $H_1:\mu\neq\mu_0$
+
+\begin{align*}
+  \hat{u}                              & =\frac{\mu-\mu_{0}}{\sigma/\sqrt{n}}\\
+  \lvert \hat u \rvert > u_{1-\frac{\alpha}{2}}     & \Rightarrow \hbox{$H_0$ wird zugunsten $H_1$ verworfen}\\
+  \lvert \hat u \rvert \leq u_{1-\frac{\alpha}{2}} & \Rightarrow \hbox{$H_0$ kann nicht verworfen werden}
+\end{align*}
+
+
+
+\chapter{Übersicht}
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{ccc}
+  & \bfseries mit Wdh.
+  & \bfseries ohne Wdh. \\
+\bfseries stetig
+  & $\N$
+  & $\Exp$ \\
+\bfseries diskret
+  & $\Bin$ oder $\Ps$
+  & $\Hyp$ \\
+\end{tabular}
+\caption{Entscheidungshilfe für Wahrscheinlichkeitsfunktionen}
+\end{table}
+
+
+\begin{table}[htb]
+\centering
+\def\arraystretch{1.5}
+\begin{tabular}{ccc}
+\bfseries Vtlg. & \bfseries Näherung & \bfseries Bedingungen \\
+$\Bin$          & $\Ps(\mu = np)$    & $1500p \leq n \leq 10/p$ \\
+\hline
+$\Bin$          & $\N(\mu=np,\sigma=\sqrt{np(1-p)})$ & $np(1-p)>9$ \\
+\hline
+$\Hyp$          & $\Bin(p=M/N)$      & $M/N \in [0.1, 0.9]$ \\
+                &                    & $10 < n < N/20$ \\
+\hline
+$\Hyp$          & $\Ps(\mu = n\cdot M/N)$ & $M/N \notin \left]0.1,0.9\right[$ \\
+\hline
+$\Hyp$          & $\N\left(\mu=n\frac{M}{N},\right.$ & $M/N \in \left]0.1,0.9\right[$ \\
+                & $\left.\sigma=\sqrt{n\frac{M}{N}\left(1-\frac{M}{N}\right)\frac{N-n}{N-1}}\right)$ & $30 < n < N/20$ \\
+\hline
+$\Ps$           & $\N(\mu, \sigma=\sqrt{\mu})$ & $\mu>10$
+\end{tabular}
+
+\index{Näherung!Verteilung}\index{Verteilung!Näherung}
+\caption{Näherungen von Wahrscheinlichkeitsfunktionen}
+\end{table}
+
+\begin{figure}[htb]
+\centering\includegraphics{gauss.pdf}
+\index{Normalverteilung}\index{Verteilung!Normal--}
+
+\caption{Standardnormalverteilung}
+\end{figure}

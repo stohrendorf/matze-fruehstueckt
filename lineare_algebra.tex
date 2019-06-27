@@ -1,0 +1,987 @@
+% !TeX root = matze_fruehstueckt.tex
+\chapter{Vektoren, Vektorräume}
+
+\index{Vektor|(}
+
+
+\section{Wichtige Begriffe}
+\begin{description}
+  \item [{Vektor}]
+	Gerichtete Strecke ohne Position.
+  \item [{Gebundener~Vektor}] \index{Vektor!gebunden}
+	Vektor mit Position, zwischen zwei Punkten: $\overrightarrow{PQ}$.
+  \item [{Ortsvektor}] \index{Ortsvektor}\index{Vektor!Orts--}
+	Gebundener Vektor mit Position im Ursprung.
+  \item [{Parallelität}] \index{Vektor!parallel}
+	$\exists\alpha : \vec{a} = \alpha\vec{b} \iff \vec{a} \| \vec{b}$
+	(gleiche Richtung: $\alpha>0$, gegensätzliche Richtung: $\alpha<0$).
+  \item [{Orthogonalität}] \index{Vektor!orthogonal}
+	$\langle \vec{a},\vec{b} \rangle = 0
+	  \quad\iff\quad
+	  \vec{a}\bot\vec{b}
+	  \quad\iff\quad
+	  \lVert \vec{a}+\vec{b} \rVert^2 = \lVert\vec{a}\rVert^2 + \lVert\vec{b}\rVert^2$
+\end{description}
+
+\subsection{Vektorraum}
+
+\index{Vektorraum}
+Sei $K$ ein beliebiger Körper und $V$ eine nicht-leere Menge.
+$V$ heißt Vektorraum, wenn für $\forall x,y\in V$ und $\forall\lambda,\mu\in K$ gilt:
+
+\begin{itemize}
+  \item Folgende Abbildungen sind definiert:
+    \[ x       \oplus y : \quad V\times V \to V, \qquad(x,y)      \mapsto x\oplus y \]
+    \[ \lambda \odot  x : \quad K\times V \to V, \qquad(\lambda,x)\mapsto\lambda\odot x \]
+  \item $V$ ist eine kommutative Gruppe bezüglich $\oplus$.
+  \item $\lambda\odot(\mu\odot x)=(\lambda\cdot\mu)\odot x$.
+  \item $1\odot x=x$ (hier ist $1$ das Neutralelement bzgl.~der Multiplikation aus $K$).
+  \item $\lambda\odot(x\oplus y)=(\lambda\odot x)\oplus(\lambda\odot y)$.
+  \item $(\lambda+\mu)\odot x=(\lambda\odot x)\oplus(\mu\odot x)$.
+\end{itemize}
+
+Dabei nennt man die $x$, $y$ \emph{Vektoren} und die $\lambda$, $\mu$ \index{Skalar}\emph{Skalare}.
+\begin{description}
+  \item [Linearkombination]
+        $\sum_{1 \leq i \leq n} \lambda_i \vec v_i$ heißt Linearkombination von $\vec v_1, \ldots, \vec v_n$.
+  \item [linear unabhängig]
+        $n$ Vektoren $\vec v_1, \ldots, \vec v_n$sind genau dann linear unabhängig, wenn $\sum_i \lambda_i \vec v_i = 0 \Rightarrow \lambda_1,\ldots,\lambda_n = 0$ ist.
+  \item [Lineare Hülle]
+	Die Menge aller Linearkombinationen
+	\[ L=\biggl\{ \sum_i \lambda_i \vec v_i \biggm| \lambda_i \in K\biggr\} \subseteq V \]
+	heißt lineare Hülle von $\vec{v}_{1},\ldots,\vec{v}_{n}$.
+  \item [Erzeugendensystem]
+	Gilt $L(\vec v_1,\ldots,\vec v_n)=V$, so bilden die Vektoren ein Erzeugendensystem.
+  \item [Basis]
+	Auch: \emph{minimales Erzeugendensystem}.
+	Ist ein Erzeugendensystem, bei dem die Vektoren linear unabhängig sind.
+	Daher hat eine Basis für einen Vektorraum $V$ mit $\dim(V)=n$ genau $n$ Basisvektoren.
+  \item [Dimension]
+	Hat ein Vektorraum $V$ eine Basis $\{ \vec v_1,\ldots,\vec v_n\}$, so ist $\dim(V)=n$.
+\end{description}
+
+\subsubsection{Untervektorraum}
+
+\index{Unterraum}\index{Vektorraum!Unter-}\index{Untervektorraum}
+Eine nicht-leere Teilmenge $U$ eines Vektorraums $V$ über einem Körper $K$ ist ein Untervektorraum, wenn gilt:
+\[ \forall x,y\in U,\; \forall\lambda\in K\ :\ x+y\in U\land\lambda x\in U \]
+
+\subsection{Skalarprodukt}
+\index{Skalarprodukt}\index{Vektorraum!Skalarprodukt}
+$V$ sei bel.~Vektorraum über einem Körper $K\in\{\mathbb{R},\mathbb{C}\}$ und $a,\, b,\, c\in V$ sowie $\lambda\in K$, dann heißt $\langle \ast,\ast \rangle : V\times V\to K$ Skalarprodukt falls gilt:
+\begin{description}
+  \item [{SP1}]
+	$\langle a,b\rangle =\overline{\langle b,a\rangle}$
+	[Gilt wegen fehlendem Imaginärteil auch für $K\ne\mathbb{C}$.]
+  \item [{SP2}]
+	$\langle a,b+c\rangle =\langle a,b\rangle +\langle a,c\rangle $
+	und $\langle a+b,c\rangle =\langle a,c\rangle +\langle b,c\rangle $
+  \item [{SP3}]
+	$\langle \lambda a,b\rangle =\lambda\langle a,b\rangle =\langle a,\bar{\lambda}b\rangle $
+	[Gilt wegen fehlendem Imaginärteil auch für $K\ne\mathbb{C}$.]
+  \item [{SP4}]
+	$\langle a,a \rangle = 0 \iff a=0$
+	und $\langle a,a \rangle > 0 \iff a\ne0$
+  \item [{Standardskalarprodukt}] $\langle \vec{a},\vec{b}\rangle :=\sum_{i} a_i b_i$
+\end{description}
+
+\subsection{\label{sub:Vektornorm}Norm}
+
+\index{Norm}\index{Vektor!Norm}
+Sei $V$ ein Vektorraum über $K \in \{\mathbb R, \mathbb C\}$ sowie $a,b \in V$ und $\lambda \in K$, dann heißt $\lVert*\rVert : V \to \mathbb R$ Norm falls $\forall a,b \in V$ und $\forall\lambda \in K$ gilt:
+\begin{description}
+  \item [{N1}]
+	$\lVert a\rVert\geq0$
+  \item [{N2}]
+	$\lVert a\rVert=0 \iff a=0$
+  \item [{N3}]
+	$\lVert \lambda a \rVert  =  \lvert \lambda \rvert \, \lVert a \rVert$
+  \item [{N4}]
+	$\lVert a+b\rVert\leq\lVert a\rVert+\lVert b\rVert$ (Dreiecksungleichung)
+  \item [{Standardnorm}] \index{Vektor!Betrag}\index{Vektor!Euklidische Norm}\index{Vektor!Zweiernorm}\index{Betrag}\index{Norm!Betrag}\index{Norm!Zweier--}\index{Norm!euklidische}\index{Vektor!Standardnorm}\index{Norm!Standard--}
+	$\lVert a\rVert=\sqrt{\langle a,a\rangle }$ (auch \emph{euklidische Norm}, \emph{Zweiernorm} oder \emph{Betrag})
+  \item [{Betragssummennorm}] \index{Vektor!Einernorm}\index{Vektor!Betragssummennorm}\index{Norm!Einer--}\index{Norm!Betragssummen--}
+	$\lVert a\rVert_1=\sum_{i}\lvert a_i \rvert$ (auch \emph{Einernorm})
+  \item [{Maximumnorm}] \index{Vektor!Maximumnorm}\index{Norm!Maximum--}
+	$\lVert a\rVert_{\infty} = \max\bigl\{\lvert a_i \rvert \bigr\}$
+  \item [{Einheitsvektor}] \index{Vektor!Einheits--}\index{Einheitsvektor}
+	$\lVert a\rVert=1$
+  \item [{Kanonischer~Einheitsvektor}] \index{Vektor!kanonischer Einheits--}\index{Einheitsvektor!kanonisch}
+	$\lVert a\rVert=1\land\exists! a_i : a_i=1$
+\end{description}
+\index{Metrik}\index{metrischer Raum}\index{Raum!Metrik}\index{Isometrie}
+\label{metrischer-raum}
+[Die Norm stellt einen Spezialfall einer Metrik $d(x,y)=\lVert x-y \rVert$ dar; eine Abbildung $d : M \times M \to \mathbb R$ auf \emph{beliebigen} Mengen $M$ heißt Metrik, wenn sie (i)~$d(x,y)\geq0$, (ii)~$d(x,y)=0 \iff x=y$, (iii)~$d(x,y)=d(y,x)$ und (iv)~$d(x,y) \leq d(x,z)+d(y,z)$ erfüllt.
+Ist $d$ auf einer Menge $M$ definiert, so heißt $(M,d)$ metrischer Raum; eine auf diesem Raum definierte Abbildung $f : M \to M$ heißt Isometrie.]
+
+\subsection{\label{sub:Errechnung-von-Normalen}Errechnung von Normalen}
+
+Sei $\vec{v}$ ein Vektor mit $n$ Komponenten, so lassen sich dazu $n-1$ senkrechte linear unabhängige Vektoren nach folgendem Prinzip errechnen:
+\begin{enumerate}
+  \item Auswahl einer Komponente $n_i \neq 0$.
+  \item Vertauschung von $n_i$ mit einer anderen Komponente $n_j$ ($i\neq j$) und Setzung der restlichen Komponenten auf~$0$.
+  \item Negation einer der gewählten gebliebenen Komponenten $n_i \neq 0$ oder $n_j \neq 0$.
+\end{enumerate}
+
+\subsection[Orthonormalisierungsverfahren]{Orthonormalisierungsverfahren nach \protect\noun{Gram-Schmidt}}
+
+Wird benutzt, um aus $m$ linear unabhängigen Vektoren $\vec v_1, \ldots, \vec v_m$ paarweise orthogonale normalisierte Vektoren $\vec w_1, \ldots, \vec w_m$ zu erzeugen.
+
+\begin{mathalgo}{Orthonormalisierung nach \protect\noun{Gram-Schmidt}}
+$\vec w_1 \= \vec v_1 / \lVert\vec v_1\rVert$
+for $k \= 1$ to $m-1$:
+\> \cmt{Entfernen des nicht-orthogonalen Anteils aus $\vec v_{k+1}$}
+\> $\vec r_{k+1} \= \vec v_{k+1} - \sum_{i \leq k} \langle \vec v_{k+1}, \vec w_i \rangle \vec w_i$
+\smallskip
+\> \cmt{Normalisierung von $\vec r_{k+1}$}
+\> $\vec w_{k+1} \= \vec r_{k+1} / \lVert \vec r_{k+1} \rVert$
+\end{mathalgo} 
+
+
+\section{Operationen mit zwei Vektoren}
+\begin{description}
+  \item [Projektion von $\vec a$ in Richtung $\vec b$]
+	\emph{Auch}: Komponente von $\vec a$ entlang $\vec b$; $\bigl(\langle \vec{a},\vec{b}\rangle \bigm/ \langle \vec{b},\vec{b}\rangle \bigr) \cdot \vec b$.
+  \item [Winkel zwischen $\vec a$ und $\vec b$]
+	\quad$\langle \vec{a},\vec{b}\rangle =\lVert\vec{a}\rVert\cdot\lVert\vec{b}\rVert\cdot\cos(\varphi)$
+  \item [\noun{Schwarz}sche Ungleichung]
+	$\lvert\langle \vec{a},\vec{b}\rangle\rvert \leq \lVert\vec{a}\rVert\cdot\lVert\vec{b}\rVert$
+  \item [Dreiecksungleichung]
+	$\lVert\vec a + \vec b \rVert \leq \lVert\vec a \rVert + \lVert \vec b \rVert$
+\end{description}
+
+\subsection{Kreuzprodukt\label{subsec:Kreuzprodukt}}
+
+Das Kreuzprodukt (oder \emph{Vektorprodukt}) ist für $\mathbb{R}^{3}$ definiert als:
+\begin{align*}
+  \veccc(a_1;a_2;a_3)
+  \times
+  \veccc(b_1;b_2;b_3)
+  &
+  =\veccc(
+    a_2 b_3 - a_3 b_2;
+    a_3 b_1 - a_1 b_3;
+    a_1 b_2 - a_2 b_1)
+  \\
+  \lVert \vec{a}\times\vec{b} \rVert
+  &
+  =\lVert\vec{a}\rVert \cdot \lVert\vec{b}\rVert \cdot \sin(\varphi)
+\end{align*}
+
+
+Es gelten folgende Eigenschaften:
+\begin{description}
+  \item [{Antikommutativität}]
+	$\vec{a}\times\vec{b} = -(\vec{b}\times\vec{a})$
+  \item [{Distributivität}]
+	$\vec{a}\times(\vec{b}+\vec{c}) = (\vec{a}\times\vec{b}) + (\vec{a}\times\vec{c})$
+	[Analog: $(\vec{a} + \vec{b}) \times \vec{c}$.]
+  \item [{Skalierbarkeit}]
+	$\forall\alpha\in\mathbb{R}
+	  \ :\ 
+	  (\alpha\vec{a}) \times \vec{b} = \alpha(\vec{a}\times\vec{b}) = \vec{a}\times(\alpha\vec{b})$
+  \item [{Keine~Assoziativität}]
+	In der Regel gilt nicht: $(\vec{a}\times\vec{b}) \times \vec{c} = \vec{a}\times(\vec{b}\times\vec{c})$
+\end{description}
+Außerdem gilt:
+$\lVert \vec{a}\times\vec{b} \rVert^2 =
+\langle \vec{a},\vec{a} \rangle
+\cdot
+\langle \vec{b},\vec{b} \rangle
+-
+\langle \vec{a},\vec{b} \rangle ^2$
+
+\begin{figure}[H]
+\centering\includegraphics{kreuzprodukt.pdf}
+
+\caption{Kreuzprodukt}
+\end{figure}
+
+\index{Vektor|)}
+
+
+\section{Vektorraum aus Polynomen}
+\begin{description}
+  \item [{Rekursive~Faktorzerlegung}] \index{Faktorzerlegung|see{Polynom}}\index{Polynom!Faktorzerlegung}
+    $p_n(x) = (x-x_0) p_{n-1}(x) + r$
+  \item [{Zerlegung~mit~$n$~Nullstellen}] \index{Nullstellen|see{Polynom}}\index{Polynom!Nullstellen}
+    $p_n(x) = a_n\sum_{i=1}^n (x-x_i)$, wobei $x_i$ die Nullstellen sind.
+    [Siehe \noun{Horner}schema auf Seite~\pageref{hornerschema}.]
+\end{description}
+\index{Basis|see{Vektorraum}}\index{Vektorraum!Basis}
+Die Funktionen $p_n = \{1,x,x^2,\dots,x^n\}$ bilden eine Basis von $P_n$ (Polynome\index{Polynom} vom Grad $n$ oder kleiner): $\dim(P_n)=n+1$; $p_n$ ist genau dann linear unabhängig, wenn $\sum_i \lambda_i x^i = 0 \: \Rightarrow \: \lambda_{1,\ldots,n} = 0$ gilt.
+
+
+\section{Ebenengleichungen}
+
+\index{Ebene|(}
+Sei $V$ ein $n$-dimensionaler Vektorraum über einem Körper $K \in \{\mathbb R, \mathbb C\}$, $\vec x$, $\vec p$, $\vec n$ sowie $\vec r_{1,\ldots,n-1} \in V$ und $\lambda_{1,\ldots,n-1} \in K$; $\vec p$ ist der Ortsvektor der (Hyper-)Ebene, $\vec r_{1,\ldots,n-1}$ sind die Richtungsvektoren, $\vec n$ ist die Normale.
+Ein Körper der Dimension $n-1$ in $V$ wird als Hyperebene bezeichnet, für $n=2$ als Gerade und für $n=3$ einfach als Ebene.
+
+\begin{description}
+  \item [Parameterform] \index{Punkt-Richtungs-Form}\index{Ebene!Punkt-Richtungs-Form}\index{Ebene!Parameterform}\index{Parameterform}
+	$E = \bigl\{ \vec x \bigm| \vec p + \sum_{1 \leq i < n} \lambda_i\vec r_i \bigr\}$.
+	\emph{Auch}: Punkt-Richtungs-Form.
+  \item [Normalform] \index{parameterlose Form}\index{Ebene!parameterlose Form}\index{Ebene!Normalform}\index{Normalform}
+	$E = \bigl\{ \vec x \bigm| \langle \vec x-\vec p, \vec n \rangle = 0 \bigr\}$
+	bzw.~$E = \bigl\{ \vec x \bigm| \langle \vec x, \vec n \rangle = \langle \vec p, \vec n \rangle \bigr\} $.
+	\emph{Auch}: parameterlose Form.
+  \item [\noun{Hesse}sche~Normalform] \index{Ebene!Hessesche Normalform}\index{Hessesche Normalform}\index{Normalform!Hessesche}
+	Wie gewöhnliche Normalform, nur mit $\lVert\vec n\rVert=1$.
+  \item [Koordinatenform] \index{Ebene!Koordinatenform}\index{Koordinatenform}
+	Die Gleichung $\langle \vec{x},\vec{n}\rangle =\langle \vec{p},\vec{n}\rangle$ ausgeschrieben:
+	\[ E = \bigl\{ \vec x \bigm| x_1 n_1 + \cdots + x_n n_n = \langle \vec{p},\vec{n}\rangle \bigr\} \]
+\end{description}
+
+
+\subsection{Umformungen}
+
+\index{Ebene!Umformungen}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lcccc}
+  && \multicolumn{3}{c}{\emph{von}} \\
+  && \bfseries PF & \bfseries NF & \bfseries KF \\
+  \multirow{3}{*}{\begin{sideways} \emph{nach} \end{sideways}}
+    & \bfseries PF & --- & via KF & s.\,u. \\
+    & \bfseries NF & s.\,u. & --- & s.\,u. \\
+    & \bfseries KF & via NF & s.\,u. & --- \\
+\end{tabular}
+\caption{Umformungswege Ebenengleichungen}
+\end{table}
+
+
+
+\subsubsection*{Parameterform zur \protect\noun{Hesse}schen Normalform}
+
+Im $\mathbb{R}^{3}$:
+\begin{enumerate}
+  \item Normale $\vec{n}$ bestimmen: Vektorprodukt der Richtungsvektoren bilden und normalisieren.
+  \item Gleichung aufstellen: $\langle \vec{x},\vec{n}\rangle =\langle \vec{p},\vec{n}\rangle $, dabei die rechte Seite durch das Ergebnis des Skalarprodukts ersetzen.
+\end{enumerate}
+
+\subsubsection*{Normalform zur Koordinatenform}
+
+Die Gleichung $\langle \vec{x},\vec{n}\rangle =\langle \vec{p},\vec{n}\rangle $ ausgeschrieben:
+$\sum_{1 \leq i < n} x_i n_i = \langle \vec p, \vec n \rangle $.
+
+\subsubsection*{Koordinatenform zur \noun{Hesse}schen Normalform}
+\begin{enumerate}
+  \item Aus den Faktoren der $x_i$ den Normalenvektor $\vec{n}$ bestimmen (der $i$-te Faktor ist die $i$-te Komponente der Normale) und ggf.~normalisieren.
+  \item Einen beliebigen Punkt $\vec{p}$ der Ebene ermitteln.
+  \item Mithilfe der Parameterform die \noun{Hesse}sche Normalform ermitteln.
+\end{enumerate}
+
+\subsubsection*{Koordinatenform zur Parameterform}
+\begin{enumerate}
+  \item $n$ paarweise verschiedene Punkte der Ebene ermitteln.
+  \item Einen Punkt als Ortsvektor $\vec{p}$ wählen.
+  \item Von den restlichen Punkten $\vec{p}$ abziehen, das sind dann die Richtungsvektoren $\vec{r}_{1,\ldots,n-1}$.
+\end{enumerate}
+
+\subsubsection*{Alternativen}
+
+Die Umrechnung der Koordinaten- und Normalform zur Parameterform lässt sich auch mit Hilfe der Errechnung von linear unabhängigen Normalen zur Ebenennormale durchführen.
+Siehe dazu Seite \pageref{sub:Errechnung-von-Normalen}.
+
+\index{Ebene|)}
+
+
+\section{Abstandbestimmung}
+
+\index{Abstand}\index{Vektor!Abstand}
+
+Allgemein:
+\begin{enumerate}
+  \item Richtung $\vec r$ des Abstandsvektors bestimmen.
+        [Bei zwei Geraden ist dies z.\,B.~das Kreuzprodukt beider Richtungsvektoren, bei einer Ebene und einer Geraden die Normale der Ebene, etc\@.]
+  \item Vektor $\vec a$ als Vektor zweier beliebiger Punkte auf den beiden Objekten bestimmen.
+        [Dies ist der sog.~\emph{Verbindungsvektor}, der die beiden Objekte in beliebiger Richtung verbindet.]
+  \item Kürzester Abstandsvektor ist dann die Projektion des Verbindungsvektors auf den Abstandsvektor:
+	\[ \vec d = \langle \vec a, \vec r \rangle \bigm/ \langle \vec r, \vec r \rangle \cdot \vec r \]
+\end{enumerate}
+
+\begin{description}
+  \item [{Hyperebenen}]
+	$\vec{r}$ entspricht der Normale der Ebene.
+  \item [{Geraden~im~$\mathbb{R}^{3}$}]
+	Funktioniert nur bei nicht-parallelen Geraden, $\vec{r}$ entspricht dem Kreuzprodukt der Richtungsvektoren.
+\end{description}
+
+\pagebreak[2]
+\section{Schnittmengenbestimmung}
+
+\CheckedBox{} Beispiel vorhanden auf \cpageref{sec:bsp-Schnittmengenbestimmung}.
+\begin{enumerate}
+  \item \index{Schnittmenge}Umformung beider Gleichungen in jeweils die parameterlose Form und die Parameterform.
+  \item Parameterlose Form in die Parameterform einsetzen und Wert eines Parameters berechnen.
+  \item Erhaltenen Parameter in die Parametergleichung einsetzen.
+\end{enumerate}
+
+\chapter{Matrizen}
+
+\index{Matrix|(}
+
+
+\section{Definition}
+
+Eine $m\times n$-Matrix besteht aus $m$ Zeilen und $n$ Spalten. Die Indizes der einzelnen Werte bestehen aus der Zeile gefolgt von der Spalte.
+\[
+A = \begin{pmatrix}
+  a_{11} & a_{12} & \cdots & a_{1n}\\
+  a_{21} & a_{22} & \cdots & a_{2n}\\
+  \vdots & \vdots &        & \vdots\\
+  a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{pmatrix}
+\]
+
+\index{Matrix!Typ}\index{Typ}
+Die Elemente einer Matrix vom Typ $(m,n)$ lassen sich mit $a_{ij},\; 1\leq i\leq m \; \land \; 1\leq j\leq n$ ansprechen.
+[Der Typ kann auch als $m\times n$ geschrieben werden.]
+Man kann Matrizen auch alternativ $A=(a_{ij}),\, 1 \leq i \leq m,\, 1 \leq j \leq n$ schreiben.
+Die Menge aller $m\times n$-Matrizen über einem Körper $K$ wird als $M(m\times n,K)$ bzw.~$K^{m\times n}$ geschrieben.
+
+\begin{description}
+  \item [{Gleichheit}]
+	$A=B$ bzw.~$(a_{ij})=(b_{ij})$ gilt, wenn die Typen gleich sind und $\forall i,j:a_{ij}=b_{ij}$ gilt.
+  \item [{Addition,~Subtraktion}]
+	$A+B:=(a_{ij}+b_{ij})$
+  \item [{Nullmatrix}] \index{Nullmatrix}\index{Matrix!Null--}
+	$a_{ij}=0,\; 1 \leq i \leq m,\; 1 \leq j \leq n$
+  \item [{Unipotent}] \index{Matrix!unipotent}\index{unipotent}
+	$a_{ii}=1,\; 1 \leq i \leq n$
+  \item [{Einheitsmatrix}] \index{Einheitsmatrix}\index{Matrix!Einheits--}\index{Matrix!Kronecker-Delta}\index{Kronecker-Delta}
+	$E=(\delta_{ij})$ mit dem \noun{Kronecker}-Delta
+	\[
+	  \delta_{ij}=\begin{cases}
+	    0 & \hbox{falls $i\neq j$}\\
+	    1 & \hbox{falls $i=j$}
+	  \end{cases}
+	\]
+  \item [{Transponierte~Matrix}] \index{transponierte Matrix}\index{Matrix!transponiert}
+	Die transponierte Matrix $A^T$ einer Matrix $A$ erhält man durch Vertauschung von Zeilen und Spalten.
+  \item [{Inverse~Matrix}] \index{inverse Matrix}\index{Matrix!invers}
+	Für die inverse Matrix $A^{-1}$ einer Matrix $A \in K^{n \times n}$ gilt $AA^{-1}=A^{-1}A=E$. Es gibt nicht immer ein $A^{-1}$.
+  \item [{Quadratisch}] \index{quadratische Matrix}\index{Matrix!quadratisch}
+	$m=n$
+  \item [{Zeilenmatrix}] \index{Matrix!Zeilen--}\index{Zeilenmatrix}
+	$m=1$
+  \item [{Spaltenmatrix}] \index{Matrix!Spalten--}\index{Spaltenmatrix}
+	$n=1$
+  \item [{Rang}] \index{Rang}\index{Matrix!Rang}
+	Der Rang einer Matrix ist die Dimension der größten Untermatrix $U$, für die $\det(U)\neq0$ ist; dies entspricht der Dimension der Spalten- bzw.~Zeilenvektoren.
+
+    [Eine Möglichkeit zur Bestimmung des Ranges ist die Anwendung des \noun{Gauß}-Verfahrens für lineare Gleichungssysteme und die Anzahl der nicht verschwindenden Zeilen zu zählen.]
+\end{description}
+
+\section{Rechenregeln}
+\begin{description}
+  \item [{Multiplikation~mit~Skalar}]
+	$\lambda A:=(\lambda a_{ij})$
+  \item [{Multiplikation~(allgemein)}]
+	Voraussetzung: $A$ ist eine $m\times n$-Matrix, $B$ eine $n\times r$-Matrix.
+	Dann gilt: $C=A\cdot B:=(c_{ik})$ mit $c_{ik}=\sum a_{ij} b_{jk}$.
+	Es entsteht eine $m\times r$-Matrix.
+	\emph{Achtung:} Im allgemeinen ist $AB\neq BA$.
+\end{description}
+
+Sofern die Produkte existieren, gelten:
+\begin{description}
+  \item [{Distributivgesetz}] \index{Matrix!Distributivgesetz}
+	$A(B+C)=AB+AC$
+  \item [{Assoziativgesetz}] \index{Matrix!Assoziativgesetz}
+	$(AB)C=A(BC)=ABC$
+\end{description}
+\[
+    (AB)\T=B\T A\T \qquad EA=AE=A
+\]
+
+\subsection{\protect\noun{Falk}sches Schema}
+\index{Falksches Schema}\index{Matrix!Falksches Schema}\index{Matrix!Multiplikation}
+
+Das \noun{Falk}sche Schema kann als Hilfsmittel zur Matrizenmultiplikation benutzt werden.
+
+Hier ein Beispiel für 
+\[
+\begin{pmatrix}
+  1 & 4\\
+  2 & 5\\
+  3 & 6
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+  1 & 2\\
+  0 & 1
+\end{pmatrix}
+\]
+
+\Todo{Darstellung Falksches Schema reparieren}
+
+\vbox{
+\emph{Schritt 1:} Die rechte Matrix etwas höher aufschreiben als die linke.
+\[
+\xySep{5pt}\xymatrix{
+                &  & \,\ar@{-}[ddddd] & 1 & 2 \\
+                &  &                  & 0 & 1 \\
+\,\ar@{-}[rrrr] &  &                  &   & \,\\
+1               & 4\\
+2               & 5\\
+3               & 6                   & \,
+}
+\]
+}
+
+\bigskip{}
+
+\vbox{
+\emph{Schritt 2:} Quasi die Skalarprodukte aus den Zeilen von $A$ und den Spalten von $B$ bilden.
+\[
+\xySep{5pt}\xymatrix{
+                &   & \,\ar@{-}[ddddd] & 1\ar@{..>}[ddd] & 2\\
+                &   &                  & 0               & 1\\
+\,\ar@{-}[rrrr] &   &                  &                 & \,\\
+1\ar@{..>}[rrr] & 4 &                  & {\color{red}1}\\
+2               & 5\\
+3               & 6 & \,
+}
+%
+\quad
+%
+\xySep{5pt}
+\xymatrix{
+                &   & \,\ar@{-}[ddddd] & 1\ar@{..}[ddddd] & 2 \\
+                &   &                  & 0                & 1 \\
+\,\ar@{-}[rrrr] &   &                  &                  & \,\\
+1               & 4 &                  & 1                    \\
+2\ar@{..}[rrr]  & 5 &                  & {\color{red}2}       \\
+3\ar@{..}[rrr]  & 6 & \,               & {\color{red}3}
+}
+%
+\quad
+%
+\xySep{5pt}
+\xymatrix{
+                &   & \,\ar@{-}[ddddd] & 1 & 2\ar@{..}[ddddd]\\
+                &   &                  & 0 & 1               \\
+\,\ar@{-}[rrrr] &   &                  &   & \,              \\
+1\ar@{..}[rrrr] & 4 &                  & 1 & {\color{red}6}  \\
+2\ar@{..}[rrrr] & 5 &                  & 2 & {\color{red}9}  \\
+3\ar@{..}[rrrr] & 6 & \,               & 3 & {\color{red}12}
+}
+\]
+}
+
+\bigskip{}
+
+\vbox{
+\emph{Schritt 3:} Produkt abschreiben.
+\[
+C = \begin{pmatrix}
+  1 & 6\\
+  2 & 9\\
+  3 & 12
+\end{pmatrix}
+\]
+}
+
+
+\section{Quadratische Matrizen}
+\begin{description}
+  \item [{Hauptdiagonale}] \index{Matrix!Diagonale}\index{Diagonale!Haupt--}\index{Hauptdiagonale}\index{Matrix!Hauptdiagonale}\index{Matrix!quadratisch}
+	existiert nur bei quadratischen Matrizen ($m=n$), es sind die Elemente $(a_{kk}),\; 1\leq k\leq n$ gemeint.
+  \item [{Nebendiagonalen}] \index{Diagonale!Neben--}\index{Nebendiagonale}\index{Matrix!Nebendiagonale}
+	Siehe unten.
+	Nebendiagonalen (markiert mit $n$) heißen sowohl die Diagonalen direkt über und direkt unter der Hauptdiagonalen ($H$) als auch die zur Hauptdiagonalen senkrechte Diagonale.
+\end{description}
+\Todo{Darstellung Haupt-/Nebendiagonalen reparieren}
+\[
+  \xySep{5pt}
+  \left(\vcenter{\xymatrix{
+  H\ar[ddddrrrr]    & n\ar@{.>}[dddrrr] & \circ & \circ & n\ar@{.>}[ddddllll] \\
+  n\ar@{.>}[dddrrr] & \circ             & \circ & \circ & \circ               \\
+  \circ             & \circ             & \circ & \circ & \circ               \\
+  \circ             & \circ             & \circ & \circ & n                   \\
+  n                 & \circ             & \circ & n     & H
+  }
+  }\right)
+\]
+
+\begin{description}
+  \item [{Dreiecksmatrix}] \index{Matrix!Dreiecks--}\index{Dreiecksmatrix}
+	Wenn alle Elemente über der Hauptdiagonalen 0 sind heißt die Matrix \enquote{untere Dreiecksmatrix}.
+	Sind die Elemente \emph{unter} der Hauptdiagonalen 0, so heißt die Matrix \enquote{obere Dreiecksmatrix}.
+  \item [{Strikte~Dreiecksmatrix}] \index{Matrix!Dreiecksmatrix!strikt}\index{Strikte Dreiecksmatrix}
+	Ist bei einer Dreiecksmatrix die Hauptdiagonale 0, so heißt die Matrix \emph{strikte} Dreiecksmatrix.
+  \item [{Diagonalmatrix}] \index{Matrix!Diagonal--}\index{Diagonalmatrix}
+	$i\neq j\Rightarrow a_{ij}=0$
+  \item [{Symmetrische~Matrix}] \index{Matrix!symmetrisch}\index{symmetrische Matrix}
+	$a_{ij}=a_{ji} \iff A=A^{T}$
+  \item [{Tridiagonalmatrix}] \index{Matrix!Tridiagonal--}\index{Tridiagonalmatrix}
+    Eine Diagonalmatrix, bei der die Nebendiagonalen direkt neben der Hauptdiagonalen von 0 verschieden sein dürfen.
+\end{description}
+
+\section{\label{sec:Lineare-Gleichungssysteme}Lineare Gleichungssysteme}
+
+\index{Gleichungssystem!linear}\index{lineares Gleichungssystem}
+Ein \gls{lgs} besteht aus $m$ linearen Gleichungen und $n$ Unbekannten:
+\[
+\begin{matrix}
+  a_{11} x_1 & +      & a_{12} x_2 & +      & \ldots & +      & a_{1n} x_n & =      & b_1   \\
+  a_{21} x_1 & +      & a_{22} x_2 & +      & \ldots & +      & a_{2n} x_n & =      & b_2   \\
+  \vdots     & \vdots & \vdots     & \vdots & \vdots & \vdots & \vdots     & \vdots & \vdots\\
+  a_{m1} x_1 & +      & a_{m2} x_2 & +      & \ldots & +      & a_{mn} x_n & =      & b_m
+\end{matrix}
+\]
+
+\begin{description}
+  \item [{Homogen}] \index{Gleichungssystem!linear!homogen}\index{homogen}
+	$\forall i:b_i=0$
+  \item [{Inhomogen}] \index{Gleichungssystem!linear!inhomogen}\index{inhomogen}
+	$\exists i:b_i\neq0$
+  \item [{Koeffizientenmatrix}] \index{Matrix!Koeffizienten--}\index{Koeffizientenmatrix}
+	$(a_{ij})$
+  \item [{Erweiterte~Matrix}] \index{Matrix!erweiterte}\index{erweiterte Matrix}
+	Koeffizientenmatrix erweitert um die $b_i$
+  \item [{Pivot-Element}] \index{Matrix!Pivot-Element}\index{Pivot-Element}
+	Das erste Element einer Zeile $\neq0$.
+	[Auch die Lösungsspalte kann ein Pivot-Element enthalten.]
+  \item [{Pivot-Spalte}] \index{Matrix!Pivot-Spalte}\index{Pivot-Spalte}
+	Spalte mit Pivot-Element.
+  \item [{Äquivalenz}] \index{Matrix!Äquivalenz}
+	Zwei Matrizen $A,B$ sind äquivalent (Schreibweise: $A\sim B$), wenn $A^{-1}\vec b = B^{-1}\vec b$ für ein beliebiges, aber festes $\vec b$ gilt.
+	[Die Matrizen besitzen die gleichen Lösungen für ein gegebenes $\vec b$.]
+  \item [{Stufenform}] \index{Matrix!Stufenform}\index{Stufenform}
+	Die Koeffizientenmatrix der erweiterten Matrix bildet eine obere Dreiecksmatrix (von oben nach unten verschiebt sich die Pivot-Spalte nach rechts).
+  \item [{Reduzierte~Stufenform}] \index{Matrix!Stufenform!reduziert}\index{reduzierte Stufenform}\index{Stufenform!reduziert}
+	Die Koeffizientenmatrix hat pro Zeile und Pi\-vot-Spal\-te genau eine 1 und sonst nur 0.
+	Bei quadratischen Matrizen bildet die Koeffizientenmatrix eine Einheitsmatrix.
+  \item [{Unterbestimmt}] \index{unterbestimmt}\index{Gleichungssystem!unterbestimmt}
+	Weniger linear unabhängige Gleichungen als Unbekannte.
+    
+	[Für $A \in K^{m\times n}$ ist $m<n$ und $\rg(A) \leq m$.]
+  \item [{Überbestimmt}] \index{überbestimmt}\index{Gleichungssystem!überbestimmt}
+	Mehr linear unabhängige Gleichungen als Unbekannte.
+    
+	[Für $A \in K^{m\times n}$ ist $m>n$ und $\rg(A) \leq n$.]
+  \item [{Nicht~lösbar}]
+	Lösungsspalte der reduzierten Stufenform ist eine Pivot-Spalte.
+  \item [{Eindeutig~lösbar}]
+	Die Koeffizientenmatrix der reduzierten Stufenform ist eine Einheitsmatrix. Bei quadratischen
+	Koeffizientenmatrizen ist die Determinante $\neq0$ (Gleichungen sind linear unabhängig).
+  \item [{Mehrdeutig~lösbar}]
+	Das \gls{lgs} ist unterbestimmt. Bei quadratischen Koeffizientenmatrizen ist die Determinante $=0$ (Gleichungen sind linear abhängig).
+\end{description}
+
+\subsection{Lösungsmethoden}
+
+Einfache Verfahren sind Gleichsetzungs-, Einsetzungs- und Additionsverfahren (sinnvoll bis max.~3 Unbekannte).
+\begin{description}
+  \item [{\noun{\noun{Gauß}}-Algorithmus}]
+	Standardverfahren, auch bekannt als \noun{Gauß}sches Eliminationsverfahren.
+  \item [{\noun{Cramer}sche~Regel}]
+	Lösungsverfahren mit Hilfe von Determinanten.
+  \item [{Methode~der~kleinsten~Quadrate}]
+	Wird benutzt, um bei überbestimmten Gleichungssystemen $A$ diejenige Lösung $\vec x^*$ zu ermitteln, für die $\lVert A\vec x^* - \vec b \rVert_2$ minimal ist.
+  \item [{Verallgemeinerte~Inverse}]
+	Wird bei unterbestimmten Gleichungssystemen benutzt, um die Lösung $\vec x^*$ mit der geringsten Norm $\lVert \vec x^* \rVert$ zu ermitteln.
+\ifincludeincomplete
+  \item [{\noun{Cholesky}-Zerlegung}]
+	Verfahren der Numerik für symmetrische, positiv-de\-fi\-ni\-te Matrizen, siehe Seite \pageref{sec:Cholesky-Zerlegung}.
+\fi
+\end{description}
+
+\subsubsection{\protect\noun{Gauß}-Algorithmus}
+
+\index{Algorithmus!Gauß}\index{Gauß-Algorithmus}
+\begin{description}
+  \item [{Ziel}] Bestimmung der zu einem \gls{lgs} äquivalenten reduzierten Stufenform unter Verwendung von Äquivalenzumformungen.
+\end{description}
+
+\paragraph*{Verwendete Rechenschritte}
+\begin{itemize}
+  \item Addition eines Vielfachen einer Zeile zu einer anderen
+  \item Vertauschen zweier Zeilen
+  \item Skalarmultiplikation mit einem Skalar $\lambda\in\mathbb{R}\setminus\{0\}$
+\end{itemize}
+
+\paragraph*{Algorithmus}
+\begin{enumerate}
+  \item Spaltenweises Vorgehen: \Gls{lgs} in eine Stufenform überführen. [Die finale Koeffizientenmatrix ist nicht eindeutig.]
+  \item Zeilenweises Vorgehen: Von unten nach oben das Pivotelement auf 1 bringen, Elemente darüber auf 0 bringen.
+\end{enumerate}
+
+\begin{mathalgo}{\protect\noun{Gauß}-Algorithmus}
+for $i \= 1$ to $n-1$:
+\> for $j \= i+1$ to $n$:
+\>\> $a_{j,1\ldots n} \= a_{j,1\ldots n} - (a_{ji} / a_{ii}) \cdot a_{i,1\ldots n}$
+\end{mathalgo}
+
+
+\subsubsection{\protect\noun{Cramer}sche Regel}
+
+\index{Regel!Cramersche}\index{Cramersche Regel}
+Sei $A\vec{x}=\vec{b}$ ein lineares Gleichungssystem mit $A\in M(n\times n,K)$ und $\vec{x}, \vec{b} \in K^n$ sowie $\det(A)\neq0$, dann wird eine Matrix $A_i$ definiert als Matrix $A$, in der die $i$-te Spalte durch $\vec{b}$ ersetzt wurde.Die Lösung des Gleichungssystems ist dann gegeben als $x_i = \det(A_i) / \det(A), 1 \leq i \leq n$.
+
+
+\subsubsection{\label{sub:Methode-der-kleinsten-Quad}Methode der kleinsten Quadrate}
+
+\index{Methode der kleinste Quadrate}
+Sei $A\in M(m\times n,\mathbb{R})$, $m\geq n$, $\rg(A)=n$, $A\vec{x}=\vec{b}$, $\vec{b}\in\mathbb{R}^m$, dann gilt für die beste Näherungslösung:
+\[ \vec{x}=(A\T A)^{-1} A^T \vec{b} \]
+
+
+
+\subsubsection{Verallgemeinerte Inverse}
+
+\index{Inverse!verallgemeiner}\index{verallgemeinerte Inverse}
+Sei $A\in M(m\times n,\mathbb{R})$, $m<n$, $\rg(A)=m$, $A\vec{x}=\vec{b}$, $\vec{b}\in\mathbb{R}^{m}$, dann gilt für die beste Näherungslösung mit der kleinsten Norm von $\vec{x}$:
+\[ \vec{x} = A^T (AA^T)^{-1} \vec{b} \]
+
+
+
+\subsubsection{Darstellung unendlich vieler Lösungen}
+\CheckedBox{} Beispiel vorhanden auf \cpageref{sec:bsp-LGS-unendlich}.
+
+\begin{enumerate}
+  \item Reduzierte Stufenform errechnen.
+  \item Nicht-Pivot-Spalten mit dem entsprechenden freien Koeffizienten durch Subtraktion auf die rechte Seite bringen.
+  \item Erweiterung um die fehlenden Zeilen: Konstante Vektoren um 0 er\-gänz\-en, abhängige Vektoren der entsprechenden freien Koeffizienten um 1 er\-gänz\-en.
+\end{enumerate}
+
+
+\section{Determinanten}
+
+\index{Matrix!Determinante}\index{Determinante}
+Determinanten können nur für quadratische Matrizen berechnet werden.
+Ihr Wert ist ein Skalar.
+Bis zur Größe $3\times3$ gibt es spezielle Gleichungen.
+\[ \det(a_1)=a_1 \]
+\[
+	\det\begin{pmatrix}
+	  a_1 & b_1\\
+	  a_2 & b_2
+	\end{pmatrix}
+	=
+	\det(\vec{a},\vec{b}) = a_1 b_2 - b_1 a_2
+\]
+\begin{align*}
+\det\begin{pmatrix}
+ a_1 & b_1 & c_1\\
+ a_2 & b_2 & c_2\\
+ a_3 & b_3 & c_3
+\end{pmatrix}
+& = \det(\vec{a},\vec{b},\vec{c}) \\
+& = a_1 b_2 c_3 + b_1 c_2 a_3 + c_1 a_2 b_3 \\
+& - a_1 c_2 b_3 - b_1 a_2 c_3 - c_1 b_2 a_3
+\end{align*}
+
+Letzteres lässt sich mit der Regel von \noun{Sarrus} veranschaulichen:
+\[
+\xySep{5pt}\xymatrix{
+        & a_1\ar@{.>}[dddrrr] & b_1\ar@{.>}[dddrrr] & c_1\ar@{.>}[dddlll]\ar@{.>}[dddrrr] & a_1\ar@{.>}[dddlll] & b_1\ar@{.>}[dddlll]\\
+        & a_2                 & b_2                 & c_2                                 & a_2                 & b_2\\
+        & a_3                 & b_3                 & c_3                                 & a_3                 & b_3\\
+\color{red}\ominus & \color{red}\ominus & \color{red}\ominus & & \color{green}\oplus & \color{green}\oplus & \color{green}\oplus
+}
+\]
+
+\subsection{Rechenregeln}
+
+Die Regeln für die Spalten gelten Aufgrund von D6 auch für Zeilen.
+\begin{description}
+  \item [{D1}]
+	$\det(\vec a, \vec b, \ldots, \vec z) = \det(\vec z, \vec a, \vec b, \ldots) = \det(\vec y, \vec z, \vec a, \ldots)$
+	[Rotation von Spalten]
+  \item [{D2}]
+	$\det(\vec a, \vec b, \vec c, \ldots) = -\det(\vec b, \vec a, \vec c, \ldots)$
+	[Vertauschung von Spalten]
+  \item [{D3}]
+	$\det(\vec a, \vec a, \vec b, \ldots) = 0$
+	[Duplikat einer Spalte]
+  \item [{D4}]
+	$\forall\alpha\in\mathbb R : \det(\alpha\cdot\vec a, \vec b, \vec c, \ldots) = \alpha\cdot\det(\vec a, \vec b, \vec c, \ldots)$
+	[Multiplikation einer Spalte mit einem Skalar]
+  \item [{D5}]
+	$\det(\vec a, \vec b+\vec b', \vec c, \ldots) = \det(\vec a, \vec b, \vec c, \ldots) + \det(\vec a, \vec b', \vec c, \ldots)$
+	[Addition zweier Spalten]
+  \item [{D6}]
+	$\det(A)=\det(A^T)$
+	[Invarianz bei Transponierung]
+\end{description}
+
+Außerdem gilt im $\mathbb{R}^{3}$:
+\[ \langle \vec{a}\times\vec{b},\vec{c}\rangle = \det(\vec{a},\vec{b},\vec{c}) \]
+[Die Determinante im $\mathbb{R}^{3}$ gibt also das Volumen des durch die Vektoren $\vec{a}$, $\vec{b}$ und $\vec{c}$ aufgespannten Spats an.]
+
+Weiter gilt: $\det(AB)=\det(A)\cdot\det(B)$.
+
+
+\subsection{Entwicklungssatz nach \protect\noun{Laplace}}
+
+\index{Laplace!Entwicklungssatz}\index{Entwicklungssatz nach Laplace}
+Sei $A_{ij}$ definiert als die $(n-1)\times(n-1)$-Untermatrix der Matrix $A$ durch Streichen von Zeile $i$ und Spalte $j$.
+Dann gilt für die Determinante:
+\begin{description}
+  \item [{Entwicklung~nach~Zeile~$i$}]  $\quad\det(A)=\sum_{1 \leq j \leq n} (-1)^{i+j}\cdot a_{ij}\cdot\det(A_{ij})$
+  \item [{Entwicklung~nach~Spalte~$j$}] $\quad\det(A)=\sum_{1 \leq i \leq n} (-1)^{i+j}\cdot a_{ij}\cdot\det(A_{ij})$
+\end{description}
+Dabei ergibt $(-1)^{i+j}$ ein Schachbrettmuster:
+\[
+\begin{pmatrix}
+  + & - & + & \cdots\\
+  - & + & - & \cdots\\
+  + & - & + & \cdots\\
+  \vdots & \vdots & \vdots & \ddots
+\end{pmatrix}
+\]
+
+
+
+\subsection{Berechnung nach \protect\noun{Gauß}}
+
+\index{Gauß!Determinante}\index{Determinante!Gauß}
+Formt man die Matrix in eine Dreiecksmatrix um, so gilt für die Determinante:
+\[ \det(A) = \prod a_{ii} = a_{11} \cdot a_{22} \cdots a_{nn} \]
+
+
+
+\subsection{Komplementärmatrix}
+
+\index{Komplementärmatrix}\index{Adjunkte}\index{Determinante!Minor}\index{Minor}
+Die Komplementärmatrix (auch \emph{Adjunkte} genannt) $\tilde{A}=(\tilde{a}_{ij})$ zu einer Matrix $A$ ist mit Hilfe der Unterdeterminanten (\emph{Minore}, Einzahl \emph{Minor}) definiert als
+\begin{align*}
+  \tilde{a}_{ij} & =(-1)^{i+j}\cdot\det(A_{ji})\\
+  \tilde{A}      & =\adj(A)
+\end{align*}
+
+
+Es bietet sich an:
+\begin{enumerate}
+  \item Aufschreiben der Minoren-Determinanten und nach dem Schachbrettmuster negieren (also $\tilde A\t$ aufschreiben).
+  \item Transponieren der neuen Matrix.
+\end{enumerate}
+
+\subsection{Umkehrmatrix}
+
+\index{Umkehrmatrix}\index{Matrix!Umkehr--}
+
+
+\subsubsection[\protect\noun{Gauß}-\protect\noun{Jordan}-Algorithmus]{Berechnung mit dem \protect\noun{Gauß}-\protect\noun{Jordan}-Algorithmus}
+
+\index{Algorithmus!Gauß-Jordan}\index{Jordan!Gauß-Jordan-Algorithmus}\index{Gauß-Jordan-Algorithmus}
+Funktioniert wie die Lösung eines linearen Gleichungssystems.
+Man Schreibt eine Blockmatrix der Form $A|E$ auf und versucht, diese mit den Rechenregeln für Determinanten in die Form $E|B$ zu bringen.
+Gelingt dies, so ist $B=A^{-1}$.
+
+
+\subsubsection[Komplementärmatrix]{Berechnung mit der Komplementärmatrix}
+
+Es gilt \[ A^{-1} = \frac{1}{\det(A)}\tilde{A} \]
+
+
+\subsection{Definitheit}
+
+\index{Definitheit}\index{Matrix!Definitheit}
+Eine symmetrische Matrix $A$ ist:
+\[
+  \forall\vec{x}\neq\vec{0}:\vec{x}^{T}\cdot A\cdot\vec{x} \begin{cases}
+  	>    0       & \hbox{positiv definit}      \\
+  	\geq 0       & \hbox{positiv semi-definit} \\
+  	<    0       & \hbox{negativ definit}      \\
+  	\leq 0       & \hbox{negativ semi-definit} \\
+  	\hbox{sonst} & \hbox{indefinit}
+  \end{cases}
+\]
+
+\subsubsection{\label{sub:Hurwitz-Kriterium}\protect\noun{Hurwitz}-Kriterium}
+
+\index{Hurwitz-Kriterium}\index{Kriterium!Hurwitz}
+Sei $D_k$ die Determinante der $k\times k$-Teilmatrix von $A \in \mathbb{R}^{n \times n}$ von links oben bzw.~rechts unten.
+Dann gilt für $A$, $1 \leq k \leq n $:
+\begin{center}
+    \begin{tabular}{ll}
+    	$D_k>0$           & positiv definit      \\
+    	$D_k>0$           & positiv semi-definit \\
+    	$(-1)^k D_k>0$    & negativ definit      \\
+    	$(-1)^k D_k\geq0$ & negativ semi-definit
+    \end{tabular}
+\end{center}
+\ifincludeincomplete
+[Zur Überprüfung auf \emph{symmetrische} positive Definitheit bietet das \noun{Cholesky}-Verfahren auf \cpageref{sec:Cholesky-Zerlegung} eine einfachere Möglichkeit.]
+\fi
+
+
+\section{Transformationsmatrizen}
+
+\index{Transformationsmatrix}\index{Matrix!Transformations--}
+Die Koordinaten eines Vektors $\vec{x}$ zu einer Basis $A$ werden als $K_A(\vec{x})$ geschrieben und geben die Linearfaktoren zur Basis $A$ an, wodurch die Linearkombination der Vektoren von $A$ zu $\vec{x}$ eindeutig bestimmt ist.
+
+Zur Transformation der Koordinaten von einer Basis $A$ zu einer Basis $B$ und umgekehrt gilt folgendes:
+\begin{description}
+  \item [{Von~$A$~nach~$B$}] $K_{B}(\vec{x})=\underbrace{B^{-1}A}_{T_{B}^{A}}\cdot K_{A}(\vec{x})$
+  \item [{Von~$B$~nach~$A$}] $K_{A}(\vec{x})=\underbrace{A^{-1}B}_{T_{A}^{B}}\cdot K_{B}(\vec{x})$
+\end{description}
+Dabei heißt $T_{B}^{A}$ \emph{Transformationsmatrix} von $A$ nach $B$. In $T_{B}^{A}$ stehen die Koordinaten der Einheitsvektoren von $A$ zur Basis $B$.
+
+
+\subsection{Basistransformation}
+
+\index{Basistransformation}\index{Matrix!Basistransformation}
+Seien $A$ und $A'$ Basen des $\mathbb{R}^{m}$ sowie $B$ und $B'$ Basen des $\mathbb{R}^{n}$ und $\Phi:\mathbb{R}^{m}\to\mathbb{R}^{n}$ eine lineare Abbildung, dann lässt sich eine \emph{Abbildungsmatrix} $M_{B}^{A}(\Phi)$ von $\Phi$ bezüglich $A$ und $B$ angeben:
+\begin{align*}
+  K_B(\Phi(\vec{x})) & = M_B^A(\Phi)\cdot K_A(\vec{x})\\
+  \\
+  M_{B'}^{A'}(\Phi)  & = T_{B'}^B\cdot M_B^A(\Phi)\cdot T_A^{A'}
+\end{align*}
+\[
+  \xySep{12pt}\vcenter{\xymatrix{
+    K_A(\vec{x})\ar@{->}[r]^{M_B^A}                                & K_B(\Phi(\vec{x}))\ar@{->}[d]^{T_{B'}^B}\\
+    K_{A'}(\vec{x})\ar@{->}[u]_{T_A^{A'}}\ar@{->}[r]_{M_{B'}^{A'}} & K_{B'}(\Phi(\vec{x}))
+  }}
+\]
+
+
+
+\section{\label{sec:Orthogonale-Matrizen}Orthogonale Matrizen}
+
+\index{Matrix!orthogonal}\index{orthogonale Matrix}
+Eine Matrix $A\in M(n\times n,\mathbb{R})$ heißt orthogonal, wenn $A\t A=E$ bzw.~$A\t=A^{-1}$ gilt.
+Man schreibt $A\in O(n)$.
+\begin{itemize}
+  \item Die Spalten- bzw.~Zeilenvektoren von $A$ bilden jeweils ein Orthonormalsystem, daher gilt $\lvert\det(A)\rvert=1$.
+  \item Abbildungen sind \emph{kongruent}, d.\,h., sie verändern nicht die Länge der abgebildeten Vektoren: $\lVert Ax \rVert_2 = \lVert x \rVert_2$.
+	[Falls $\det(A)=1$, so handelt es sich um eine Drehung, falls $\det(A)=-1$, so handelt es sich um eine Spiegelung.]
+  \item Das Produkt zweier Orthogonalmatrizen ist wieder eine Orthogonalmatrix.
+  \item \index{orthogonaleMatrix!involut}\index{selbstinvers}\index{involut}\index{Matrix!involut}\index{Matrix!selbstinvers}
+	Ist eine orthogonale Matrix symmetrisch, d.\,h.,~gilt $A^2=E$, so heißt $A$ \emph{involut} (selbstinvers).
+\end{itemize}
+
+\begin{figure}[htb]
+\centering\includegraphics{matrix-spiegelung.pdf}\hfil\includegraphics{matrix-drehung.pdf}
+
+\caption{Spiegelung und Drehung}
+\end{figure}
+
+\begin{description}
+\item [{Drehmatrix~im~$\mathbb{R}^{2}$}]
+\[
+  A = \begin{pmatrix}
+    \cos(\varphi) & -\sin(\varphi) \\
+    \sin(\varphi) &  \cos(\varphi)
+  \end{pmatrix}
+\]
+\end{description}
+
+\section{Eigenwerte und -vektoren}
+
+\index{Matrix!Eigenvektor}\index{Matrix!Eigenwert}\index{Eigenvektor}\index{Eigenwert}
+\begin{enumerate}
+  \item Lösung des \emph{charakteristischen Polynoms} $p(\lambda)=\det(A-\lambda E)\stackrel{!}{=}0$, die gefundenen $\lambda$ sind die \emph{Eigenwerte}.
+  \item Einsetzen der $\lambda_{i}$ in $(\lambda_{i}E-A)\vec{x}=0$.
+  		Die \emph{speziellen} Lösungen $\vec{x}_{i}$ sind die \emph{Eigenvektoren} zu den entsprechenden Eigenwerten.
+\end{enumerate}
+\begin{description}
+  \item [{Algebraische~Vielfachheit}] Vielfachheit eines Eigenwertes.
+  \item [{Geometrische~Vielfachheit}] Anzahl linear unabhängiger Eigenvektoren zu einem bestimmen Eigenwert.
+\end{description}
+\begin{itemize}
+  \item Sind $A,T\in\mathbb{R}^{n\times n}$ mit $\det(T)\neq0$, so haben $A$ und $TAT^{-1}$ dieselben Eigenwerte.
+  \item Hat $A\in\mathbb{R}^{n\times n}$ genau $n$ verschiedene Eigenwerte $\lambda_{i}$ und $n$ linear unabhängige Vektoren $v_{i}$, dann gilt:
+	\[
+	  A = T \cdot
+	  \begin{pmatrix}
+	    \lambda_1                     \\
+		      & \ddots            \\
+		      &        & \lambda_n
+	  \end{pmatrix}
+	  \cdot T^{-1}
+	  ,\quad
+	  T=(v_1, \ldots, v_n)
+	\]
+\end{itemize}
+
+\subsection{\label{sub:Satz-von-Gerschgorin}Satz von \protect\noun{Gerschgorin}}
+
+\index{Satz!von Gerschgorin}\index{Gerschgorin}
+Sei $A\in\mathbb{R}^{n\times n}$, so gilt für die Eigenwerte $\lambda_{i}$:
+\[ \lambda_{i}\in\bigcup \bigl\{ z\in\mathbb{C} \bigm| \lvert z-a_{ii} \rvert \leq \sum_{j\neq i} \lvert a_{ij} \rvert\bigr\} \]
+
+[Dies ist eine Reihe von Kreisen in der komplexen Ebene mit Mittelpunkt bei $a_{kk}+0i$ und Radius $\sum_{j\neq i} \lvert a_{ij} \rvert$.]
+
+\index{Matrix|)}
+
+
+\chapter{Lineare Abbildungen}
+
+\index{Homomorphismus}\index{Lineare Abbildung}\index{Abbildung!linear}
+
+
+\section{Definitionen}
+
+Seien $V$, $W$ Vektorräume über einem Körper $K$ ($f:V\to W$), dann heißt $f$ \emph{lineare Abbildung} bzw.~\emph{Homomorphismus},
+wenn $\forall x,y\in V$ und $\forall\lambda\in K$ gilt:
+\[ f(x+y)=f(x)+f(y) \quad \land \quad f(\lambda x)=\lambda f(x) \]
+Die Menge aller Homomorphismen über zwei Vektorräume $V$, $W$ wird als $\hom(V,W)$ bezeichnet.
+\begin{description}
+  \item [{Bild}] \index{Abbildung!Bild}\index{Bild}
+	$\bild(f) = f(V) := \{ f(v) \mid v \in V \} \subseteq W$
+	[$V$ ist Unterraum von $W$, wenn $f$ linear ist.]
+
+	Die lineare Hülle der Spaltenvektoren der $m\times n$-Abbildungsmatrix einer Abbildung $f:\mathbb{R}^{n}\to\mathbb{R}^{m}$ ist gleich $\bild(f)$.
+  \item [{Kern}] \index{Kern}\index{Abbildung!Kern}
+	$\ker(f):=\{ v\in V \mid f(v)=0 \}$
+    [Auch genannt: \emph{Nullraum} von $f$.]
+    
+    Es ist immer $0\in\ker(f)$.
+	Außerdem: $\lvert \ker(f) \rvert \in \{ 1,\infty\} $
+  \item [{Rang}] \index{Rang}\index{Abbildung!Rang}
+	$\rg(f)=\dim(\bild(f))$
+  \item [{Dimensionssatz}] \index{Abbildung!Dimensionssatz}\index{Dimensionssatz}\index{Satz!Dimensions--}
+	$\dim(V)=\dim(\ker(f))+\rg(f)$.
+    Wenn $\dim(V)=\dim(W)<\infty$ ist, dann gilt: $f \hbox{ injektiv} \iff f \hbox{ surjektiv}$.
+  \item [{regulär}] \index{regulär}\index{Abbildung!regulär}
+	$\ker(f)=\{0\}$ bzw.~mit der Abbildungsmatrix $A$: $\det(A)\neq0$
+  \item [{singulär}] \index{singulär}\index{Abbildung!singulär}
+	$\lvert \ker(f) \rvert > 1$ bzw.~mit der Abbildungsmatrix $A$: $\det(A)=0$
+  \item [{Injektivität}]
+	$f \hbox{ regulär} \iff f \hbox{ injektiv}$
+  \item [{Matrixdarstellung}]
+	Jede $m\times n$-Matrix liefert eine lineare Abbildung.
+  \item [{Isomorphismus}]
+	$f$ bijektiv, $A$ quadratisch, $\det(A)\neq0$. Das Bild der Basis von $V$ ist eine Basis von $W$.
+  \item [{Urbild}] \index{Abbildung!Urbild}\index{Urbild}
+	$f^{-1}:=\{ v \mid f(v)=w\;\forall w\in W\} $. Immer vorhanden.
+  \item [{Umkehrabbildung}] \index{Abbildung!Umkehr--}\index{Umkehrabbildung}
+	Urbild einer linearen Abbildung: $f(f^{-1}(x))=f^{-1}(f(x))=x$
+\end{description}
+
+\section{Überprüfung auf Linearität}
+
+\index{Linearität}\index{Abbildung!Linearität}
+Es gibt zwei Möglichkeiten:
+\begin{enumerate}
+  \item Obige Definition des Homomorphismus überprüfen.
+  \item $f(x)$ als Matrixdarstellung $Ax$, dann prüfen, ob $f(x)=Ax$ gilt (gilt nur für Abbildungen in Vektorräumen über $\mathbb{R}$).
+\end{enumerate}
+
+\section{Berechnung der Abbildung}
+
+\index{Abbildung!Berechnung}
+Seien $V$, $W$ Vektorräume über einem Körper $K$, $\{v_1,\ldots,v_n\}$ eine Basis von V, sowie $\{w_1,\ldots,w_n\}$ beliebige Vektoren von $W$, dann gilt:
+\[ \exists! f:V \to W\;\forall1\leq i\leq n:f(v_{i})=w_{i} \]
+
+Damit ist $f$ durch Abbildung der $v_i$ eindeutig bestimmt.
+[$f$ ist also durch die Bilder der Basis von $V$ eindeutig bestimmt.]
+
+
+\section{Vektorraum aus Matrizen}
+
+Vektorraum der $m\times n$-Matrizen über einem Körper $K$ bzgl.~der Matrixaddition und -Multiplikation mit einem Skalar: $M(m\times n,K)$, alternativ $K^{m\times n}$.
+\begin{description}
+  \item [{Invertierbarkeit}]
+	Wenn $\exists A\in\mathbb{R}^{n\times n}:AA^{-1}=A^{-1}A=E$ gilt, dann heißt $A$ invertierbar
+	und $A^{-1}$ Inverse von $A$. $A$ ist genau dann invertierbar, wenn $\det(A)\neq0$.
+
+	Es gilt: $(A^{-1})\t = (A^T)^{-1}$ und $(\lambda A)^{-1}=\frac{1}{\lambda}A^{-1}$.
+\end{description}

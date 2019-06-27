@@ -1,0 +1,842 @@
+% !TeX root = matze_fruehstueckt.tex
+\chapter{Hinweise}
+\begin{itemize}
+  \item Die Einheitsmatrix wird hier mit $I$ bezeichnet, nicht wie in der linearen Algebra mit $E$.
+  \item Verschiedene Bezeichner für Variablen habe ich von den Vorlesungen nicht übernommen, um mit den Bezeichnungen aus den anderen Teilen konform zu bleiben.
+  	Beispielsweise bezeichne ich die \noun{Lipschitz}-Konstante hier mit $L$, und nicht---wie in der Vorlesung---mit $\alpha$.
+  \item Der Fokus liegt auf der Anwendbarkeit für \emph{Menschen}, nicht auf der optimalen Durchführbarkeit für Computer.
+  \item Für Normen auf Räumen, die nicht genauer spezifiziert sind, wird bspw.~für $x\in X$ die Notation $\lVert x \rVert_X$ verwendet, um darzustellen, dass $\lVert * \rVert_X$ eine \emph{beliebige} Norm in $X$ sein kann.
+\end{itemize}
+
+\chapter{Fehlerbetrachtung}
+\begin{description}
+  \item [{Ausgangsproblem}]
+	$f$
+	\begin{description}
+	  \item [{Ersatzproblem}] $\hat{f}$
+	  \item [{Näherungsproblem}] $\tilde{f}$
+	\end{description}
+  \item [{Exakter~Wert}]
+	$x$
+	\begin{description}
+	  \item [{Eingabewert}] $\tilde{x}\in U_{\varepsilon}(x)$ (siehe Seite \pageref{sub:Epsilon-Umgebung})
+	\end{description}
+  \item [{Fehlerquellen}]
+	Eingabefehler, Verfahrens-/Algorithmusfehler, Ergebnisfehler
+
+  \begin{description}
+    \item [{Eingabefehler}]
+	  $f(\tilde{x})-f(x)$
+    \item [{Verfahrensfehler}]
+	  $\hat{f}(\tilde{x})-f(\tilde{x})$
+    \item [{Akkumulierter~Rundungsfehler}]
+	  $\tilde{f}(\tilde{x})-\hat{f}(\tilde{x})$
+  \end{description}
+  \item [{Absoluter~Fehler}]
+	$e_a = \lVert y-\tilde{y} \rVert_Y$
+  \item [{Relativer~Fehler}]
+	$e_r = \frac{\lVert y-\tilde y \rVert_Y}{\lVert y \rVert_Y} \mid \lVert y \rVert_Y \neq 0$
+  \item [{Gemischtes~Fehlerkriterium}]
+	$\lVert \tilde y - y \rVert_Y \leq \varepsilon_a + \lVert y \rVert_{Y} \cdot \varepsilon_r$
+  \item [{Komponentenweiser~absoluter~Fehler}]
+	$\lvert x_i - \tilde x_i \rvert$
+  \item [{Komponentenweiser~relativer~Fehler}]
+	$\frac{\lvert x_i - \tilde x_i \rvert}{\lvert x_i \rvert}$
+  \item [{Fehlerfortpflanzung}]
+	$\lvert f(x') - f(x) \rvert \approx \lvert f'(x) \rvert \cdot \lvert x'-x \rvert$ für $f:\mathbb{R}\to\mathbb{R}$
+  \item [{Kondition}]
+	beschreibt die maximale Auswirkung von Eingabefehlern auf die Ausgabe unter der Annahme, dass das angewendete Verfahren exakt (ohne Rundungsfehler) berechnet wird.
+	\begin{description}
+	  \item [{Absolute~Kondition}] $\kappa_a = \max_{x\in[a;b]} \lVert f'(x) \rVert$, bzw.~mit $x',x\in[a;b]$ und $\delta\geq\lVert x'-x \rVert_X$: $\kappa_a = \max\frac{\lVert f(x')-f(x)\rVert_Y}{\lVert x'-x \rVert_X} \mid x'\neq x$ ($\delta$ ist max.~Eingabefehler).
+	  \item [{Relative~Kondition}] $\kappa_r = \max_{x\in[a;b]}\frac{\lVert x \rVert}{\lVert f(x) \rVert}\lVert f'(x) \rVert$, bzw.~mit $x',x\in[a;b]$ und $\delta\geq\lVert x'-x \rVert_X$: $\kappa_{r}=\max\frac{\lVert f(x')-f(x)\rVert_Y}{\lVert f(x)\rVert_Y}\cdot\frac{\lVert x \rVert_X}{\lVert x'-x \rVert_X}\mid x'\neq x$ ($\delta$ ist max.~Eingabefehler).
+	\end{description}
+  \item [{Stabilität}]
+	beschreibt die Größenordnung von Verfahrensfehlern (\emph{Fehlerfortpflanzung}).
+
+	\emph{Stabil} bzw.~\emph{gut konditioniert} oder \emph{gutartig} heißt, dass die durch den Algorithmus erzeugten Fehler in der Größenordnung unvermeidbarer Fehler (Mess-/Eingabefehler) liegen.
+  \item [{Fließkommazahl}]
+	Darstellung einer Zahl als $v\cdot m\cdot b^e$. $v=\pm1$ ist Vorzeichen, $m$ ist Mantisse mit Basis $b$ Länge $l$, $e$ ist Exponent:
+	\[ \pm\sum_{i=0}^l m_i b^{e-i} \mid m_0 \neq 0 \]
+	\begin{description}
+	  \item [{Maschinengenauigkeit}]
+		$\varepsilon_{M}=\frac{1}{2}b^{-l}$
+	\end{description}
+
+	Ein \mbox{\emph{Double}} nach IEEE~754 (siehe \pageref{Gleitkommazahlen(IEEE754)}) ist auf ca.~$10^{-16}$ genau, ein \mbox{\emph{Single}} auf ca.~$10^{-7}$.
+  \item [{Mittelwertsatz}]
+	$f(x')=f(x)+f'(\xi)(x'-x)\mid\xi\in[x';x]$
+	\begin{align*}
+	  \kappa_{a} & \leq \sup_{\xi\in[x';x]} \lvert f'(\xi) \rvert\\
+	  \kappa_{r} & \leq \sup_{\xi\in[x';x]} \lvert f'(\xi) \rvert \frac{\lvert x \rvert}{\lvert f(x) \rvert}
+	\end{align*}
+\end{description}
+
+\chapter{Lineare Gleichungssysteme}
+
+
+\section{Direkte Löser}
+
+
+\subsection{Matrixnorm}
+
+\index{Norm!Matrix--}\index{Matrixnorm}
+Ist $\lVert * \rVert$ eine Norm auf $\mathbb{R}^{n}$ mit $A\in\mathbb{R}^{n\times n}$, dann ist $\lVert A \rVert$ definiert als:
+\[ \lVert A \rVert := \sup_{x\neq0} \frac{\lVert Ax \rVert}{\lVert x \rVert} = \max_{\lVert x \rVert=1} \lVert Ax \rVert \]
+
+
+Es gilt analog zur Vektornorm \vpageref{sub:Vektornorm}:
+\begin{itemize}
+  \item $A = 0 \Leftrightarrow \lVert A \rVert = 0$
+  \item $\lVert Ax \rVert \leq \lVert A \rVert \cdot \lVert x \rVert$
+  \item $\lVert AB \rVert \leq \lVert A \rVert \cdot \lVert B \rVert$
+  \item $\lVert A+B \rVert \leq \lVert A \rVert + \lVert B \rVert$
+  \item $\forall\lambda\in\mathbb{R}\,:\,\lVert \lambda A \rVert = \lvert\lambda\rvert \cdot \lVert A \rVert$
+\end{itemize}
+
+\begin{description}
+  \item [{Induzierte~Matrixnorm}] \index{Matrixnorm!induzierte}
+	$\lVert A \rVert_n := \max_{x\neq0}\frac{\lVert Ax \rVert_n}{\lVert x \rVert_n} = \max_{\lVert x \rVert_n=1} \lVert Ax \rVert_n$
+  \item [{Matrixkondition}]
+	$\kappa_{k}(A) := \lVert A \rVert_k \lVert A^{-1} \rVert_k = \frac{\max_{\lVert x \rVert_k = 1} \lVert Ax \rVert_k}{\min_{\lVert x \rVert_k = 1}\lVert Ax \rVert_k}$
+  \item [{Spektralradius}] \index{Spektral!--radius}
+	$\varrho(A)=\lambda_{\max}(A)=\max\left|\lambda(A)\right|$ ist der betragsmäßig größte Eigenwert von $A$.
+
+	[Der Spektralradius gibt somit die maximale Vergrößerung eines Vektors an. Zur Abschätzung eignet sich der Satz von \noun{Gerschgorin} \vpageref{sub:Satz-von-Gerschgorin}.]
+  \item [{Spektralnorm}] \index{Norm!Spektral--}\index{Spektral!--norm}
+	$\lVert A \rVert_2 = \sqrt{\varrho(A\T A)}$
+  \item [{Zeilensummennorm}] \index{Norm!Zeilensummen--}\index{Zeilensummennorm}
+	$A\in K^{m\times n}:\lVert A \rVert_\infty = \max_{i=1,\ldots,m}\sum_{j=1}^{n} \lvert a_{ij} \rvert$
+  \item [{Spaltensummennorm}] \index{Norm!Spaltensummen--}\index{Spaltensummennorm}
+	$A\in K^{m\times n}:\lVert A \rVert_1 = \max_{j=1,\ldots,n}\sum_{i=1}^{m} \lvert a_{ij} \rvert$
+  \item [{\noun{Frobenius}norm}] \index{Norm!Frobenius--}\index{Frobenius!--norm}\index{Spur}
+	$\lVert A \rVert_F = \sqrt{\spur(A\T A)}$ mit $\spur(A)=\sum_{i=1}^{n}c_{ii}$
+  \item [{Pivotisierung}] \index{Pivotisierung}
+	Bei der \noun{Gauß}-Zerlegung kann es vorkommen, dass ein Hauptdiagonalelement 0 ist---dann muss die entsprechende Zeile (oder Spalte) mit Hilfe einer Permutationsmatrix gegen eine andere Zeile bzw.~Spalte mit einem Pivotelement $\neq0$ vertauscht werden.
+	\begin{description}
+	  \item [{Permutationsmatrix}] \index{Permutationsmatrix}
+		$P$ vertauscht zwei Zeilen $i$ und $j$ in einer Matrix $A$, indem $P$ als Einheitsmatrix mit vertauschten Zeilen $i$ und $j$ aufgebaut wird und auf $A$ mit $P\cdot A$ angewandt wird.
+		[Eine Multiplikation von rechts ($A\cdot P$) vertauscht die entsprechenden Spalten.]
+	\end{description}
+  \item [{Residuum}]
+	$\tilde{r}=b-A\tilde{x}$
+  \item [{Fehlerabschätzung}]
+	Sei $x+\Delta x$ die Lösung von $A(x+\Delta x)=b+\Delta b$, dann gilt:
+	\[ \frac{\lVert \Delta x \rVert}{\lVert x \rVert} \leq \kappa(A)\frac{\lVert \Delta b \rVert}{\lVert b \rVert} \]
+	Sei $\kappa(A)\frac{\lVert \Delta A \rVert}{\lVert A \rVert} < 1$ und $x+\Delta x$ die Lösung von $(A+\Delta A)(x+\Delta x)=b+\Delta b$, dann gilt:
+	\[
+	  \frac{\lVert \Delta x \rVert}{\lVert x \rVert} \leq \frac{\kappa(A)}{1-\kappa(A)\frac{\lVert \Delta A \rVert}{\lVert A \rVert}}
+	  \left( \frac{\lVert \Delta A \rVert}{\lVert A \rVert}+\frac{\lVert \Delta b \rVert}{\lVert b \rVert} \right)
+	\]
+  \item [{Satz~von~\noun{Prager}-\noun{Oettli}}]
+	Eine Näherungslösung $\tilde{x}$ des Näherungssystems $\tilde{A}x=\tilde{b}$ ist eine akzeptable Lösung des Ausgangssystems $Ax=b$, wenn für das Residuum $\tilde{r}$ mit den komponentenweisen Fehlerschranken $\Delta A$ und $\Delta b$ gilt:
+	\[ \lvert \tilde r \rvert \leq \underbrace{\Delta A \cdot \lvert \tilde x \rvert + \Delta b}_{=:\bar{b}} \]
+	[$\Delta A$ und $\Delta b$ stellen gewissermaßen eine Epsilon-Umgebung um $\tilde{A}x=\tilde{b}$ dar.]
+\end{description}
+
+\subsection{LU-Zerlegung}
+\begin{description}
+  \item [{\noun{Frobenius}matrix}] \index{LU-Zerlegung}\index{Zerlegung!LU--}\index{Abbildungsmatrix}\index{Frobenius!--matrix}
+	Mit $l_{ik} = \frac{a_{ik}^{(k-1)}}{a_{kk}^{(k-1)}}$, wobei $a_{ik}^{(k-1)}$ die Koeffizienten der Abbildungsmatrix $A$ \emph{vor} der Elimination der $k$-ten Spalte angeben, d.\,h., $A^{(k)}$ ist die Abbildungsmatrix nach \noun{Gauß}-Elimination der $k$-ten Spalte:
+
+	\begin{align*}
+	  A^{(k)} & = F_k A^{(k-1)}\\
+	  F_k     & =
+	  \begin{pmatrix}
+	  1\\
+	    & 1\\
+	    &   & \ddots\\
+	    &   & -l_{k+1,k} & 1\\
+	    &   & -l_{n,k}   &   & 1
+	  \end{pmatrix}\\
+	  F_k^{-1} & =
+	  \begin{pmatrix}
+	  1\\
+	    & 1\\
+	    &   & \ddots\\
+	    &   & l_{k+1,k} & 1\\
+	    &   & l_{n,k}   &   & 1
+	  \end{pmatrix}
+	\end{align*}
+	\[
+	  L := F_1^{-1} \cdot \ldots \cdot F_{n-1}^{-1} =
+	  \begin{pmatrix}
+	    1\\
+	    l_{21} & 1\\
+	    \vdots & \ddots & \ddots\\
+	    l_{n1} & \cdots & l_{n,n-1} & 1
+	  \end{pmatrix}
+	\]
+
+	\[ U = A^{(n-1)} \]
+\end{description}
+\begin{enumerate}
+  \item $Ly=b$ durch Vorwärtseinsetzen lösen.
+  \item $Ux=y$ durch Rückwärtseinsetzen lösen.
+\end{enumerate}
+Mit anderen Worten: $U$ (\mbox{\emph{upper}}) entspricht der oberen Dreiecksmatrix nach der \noun{Gauß}\-elimination, und $L$ (\mbox{\emph{lower}}) enthält in Spalte $j$ die Faktoren, welche im $j$-ten Schritt zur Subtraktion der entsprechenden Zeile angewandt wurden.
+Es ist $A=L\cdot U$.
+
+$L$ ist eine unipotente untere Dreiecksmatrix und $R$ eine obere Dreiecksmatrix.
+
+
+\subsubsection{Nachiteration}
+
+Die Nachiteration gleicht Rechenungenauigkeiten bei der LU-Zerlegung durch ,,Rückwärtsanpassung`` aus. Oft reichen wenige Iterationsschritte.
+
+\begin{mathalgo}{Nachiteration}
+$x_0 \= \tilde{x}$
+do:
+\> $r_k \= b-Ax_k$
+\> $p_k \= \underbrace{(LU)^{-1}}_{=\tilde{A}^{-1}}r_k$ \cmt{$p_k$ ist das Residuum im $x$-Raum}
+\> $x_{k+1} \= x_k + p_k$
+until $\lVert p_k \rVert / \lVert x_{k+1} \rVert < \varepsilon$
+\end{mathalgo}
+
+
+\subsubsection{Beispiel}
+
+\[
+\begin{matrix}
+A = \begin{pmatrix}
+  2 & 1 & 1\\
+  4 & 4 & 0\\
+  2 & 7 & 1
+\end{pmatrix} &  & b = \veccc(1;2;3)
+\end{matrix}
+\]
+
+
+Elimination der ersten Spalte:
+\[
+\begin{matrix}
+A^{(2)} = \begin{pmatrix}
+  {\color{red}2}     & 1 & 1\\
+  \cline{1-1}\bord{} & 2 & -2\\
+  \bord{}            & 6 & 0
+\end{pmatrix} &  & L=\begin{pmatrix}
+  1                              & 0 & 0\\
+  \cline{1-1}\bord{\color{red}2} & 1 & 0\\
+  \bord{\color{red}1}            &   & 1
+\end{pmatrix}\end{matrix}
+\]
+
+
+Elimination der zweiten Spalte:
+\[
+  \begin{matrix}A^{(3)} = U = \begin{pmatrix}
+    2                  & 1              & 1\\
+    \cline{1-1}\bord{} & {\color{red}2} & -2\\
+    \cline{2-2}        & \bord{}        & 6
+  \end{pmatrix} &  & L=\begin{pmatrix}
+    1                   & 0                   & 0\\
+    \cline{1-1}\bord{2} & 1                   & 0\\
+    \cline{2-2}1        & \bord{\color{red}3} & 1
+  \end{pmatrix}\end{matrix}
+\]
+
+
+Lösen von $Ly=b$:
+\[
+\begin{pmatrix}
+  1 & 0 & 0\\
+  2 & 1 & 0\\
+  1 & 3 & 1
+\end{pmatrix}
+\veccc(y_1;y_2;y_3) = \veccc(1;2;3) \; \Rightarrow \; y = \veccc(1;0;2)
+\]
+
+
+Lösen von $Ux=y$:
+\[
+\begin{pmatrix}
+  2 & 1 & 1\\
+  0 & 2 & -2\\
+  0 & 0 & 6
+\end{pmatrix}
+\veccc(x_1;x_2;x_3) = \veccc(1;0;2)
+\; \Rightarrow \;
+x = \veccc(-\nicefrac{5}{2}; 3; 3)
+\]
+
+\begin{mathalgo}{LU-Zerlegung}
+for $i\leftarrow1$ to $n$:
+\> \cmt{Bestimmen von $U$}
+\> for $j \= i$ to $n$:
+\> $a_{ij} \= a_{ij}-a_{i,1\ldots i-1}\cdot a_{1\ldots i-1,j}$
+\> \cmt{Bestimmen von $L$}
+\> for $j \= i+1$ to $n$:
+\>\> $a_{ji} \= a_{ii}^{-1} (a_{ji}-a_{j,i+1\ldots n}\cdot a_{i+1\ldots n,i})$
+\end{mathalgo}
+
+
+
+\subsection{\label{sec:Cholesky-Zerlegung}\protect\noun{Cholesky}-Zerlegung}
+
+\index{Zerlegung!Cholesky--}\index{Cholesky-Zerlegung}
+Die \noun{Cholesky}-Zerlegung formt eine symmetrische, positiv-definite Matrix $A$ nach $LL^{T}$ um.
+Dazu wird für jedes Hauptdiagonalelement $a_{kk}$ von oben links beginnend folgendes gemacht:
+\begin{enumerate}
+  \item $a_{kk}$ durch $\sqrt{a_{kk}}$ ersetzen.
+	\par [Ist ein $a_{kk}\leq0$, so ist $A$ nicht symmetrisch positiv-definit.]
+  \item Für alle Spaltenelemente $a_{jk}$ unter $a_{kk}$: $a_{jk}$ durch $l_{jk} = a_{jk} / \sqrt{a_{kk}}$ ersetzen.
+  \item Alle Elemente rechts unterhalb von $a_{kk}$ durch $a_{ij}-l_{ik}\cdot l_{jk}=a_{ij} - (a_{ik}\cdot a_{jk}) / a_{kk}$ ersetzen (die Koordinaten von $a_{ij}$ geben also die Zeilenindizes der gerade dividierten $a_{jk}$ an).
+  \item Alles mit dem neuen Minor wiederholen.
+\end{enumerate}
+
+\begin{mathalgo}{\protect\noun{Cholesky}-Zerlegung}
+for $k\=1$ to $n$:
+\> \cmt{Schritt 3}
+\> for $i \= k+1$ to $n$:
+\>\> for $j \= k+1$ to $n$:
+\>\>\> $a_{ij} \= a_{ij} - (a_{ik}\cdot a_{jk}) / a_{kk}$
+\> \cmt{Schritte 1 und 2}
+\>for $i \= k$ to $n$:
+\>\> $a_{ik} \= a_{ik}/\sqrt{a_{ik}}$
+\end{mathalgo}
+
+\subsubsection{Beispiel}
+
+\[
+A^{(1)} = 
+\begin{pmatrix}
+  1  & -1 & 1   & -1\\
+  -1 & 5  & -5  & 5\\
+  1  & -5 & 14  & -14\\
+  -1 & 5  & -14 & 30
+\end{pmatrix}
+\]
+
+
+\[
+\begin{pmatrix}
+  {\color{red}\sqrt{1}}\\
+  {\color{red}\nicefrac{-1}{\sqrt{1}}} & 5\\
+  {\color{red}\nicefrac{1}{\sqrt{1}}}  & -5 & 14\\
+  {\color{red}\nicefrac{-1}{\sqrt{1}}} & 5  & -14 & 30
+\end{pmatrix}
+\]
+
+
+\begin{align*}
+A^{(2)} & =
+\begin{pmatrix}
+  1\\
+  {\color{red}-1}     & 5-{\color{red}(-1)}\cdot{\color{red}(-1)}\\
+  \mcolor{dkgreen}{1} & -5-\mcolor{dkgreen}{(1)}\cdot{\color{red}(-1)} & 14-\mcolor{dkgreen}{(1)}\cdot\mcolor{dkgreen}{(1)}\\
+  {\color{blue}-1}    & 5-{\color{blue}(-1)}\cdot{\color{red}(-1)}     & -14-{\color{blue}(-1)}\cdot\mcolor{dkgreen}{(1)} & 30-{\color{blue}(-1)}\cdot{\color{blue}(-1)}
+\end{pmatrix}\\
+ & =
+\begin{pmatrix}
+  \bord{1}\\
+  \bord{-1} & 4\\
+  \bord{1}  & -4 & 13\\
+  \bord{-1} & 4  & -13 & 29
+\end{pmatrix}
+\end{align*}
+
+
+\begin{align*}
+A^{(3)} & =
+\begin{pmatrix}1\\
+  -1 & \sqrt{4}\\
+  1  & {\color{red}\nicefrac{-4}{\sqrt{4}}} & 13-{\color{red}(-2)}\cdot{\color{red}(-2)}\\
+  -1 & {\color{blue}\nicefrac{4}{\sqrt{4}}} & -13-{\color{blue}(2)}\cdot{\color{red}(-2)} & 29-{\color{blue}(2)}\cdot{\color{blue}(2)}
+\end{pmatrix}\\
+ & =
+\begin{pmatrix}
+  \bord{1}\\
+  \cline{2-2}-1 & \bord{2}\\
+  1             & \bord{-2} & 9\\
+  -1            & \bord{2}  & -9 & 25
+\end{pmatrix}
+\end{align*}
+
+
+\begin{align*}
+A^{(4)} & =
+\begin{pmatrix}
+  1\\
+  -1 & 2\\
+  1  & -2 & \sqrt{9}\\
+  -1 & 2  & {\color{red}\nicefrac{-9}{\sqrt{9}}} & 25-{\color{red}(-3)}\cdot{\color{red}(-3)}
+\end{pmatrix}\\
+ & =
+\begin{pmatrix}
+  \bord{1}\\
+  \cline{2-2}-1 & \bord{2}\\
+  \cline{3-3}1  & -2 & \bord{3}\\
+  -1            & 2  & \bord{-3} & 16
+\end{pmatrix}
+\end{align*}
+
+
+\begin{align*}
+L = L^T & =
+\begin{pmatrix}
+  1\\
+  -1 & 2\\
+  1  & -2 & 3\\
+  -1 & 2  & -3 & {\color{red}\sqrt{16}}
+\end{pmatrix}\\
+ & =
+\begin{pmatrix}1\\
+  -1 & 2\\
+  1  & -2 & 3\\
+  -1 & 2  & -3 & 4
+\end{pmatrix}
+\end{align*}
+
+
+
+\subsection{\protect\noun{Householder}-Zerlegung}
+
+\index{Householder-Zerlegung}\index{Zerlegung!Householder--}
+Sei $s_{k}$ die erste Spalte des $k$-ten Minors der Matrix $A^{(k)}$, dessen Komponenten alle bis auf die erste auf 0 gespiegelt werden sollen.
+Dazu wird die entsprechende Normale $v$ einer Hyperebene berechnet, die zur Spiegelung auf die $k$-te Achse benutzt wird, und anschließend die \noun{Householder}-Matrix $H=I-\frac{2}{v^T v}vv^T=I-\frac{2}{\lVert v \rVert_2^2}vv^T$ auf den Minor angewandt.
+
+[Ist $v$ auf 1 normiert, gilt $H=I-2vv^T$.]
+
+$H$ ist involut (siehe Seite \pageref{sec:Orthogonale-Matrizen}).
+
+\begin{mathalgo}{\protect\noun{Householder}-Zerlegung}
+$R \= A$
+$Q \= I$
+for $k \= 1$ to $n$:
+\> $s \= R_{k\ldots n,k}$
+\> $d \= \sign(R_{kk}) \cdot \lVert s \rVert_2$
+\> $v \= s$; $v_1 \= v_1+d$
+\> $Q^* \= I - 2 / \lVert v \rVert_2^2 \cdot vv^T$
+\> $R \= Q^* R$
+\> $Q \= Q^* Q$
+\end{mathalgo}
+
+
+$Q$ ist eine unipotente untere Dreiecksmatrix.
+
+
+\subsection{\protect\noun{Givens}-Rotation}
+
+Ähnlich der \noun{Householder}-Reflexionen versucht man mit \noun{Givens}-Rotationen, eine Komponente $l$ eines Spaltenvektors $x$ ,,wegzudrehen``.
+Die benutzten Matrizen haben die Form:
+\[
+\Omega_{kl}:=\begin{pmatrix}
+I                 \\
+  & c  &   & s    \\
+  &    & I        \\
+  & -s &   & c    \\
+  &    &   &   & I
+\end{pmatrix}
+\begin{matrix}\\
+\leftarrow k\\
+\\
+\leftarrow l\\
+\\
+\end{matrix}
+\]
+
+
+$c$ und $s$ errechnen sich als:
+\begin{align*}
+\tau & =\begin{cases}
+\frac{x_{k}}{x_{l}} & \lvert x_l \rvert > \lvert x_k \rvert \\
+\frac{x_{l}}{x_{k}} & \lvert x_l \rvert \leq \lvert x_k \rvert
+\end{cases}\\
+c & =\begin{cases}
+s\tau & \lvert x_l \rvert > \lvert x_k \rvert\\
+\frac{1}{\sqrt{1+\tau^{2}}} & \lvert x_l \rvert \leq \lvert x_k \rvert
+\end{cases}\\
+s & =\begin{cases}
+\frac{1}{\sqrt{1+\tau^{2}}} & \lvert x_l \rvert > \lvert x_k \rvert\\
+c\tau & \lvert x_l \rvert \leq \lvert x_k \rvert
+\end{cases}
+\end{align*}
+
+
+Mit Hilfe der Rotationsmatrizen bringt man eine Matrix $A$ von links nach rechts und innerhalb der Spalten von unten nach oben auf eine Dreiecksmatrix, so dass $A$ darstellbar ist als $A=QR$.
+
+\begin{mathalgo}{\protect\noun{Givens}-Rotation}
+$R \= A$
+$Q \= I$
+for $l \= 1$ to $n-1$:
+\> for $k \= l+1$ to $n$:
+\>\> if $\lvert R_{kl} \rvert > \lvert R_{kk} \rvert$:
+\>\>\> $\tau \= R_{kk}/R_{kl}$
+\>\>\> $s \=1/\sqrt{1+\tau^2}$
+\>\>\> $c \= s\tau$
+\>\> else:
+\>\>\> $\tau \= R_{kl}/R_{kk}$
+\>\>\> $c \=1/\sqrt{1+\tau^2}$
+\>\>\> $s \= c\tau$
+\> $\Omega \= I$
+\> $\Omega_{kk},\Omega_{ll} \= c$
+\> $\Omega_{kl} \= s$
+\> $\Omega_{lk} \=-s$
+\> $R \= \Omega R$
+\> $Q \= \Omega Q$
+\end{mathalgo}
+
+
+
+\section{Iterative Löser}
+
+
+\subsection{Allgemeines}
+\begin{description}
+  \item [{Einstufig}] Es wird in jedem Iterationsschritt nur das Ergebnis des vorherigen Iterationsschrittes benötigt.
+  \item [{Stationär}] Jeder Iterationsschritt sieht gleich aus, d.\,h.,~die Iterationsvorschrift ändert sich nicht.
+\end{description}
+Ein einstufiges, lineares, stationäres Verfahren mit \emph{Vorschrift} $\Phi(x)$, \emph{Iterationsmatrix} $B$ und \emph{Iterationsvektor} $d$ sieht folgendermaßen aus:
+\[ x_{k+1} = \Phi(x_k) = Bx_k+d \]
+
+\begin{description}
+\item [{Konvergenz}] Das Verfahren konvergiert, wenn $\varrho(B)<1$ ist.
+\end{description}
+
+\subsection{\protect\noun{Jacobi}-Verfahren}
+
+Auch \emph{Gesamtschrittverfahren} genannt.
+Dient zur iterativen Berechnung einer Näherungslösung für $Ax=b$.
+\begin{enumerate}
+  \item $A$ in $D-L-U$ zerlegen, wobei $D$ die Hauptdiagonale von $A$ enthält und $L$ und $U$ jeweils die negative untere bzw.~obere strikte Dreiecksmatrix.
+  \item Ist für $B_J = D^{-1}(-L-U)$ der Spektralradius $\varrho(B_J)<1$, so konvergiert das Verfahren.
+  \item In jeder Iteration $x^{(k+1)} = D^{-1} (b+(L+U)x^{(k)})$ ausrechnen.
+\end{enumerate}
+
+\begin{mathalgo}{\protect\noun{Jacobi}-Verfahren}
+$D^{-1} \= \diag(\nicefrac{1}{a_{11}},\ldots,\nicefrac{1}{a_{nn}})$
+$\underbrace{-L-U}_{M} \= A-\diag(A)$
+$x \= b$
+for $i \= 1$ to $c$:
+\> $x \= D^{-1}(b+M\cdot x)$
+\end{mathalgo}
+
+
+\subsubsection{Relaxiertes \protect\noun{Jacobi}-Verfahren}
+
+Für $\varrho(B_{J})<1$ gilt mit den größten und kleinsten Eigenwerten $\lambda_{\min}$, $\lambda_{\max}$ von $B_J$ und $\omega = 2/(2-\lambda_{\min}-\lambda_{\max})$:
+\[ x_i^{(k+1)} = (1-\omega) x_i^{(k)} + \frac{\omega}{a_{ii}} \biggl(b_i-\sum_{j\neq i} a_{ij} x_j^{(k)} \biggr) \]
+
+
+\emph{Achtung}: $\lambda_{\min}$ und $\lambda_{\max}$ werden---im Gegensatz zum Spektralradius---\emph{ohne} Betrag bestimmt.
+
+
+\subsection{\protect\noun{Gauß}-\protect\noun{Seidel}-Verfahren}
+
+Auch \emph{Einzelschrittverfahren} genannt, eine Verfeinerung des \noun{Jacobi}-Verfahrens.
+Für jeden Iterationsschritt gilt $x_{k+1} = D^{-1} \bigl(b + (Lx_{k+1} + Ux_{k}) \bigr)$:
+\[
+  x_k^{(m+1)} := \frac{1}{a_{kk}} \biggl(b_k-\sum_{i=1}^{k-1} a_{ki} \cdot x_i^{(m+1)} - \sum_{i=k+1}^n a_{ki} \cdot x_i^{(m)} \biggr),\, k=1,...,n
+\]
+
+D.\,h.,~für den Iterationsschritt $(m+1)$ werden im Gegensatz zum \noun{Jacobi}-Verfahren die bereits berechneten $x_i^{(m+1)}$ mit einbezogen, wodurch das Verfahren schneller konvergiert.
+
+Das Verfahren konvergiert, wenn für $B_{GS}=(-D-L)^{-1}U$ der Spektralradius $\varrho(B_{GS})<1$ ist.
+
+\begin{mathalgo}{\protect\noun{Gauß}-\protect\noun{Seidel}-Verfahren}
+for $m \= 1$ to $c$:
+\> for $k \= 1$ to $n$:
+\>\> \cmt{In $s_1$ befinden sich die bereits berechneten}
+\>\> \cmt{Komponenten von $x$.}
+\>\> $s_1 \= a_{k,1\ldots k-1} \cdot x_{1\ldots k-1}$
+\>\> $s_2 \= a_{k,k+1\ldots n} \cdot x_{k+1\ldots n}$
+\>\> \cmt{Es gilt: $s_1 + s_2 = a_{k,1\ldots n} \cdot x-a_{kk} \cdot x_k$.}
+\>\> $x_k \= \frac{1}{a_{kk}} (b_k - s_1 - s_2)$
+\end{mathalgo}
+
+\subsection{Steepest Descent}
+
+Mit $\Phi_{k}(x)=x+\alpha_{k}\tilde{A}^{-1}r_{k}$:
+
+\begin{mathalgo}{Steepest Descent}
+$r_0 \= b-Ax_0$
+repeat:
+\> $p_k \= \tilde{A}^{-1} r_k$ \cmt{Urbild des Residuums}
+\> $s_k \= Ap_k$ \cmt{Einrechnen des Abbildungsfehlers}
+\> $\alpha_k \= \langle p_k,r_k \rangle / \langle p_k,s_k \rangle$
+\> $x_{k+1} \= x_k + \alpha_k p_k$
+\> $r_{k+1} \= r_k - \alpha_k s_k$
+\end{mathalgo}
+
+
+\clearpage\par
+\Todo{Konjugierte Gradienten}\par
+\Todo{EW: Vektoriteration}\par
+\Todo{EW: Jacobi-Verfahren}\par
+\Todo{EW: QR-Iteration, Hessenberg-Transf., Shift-Technik}\par
+\Todo{Nicht-lineare Gleichungen}
+
+
+\chapter{Interpolation}
+\begin{description}
+  \item [{\noun{Lagrange}-Polynom}]
+	$L_j(x) := \prod_{i=0}^{n} \frac{x-x_{i}}{x_{j}-x_{i}}\mid i\neq j$
+  \item [{Interpolation~nach~\noun{Lagrange}}]
+	$p_n(x) = \sum_{i=0}^{n}y_{i}L_{i}(x)$
+\end{description}
+
+\Todo{Newton-Interpolation}
+
+
+\section{Spline}
+\begin{itemize}
+  \item $n+1$ Messpunkte $(x_{i},y_{i})\mid i=0,\ldots,n$ sind gegeben mit $x_{0}<x_{1}<\ldots<x_{n}$.
+  \item $h_{i}=x_{i+1}-x_{i}$---Breite der Messpunktabschnitte: $\Delta x_{i}$.
+  \item $\gamma_{i}=6\left(\frac{y_{i+1}-y_{i}}{h_{i}}-\frac{y_{i}-y_{i-1}}{h_{i-1}}\right)$---Das sechsfache der Änderung der Steigung.
+\end{itemize}
+\begin{align*}
+  A & :=\begin{pmatrix}
+	2(h_0 + h_1) & h_1               \\
+	h_1          & 2(h_1 + h_2) & h_2 \\
+		    & h_2          & 2(h_2 + h_3) & \ddots \\
+		    &              & \ddots       & \ddots & h_{n-2} \\
+		    &              &              & h_{n-2} & 2(h_{n-2} + h_{n-1})
+      \end{pmatrix}\\
+  A \beta & = A \veccc(\beta_1;\vdots;\beta_{n-1}) = \veccc(\gamma_1;\vdots;\gamma_{n-1})
+\end{align*}
+
+
+Der natürliche Spline zu $x_i$ ist mit $\beta_{0}=\beta_{n}=0$:
+\[ \left.s_3\right|_{[x_i, x_{i+1}]}(x) = y_i + \alpha_i(x-x_i) + \frac{\beta_i}{2}(x-x_i)^2 + \frac{\beta_{i+1}-\beta_i}{6h_i}(x-x_i)^3 \]
+mit
+\[ \alpha_i = \frac{y_{i+1}-y_i}{h_i} - \frac{1}{3}\beta_i h_i - \frac{1}{6}\beta_{i+1}h_i \]
+
+\begin{description}
+  \item [{Natürlicher~Spline}]
+	$s_{3}''(x_0) = s_{3}''(x_n)=0$
+  \item [{Periodischer~Spline}]
+	$s_{3}'(x_0) = s_{3}'(x_n) \, \land \, s_{3}''(x_0) = s_{3}''(x_n)$
+  \item [{Hermite~Spline}]
+	$s_{3}'(x_0) = u \, \land \, s_{3}'(x_n)=v$ mit gegebenen $u$ und $v$.
+\end{description}
+
+\subsection{Beispiel}
+
+\noindent\begin{center}
+\begin{tabular}{c|ccccc}
+$i$ & 0 & 1 & 2 & 3 & 4 \\
+\hline 
+  $x_{i}$ & $-3$          & $-1$ & $0$           & $1$ & $3$          \\
+  $y_{i}$ & $\frac{3}{5}$ & $1$  & $\frac{3}{2}$ & $1$ & $\frac{3}{5}$\\
+  $h_{i}$ & $2$           & $1$  & $1$           & $2$ & $\varnothing$\\
+\end{tabular}
+\end{center}
+
+\begin{align*}
+  A & =\begin{pmatrix}
+    2(2+1) & 1\\
+    1      & 2(1+1) & 1\\
+           & 1      & 2(1+2)
+  \end{pmatrix}\\
+  & =\begin{pmatrix}
+    6 & 1 & 0\\
+    1 & 4 & 1\\
+    0 & 1 & 6
+  \end{pmatrix}\\
+  \gamma & = \veccc(
+    6\left(\frac{\nicefrac{3}{2}-1}{1}-\frac{1-\nicefrac{3}{5}}{2}\right);
+    6\left(\frac{1-\nicefrac{3}{2}}{1}-\frac{\nicefrac{3}{2}-1}{1}\right);
+    {6\left(\frac{\nicefrac{3}{5}-1}{2}-\frac{1-\nicefrac{3}{2}}{1}\right)})
+  = \veccc(
+    \nicefrac{9}{5};
+    -6;
+    \nicefrac{9}{5}) \\
+  A\beta & =\gamma
+\end{align*}
+\[ \beta= \veccc(\nicefrac{3}{5}; -\nicefrac{9}{5}; \nicefrac{3}{5}) \]
+
+
+\noindent \begin{center}
+\begin{tabular}{c|ccccc}
+  $i$ & 0 & 1 & 2 & 3 & 4 \\
+  \hline 
+  $\beta_i$  & $0$ & $\nicefrac{3}{5}$ & $-\nicefrac{9}{5}$ & $\nicefrac{3}{5}$  & $0$ \\
+  $\alpha_i$ & $0$ & $\nicefrac{3}{5}$ & $0$                & $-\nicefrac{3}{5}$ & $\varnothing$ \\
+\end{tabular}
+\end{center}
+
+\begin{description}
+  \item [{Systemmatrix}]
+	$A := \begin{pmatrix}
+	  1      & x_0^1     & \cdots & x_0^{n-1} \\
+	  \vdots & \vdots    & \ddots & \vdots    \\
+	  1      & x_{n-1}^1 & \cdots & x_{n-1}^{n-1}
+	\end{pmatrix}$,
+	$ p(x) := \sum_{i=0}^{n-1} p_i x^i$,
+	$ p=(A\T A)^{-1} (A\T b)$
+	(Fußnote%
+	\footnote{Bekannt als ,,Methode der kleinsten Quadrate``, siehe Seite \pageref{sub:Methode-der-kleinsten-Quad}.}%
+	)
+\end{description}
+
+\chapter{Nullstellenapproximation}
+
+\begin{mathalgo}{Bisektionsverfahren}
+for $k \= 1$ to $n$:
+\> $x_k \= \frac{1}{2} (a_k + b_k)$
+\> if $f(a_k) \cdot f(x_k) \leq 0$:
+\>\> $a_{k+1} \= a_k$
+\>\> $b_{k+1} \= x_k$
+\> else:
+\>\> $a_{k+1} \= x_k$
+\>\> $b_{k+1} \= b_k$
+\end{mathalgo}
+
+\begin{mathalgo}{Sekantenverfahren}
+for $k \= 1$ to $n$:
+\> $x_{k+1} \= x_k - \frac{x_k-x_{k-1}}{f(x_k)-f(x_{k-1})} f(x_k)$
+\end{mathalgo}
+
+\begin{mathalgo}{\noun{Newton}verfahren}
+\cmt{$k$ ist die Vielfachheit der gesuchten Nullstelle}
+for $k \= 1$ to $n$:
+\> $x_{k+1} \= x_k - k\cdot\frac{f(x_{k})}{f'(x_{k})}$
+\end{mathalgo}
+
+
+\chapter{Numerische Integration}
+
+
+\section{Trapez-Regel}
+
+\[ I_1(f):=\frac{(b-a)}{2} (f(a)+f(b)) \]
+
+
+
+\subsection{Summierte Trapez-Regel}
+
+\[ T_{m}(f):=\frac{l}{2}\left(f(a_{0})+2f(a_{1})+2f(a_{2})+\ldots+2f(a_{m-1})+f(a_{m})\right) \]
+
+
+
+\subsection{Extrapolation}
+\begin{enumerate}
+  \item Berechne für $q$ Schrittweiten die summierten Trapez-Regeln $T_{m_{i}}(f)$ sowie (mit $a<b$):
+	\[ l_{i}^{2}=\left(\frac{b-a}{m_{i}}\right)\mid i=0,\ldots,q-1 \]
+  \item Bestimme das Interpolationspolynom $p_{q-1}(x)$ durch die Punkte $\left(l_{i}^{2},T_{m_{i}}\right)$.
+  \item Berechne $T=p_{q-1}(0)$.
+\end{enumerate}
+
+\subsubsection{\protect\noun{Aitken}-\protect\noun{Neville}-Schema}
+
+Auswertung des Interpolationspolynoms $p(x)$ durch die Punkte $(x_{i},y_{i})\mid i=0,1,2,\ldots$ an Stelle $\hat{x}$ ist $p_{k}(\hat{x})=P_{kk}$ mit:
+\begin{align*}
+  P_{i0} & =y_{i}\\
+  P_{ij} & =P_{i,j-1}+\frac{\hat{x}-x_{i}}{x_{i}-x_{i-j}}\left(P_{i,j-1}-P_{i-1,j.1}\right)\mid i\geq j\geq1
+\end{align*}
+
+
+Für die äquidistante Trapez-Regel gilt:
+\begin{align*}
+  P_{i0} & =T_{m_{i}}\mid i=0,\ldots,q-1\\
+  P_{ij} & =P_{i,j-1}+\frac{P_{i,j-1}-P_{i-1,j-1}}{\left(\frac{l_{i-j}}{l_{i}}\right)^{2}-1}\mid q-1\geq i\geq j\geq1
+\end{align*}
+
+
+Es gibt verschiedene Ansätze zur Bestimmung der Stützstellenabstände $h$ der äquidistanten Trapez-Regel:
+\begin{description}
+  \item [{\noun{Romberg}-Folge}]
+	$h_{n}=\frac{b-a}{n}$
+  \item [{\noun{Bulirsch}-Folge}]
+	\[ h_n = \begin{cases}
+	    b-a               & n=1\\
+	    \frac{b-a}{2}     & n=2\\
+	    \frac{b-a}{3}     & n=3\\
+	    \frac{h_{n-2}}{2} & n>3
+	  \end{cases}
+	\]
+\end{description}
+
+\section{\protect\noun{Simpson}-Regel}
+
+\[ I_{2}(f):=\frac{(b-a)}{6}\left(f(a)+4f\left(\frac{a+b}{2}\right)+f(b)\right) \]
+
+
+
+\subsection{Summierte \protect\noun{Simpson}-Regel}
+
+Mit $\tilde{m}$ gerade:
+\[
+  S_{\tilde{m}}(f) := \frac{\tilde{l}}{3}
+    \begin{pmatrix}
+      f(\tilde{a}_{0}) & + & 4f(\tilde{a}_{1})           & + & 2f(\tilde{a}_{2})\\
+                       & + & 4f(\tilde{a}_{3})           & + & \ldots\\
+                       & + & 4f(\tilde{a}_{\tilde{m}-3}) & + & 2f(\tilde{a}_{\tilde{m}-2})\\
+                       & + & 4f(\tilde{a}_{\tilde{m}-1}) & + & f(\tilde{a}_{\tilde{m}})
+    \end{pmatrix}
+\]
+
+
+
+\section{\protect\noun{Newton}-Integration}
+
+\[ I_{3}(f):=\frac{(b-a)}{8}\left(f(a)+3f\left(\frac{2a+b}{3}\right)+3f\left(\frac{a+2b}{3}\right)+f(b)\right) \]
+
+
+
+\section{Fehlerabschätzung}
+
+Sei $f\in C^{(n+2)}[a,b]$ und $h=\frac{b-a}{n}$ mit $I_{n}(f)$ wie oben, dann $\exists\xi\in[a,b]$ mit 
+\[
+  E_{n}(f) = \begin{cases}
+    h^{n+3} f^{(n+2)}(\xi) \cdot \int_0^n \frac{t\prod_{k=0}^{n}(t-k)}{(n+2)!} \intd t & \hbox{für $n$ gerade}\\
+    \\
+    h^{n+2} f^{(n+1)}(\xi) \cdot \int_0^n \frac{t\prod_{k=0}^{n}(t-k)}{(n+1)!} \intd t & \hbox{für $n$ ungerade}
+  \end{cases}
+\]
+
+
+Insbesondere gelten für Trapez-Regel, \noun{Simpson}-Regel und \noun{Newton}-Integration:
+\[
+  E_{n}(f) = \begin{cases}
+    -\frac{h^3}{12}f''(\xi)      & \hbox{für $n=1$}\\
+    \\
+    -\frac{h^5}{90}f^{(4)}(\xi)  & \hbox{für $n=2$}\\
+    \\
+    -\frac{3h^5}{80}f^{(4)}(\xi) & \hbox{für $n=3$}
+  \end{cases}
+\]
+
+
+
+\section{\protect\noun{Gauß}-Quadratur}
+
+\[ G_0(f)=(b-a)f \left(\frac{a+b}{2}\right) \]
+
+
+
+\chapter{Scrap}
+
+
+\section{Singulärwertzerlegung}
+
+\[ \forall A\in\mathbb{R}^{m\times n} \; : \; \exists U\in\mathbb{R}^{m\times m}, V\in\mathbb{R}^{n\times n} \; : \; A=U\Sigma V^T \]
+mit
+\[ \Sigma:=\diag(\sigma_1,\sigma_2,\ldots,\sigma_p)\in\mathbb{R}^{m\times n}\mid p=\min(m,n)\land\sigma_1\geq\sigma_2\geq\ldots\geq\sigma_p\geq0 \]
+wobei die $\sigma_{i}=\sqrt{\lambda_{i}}$ die Wurzeln der Eigenwerte von $A\T A$, $U$ die normierten Eigenvektoren von $AA\T$ und $V$ die normierten Eigenvektoren von $A\T A$ sind.
+$U$ und $V$ sind orthonormale Matrizen.
+Es gilt:
+\[ A^+ = V^T \Sigma^+ U \]
+
+
+
+\section{Liniensuche}
+
+\begin{align*}
+  x_{k+1}             & = x_k - \alpha_k\cdot\grad f(x_k)\\
+  \varphi(\alpha)     & =f(x_k-\alpha\cdot\grad f(x_k))\\
+  \varphi(\alpha_{k}) & =f(x_{k+1})\\
+  \alpha              & \in\left]0;\infty\right[
+\end{align*}
+
+\begin{description}
+  \item [{Armijo-Bedingung}]
+	\begin{align*}
+	  \varphi(\alpha_k) & \leq\lambda(\alpha_k)\\
+	  \lambda(\alpha)   & :=\varphi(0)-\varrho\cdot\alpha\cdot\grad \varphi(0)\;\mid\;\varrho\in\left]0;\frac{1}{2}\right[
+	\end{align*}
+\end{description}
+
+\section{Tikhonov-Regularisierung}
+
+\[ x_{\alpha} = \left(A\T A+\alpha^2 I\right)^{-1}A\T b \]
+

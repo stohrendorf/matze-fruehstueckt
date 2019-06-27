@@ -1,0 +1,1207 @@
+% !TeX root = matze_fruehstueckt.tex
+
+\chapter{Allgemeines}
+\index{Algorithmus}
+\index{Problemklasse}
+\index{Terminierung}
+\index{Determiniertheit}
+\index{Determinismus}
+\index{Darstellung}
+\index{Church'sche These}\index{These!Church'sche}
+\index{Komplexität}
+\index{Effizienz}
+\index{Zeitmessung}
+\begin{description}
+  \item[Algorithmus] Lösungsvorschrift für eine Problemklasse; besteht aus einer endlichen Folge von Instruktionen
+  \item[Problemklasse] z.\,B.:~lösen einer quadratischen Gleichung
+  \item[Programme] sind spezielle Implementierungen von Algorithmen
+  \item[Terminierung] Der Algorithmus bricht bei jeder erlaubten Eingabe nach endlich vielen Schritten ab.
+  \item[Determiniertheit] Bei gleicher Eingabe ergibt sich das gleiche Ergebnis.
+  \item[Determinismus] Bei gleicher Eingabe werden dieselben Instruktionen in derselben Reihenfolge ausgeführt.
+  \item[Darstellung] durch verbale Beschreibung, Struktogramme oder Flussdiagramme, Pseudo-Code, höhere Programmiersprachen,\ldots
+  \item[Church'sche These] Alle Darstellungen von Algorithmen sind äquivalent.
+  \item[Komplexität] Erforderlicher Aufwand an Ressourcen.
+  \begin{description}
+    \item[\ldots eines Algorithmus] Aufwand bei Realisierung eines Algorithmus.
+    \item[\ldots einer Funktion] Komplexität des effizientesten Algorithmus zur Berechnung einer Funktion.
+    \item[optimaler Algorithmus] Die Komplexität des Algorithmus entspricht der Komplexität der Funktion.
+  \end{description}
+  \item[Effizienzmessung] ~
+  \begin{description}
+    \item[Zeitmessung] auf realem Rechner; Nachteil: zu viele Einflussgrößen.
+    \item[Zählen der Rechenschritte] in einer künstlichen Programmiersprache; Nachteil: Aufwand und Frage der Übertragbarkeit.
+    \item[Operationen auf hohem Niveau] z.\,B.~Zählen der Vergleiche bei Sortierung: Nachteil: nur sehr grobe Abschätzung.
+  \end{description}
+\end{description}
+
+\section{\protect\noun{Landau}-Notation}
+\index{Landau-Notation}\index{Komplexität!Landau-Notation}
+Mit $f : \mathbb{N} \to \mathbb{R}^{>0}$ sind die \emph{asymptotische obere Schranke}, Ordnung bzw.~Komplexitätsklasse $\mathcal{O}(g)$ sowie die asymptotische \emph{untere} Schranke $\Omega(g)$ definiert als:
+\begin{align*}
+  \mathcal{O}(g) & := \bigl\lbrace f \mid \exists n_0 \in \mathbb{N}^{>0}, c \in \mathbb{R}^{>0} \; \forall n \geq n_0 : f(n)\leq c\cdot g(n) \bigr\rbrace \\
+  \Omega(g) & := \bigl\lbrace f \mid \exists n_0 \in \mathbb{N}^{>0}, c \in \mathbb{R}^{>0} \; \forall n \geq n_0 : f(n)\geq c\cdot g(n) \bigr\rbrace
+\end{align*}
+
+Z.\,B.~gilt damit $f(n) = 2n^2 + 7n + 20 \Rightarrow f \in \mathcal{O}(n^2),\; n_0 = 9$.
+
+Außerdem gilt:
+\[
+  \varTheta(g) := \bigl\lbrace f \mid \exists n_0 \in \mathbb{N}^{>0},\, c_1,c_2 \in \mathbb{R}^{>0} \; \forall n \geq n_0 : c_1\cdot g(n) \leq f(n) \leq c_2\cdot g(n) \bigr\rbrace
+\]
+
+\subsection{Wichtige Komplexitätsklassen}
+\index{Komplexität!Klassen}
+\begin{table}[htb]
+\centering\begin{tabular}{rll}
+	\bfseries Klasse & \bfseries Bezeichnung & \bfseries Beispiel          \\
+	               1 & konstant              & elementarer Befehl          \\
+	       $\log(n)$ & logarithmisch         & binäre Suche                \\
+	             $n$ & linear                & Minimum einer Folge         \\
+	      $n\log(n)$ & überlinear            & effiziente Sortierverfahren \\
+	           $n^2$ & quadratisch           & einfache Sortierverfahren   \\
+	           $n^3$ & kubisch               & Matrizeninversion           \\
+	           $n^k$ & polynomiell           & Lineare Programmierung      \\
+	        $2^{cn}$ & exponentiell          & Backtracking                \\
+	            $n!$ & Fakultät              & Permutation
+\end{tabular}
+\begin{center}\textit{(Aufsteigend sortiert.)}\end{center}
+
+\caption{Wichtige Komplexitätsklassen}
+\end{table}
+
+\index{worst case}\index{average case}\index{best case}
+Unterschieden werden:
+\begin{description}
+  \item[worst case] Komplexitätsklasse bei den ungünstigsten Eingabedaten.
+  \item[average case] Komplexitätsklasse über alle möglichen Eingabedaten gemittelt.
+  \item[best case] Komplexitätsklasse bei den günstigsten Eingabedaten.
+\end{description}
+
+
+\chapter{Datenstrukturen}
+\index{Datentyp}\index{Datentyp!atomar}\index{atomar}
+\emph{Datentypen} bestehen aus Werten (Daten) und Operationen auf diesen Werten.
+\emph{Atomare} Datentypen sind elementar und skalar; Datenstrukturen bestehen aus mehreren anderen Datentypen.
+Je nach Inhalt der Datenstrukturen spricht man von homogenen (z.\,B.~ein Array) oder inhomogenen (z.\,B.~eine Klasse mit Float und Integer) Datenstrukturen.
+
+\index{abstrakter Datentyp}\index{Datentyp!abstrakt}
+\index{Liste}\index{Queue}\index{Deque}\index{Set}\index{Map}
+Ein \emph{abstrakter Datentyp} (ADT) hat eine funktionale Schnittstelle und verbirgt die interne Darstellung vor dem Benutzer (Geheimnisprinzip).
+Bekannte ADT sind: \texttt{List}, \texttt{Queue}, \texttt{Deque}, \texttt{Set}, \texttt{Map} und deren spezielle Implementierungen \texttt{ArrayList}, \texttt{LinkedList}, \texttt{ArrayDeque}, \texttt{HashSet}, \texttt{HashMap}, \texttt{PriorityQueue}.
+
+[Listen und Bäume werden ausführlich in \cite[S.~232--465]{TAOCP1} und insbesondere in \cite{TAOCP3} mit Bezug auf Sortier- und Suchverfahren behandelt.]
+
+\section{Listen}
+\paragraph{Array/Feld}
+\index{abstrakter Datentyp!Feld}\index{Feld}
+\index{abstrakter Datentyp!Array}\index{Array}
+\begin{itemize}
+  \item Feste Größe
+  \item Direkter Zugriff auf jedes Element
+  \item Java: z.\,B.~\texttt{int[]}
+\end{itemize}
+
+\paragraph{Liste}
+\index{abstrakter Datentyp!Liste}\index{Liste}
+\begin{itemize}
+  \item Dynamische Größe
+  \item Direkter Zugriff auf jedes Element
+  \item Elemente können überall gelöscht oder hinzugefügt werden
+  \item Java: \texttt{List} bzw.~\texttt{ArrayList}
+\end{itemize}
+
+\paragraph{Stack/Stapel/Keller/LIFO}
+\index{abstrakter Datentyp!Stack}\index{Stack}
+\index{abstrakter Datentyp!Stapel}\index{Stapel}
+\index{abstrakter Datentyp!Keller}\index{Keller}
+\index{abstrakter Datentyp!LIFO}\index{LIFO}
+\noindent\begin{center}
+    \includegraphics{stack.pdf}
+\end{center}
+\begin{itemize}
+  \item Dynamische Größe
+  \item Direkter Zugriff nur auf das Element am Ende der Liste
+  \item Elemente können nur am Ende gelöscht oder hinzugefügt werden
+\end{itemize}
+
+\paragraph{Queue/Warteschlange/FIFO}
+\index{abstrakter Datentyp!Queue}\index{Queue}
+\index{abstrakter Datentyp!Warteschlange}\index{Warteschlange}
+\index{abstrakter Datentyp!FIFO}\index{FIFO}
+\noindent\begin{center}
+    \includegraphics{queue.pdf}
+\end{center}
+\begin{itemize}
+  \item Dynamische Größe
+  \item Direkter Zugriff nur auf die Elemente an den Enden der Liste
+  \item Elemente können nur am einen Ende gelöscht und am anderen Ende hinzugefügt werden
+\end{itemize}
+
+\paragraph{Deque (Double Ended Queue)}
+\index{abstrakter Datentyp!Deque}\index{Deque}
+\noindent\begin{center}
+    \includegraphics{deque.pdf}
+\end{center}
+\begin{itemize}
+  \item Wie die Queue, allerdings mit allen Operationen an beiden Enden der Liste
+\end{itemize}
+
+\paragraph{Set}
+\index{abstrakter Datentyp!Set}\index{Set}
+\[
+  S \subseteq K
+  \qquad
+  S_2 = S \cup \lbrace x \rbrace
+  \qquad
+  S_3 = S \setminus \lbrace x \rbrace
+  \qquad
+  x \stackrel{?}{\in} S
+\]
+\begin{itemize}
+  \item Ungeordnete, aber eindeutige Sammlung von Elementen gleichen Typs
+  \item Elementare Operationen: einfügen, löschen, testen ob ein Element enthalten ist
+\end{itemize}
+
+\paragraph{Assoziatives Feld/Associative Array/Dictionary/Map}
+\index{abstrakter Datentyp!Feld!assoziativ}\index{Feld!assoziativ}\index{assoziatives Feld}
+\index{abstrakter Datentyp!Array!associative}\index{Array!associative}\index{associative array}
+\index{abstrakter Datentyp!Dictionary}\index{Dictionary}
+\index{abstrakter Datentyp!Map}\index{Map}
+\[
+  M \subseteq K \times V
+  \qquad
+  M_2 = M \cup \lbrace (k,v) \rbrace
+  \qquad
+  v = m_v \mid m \in M \land m_k = 123
+\]
+\begin{itemize}
+  \item Schlüssel-Wert-Paare
+  \item Elementare Operationen: Paar einfügen, Wert zum Schlüssel finden
+  \item Java: \texttt{Map} bzw.~\texttt{HashMap}
+\end{itemize}
+
+\paragraph{Prioritätswarteschlange/Vorrangwarteschlange/Priority Queue}
+\index{abstrakter Datentyp!Prioritätswarteschlange}\index{Prioritätswarteschlange}
+\index{abstrakter Datentyp!Vorrangwarteschlange}\index{Vorrangwarteschlange}
+\index{abstrakter Datentyp!Queue!priority --}\index{Queue!priority --}\index{priority queue}
+\begin{itemize}
+  \item Queue, bei der die Elemente einen Schlüssel/eine Priorität besitzen
+  \item Elementare Operationen: einfügen, Element mit höchster Priorität entnehmen
+\end{itemize}
+
+
+\subsection{Einfach verkettete Liste}
+\index{Liste!einfach verkettet}
+\index{Liste!zyklisch}
+\index{zyklische Liste}
+\includegraphics{single-link-list.pdf}
+\begin{itemize}
+  \item Jeder Knoten zeigt auf seinen Nachfolger.
+  \item In einer (offenen) Liste zeigt der letzte Knoten auf \texttt{null}.
+  \item In einer \emph{zirkulären} Liste zeigt der letzte Knoten auf den ersten Knoten.
+  
+      [Solche Listen sind homogen in dem Sinne, dass vom Prinzip her kein Knoten Anfang oder Ende sein kann.]
+\end{itemize}
+
+\begin{mathalgo}{Durchlauf einer Liste}
+for( $n \= \mathtt{list.head}$; $n \neq \mathtt{null}$; $n \= n\mathtt{.next}$ ):
+\> visit($n$)
+\> if $n\mathtt{.next} = \mathtt{list.head}$: \cmt{nur bei zirkulären Listen}
+\>\> break
+\end{mathalgo}
+
+\begin{table}[htb]
+\centering\begin{tabular}{rl}
+\bfseries Operation & \bfseries Klasse \\ 
+Auslesen Anfang & $\mathcal{O}(1)$ \\ 
+Auslesen Mitte & $\mathcal{O}(n)$ \\ 
+Auslesen Ende & $\mathcal{O}(n)$ \\ 
+Einfügen/löschen Anfang & $\mathcal{O}(1)$ \\ 
+Einfügen/löschen Mitte & $\mathcal{O}(n)$ \\ 
+Einfügen/löschen Ende & $\mathcal{O}(n)$
+\end{tabular}
+
+\caption{Komplexitäten einfache Liste}
+\end{table}
+
+\subsection{Doppelt verkettete Liste}
+\index{Liste!doppelt verkettet}
+\index{Liste!zyklisch}
+\index{zyklische Liste}
+\includegraphics{double-link-list.pdf}
+
+Enthält zusätzlich in jedem Knoten eine Referenz auf den Vorgänger.
+
+\begin{table}[htb]
+\centering\begin{tabular}{rl}
+\bfseries Operation & \bfseries Klasse \\ 
+Auslesen Anfang & $\mathcal{O}(1)$ \\ 
+Auslesen Mitte & $\mathcal{O}(n)$ \\ 
+Auslesen Ende & $\mathcal{O}(1)$ \\ 
+Einfügen/löschen Anfang & $\mathcal{O}(1)$ \\ 
+Einfügen/löschen Mitte & $\mathcal{O}(n)$ \\ 
+Einfügen/löschen Ende & $\mathcal{O}(1)$
+\end{tabular}
+
+\caption{Komplexitäten doppelte Liste}
+\end{table}
+
+
+\subsection{Dynamisches Feld}
+\index{Feld!dynamisch}
+\begin{itemize}
+  \item Array, bei dem nicht jedes Feld befüllt ist.
+  \item Index von erstem freien Feld wird vermerkt.
+  \item Ein neues Element wird in das freie Feld gesetzt und der \enquote{freie Index} erhöht.
+  \item Eine Vergrößerung des Arrays erzeugt ein neues, größeres Array und erfordert die Kopie aller bisherigen Elemente aus dem alten Array in das neue Array.
+  \item In der Regel wird die neue Arraygröße aus der alten Größe durch Multiplikation mit einem Faktor berechnet.
+        [Normalerweise 1.125 bis 2.]
+\end{itemize}
+
+\begin{table}[htb]
+\centering\begin{tabular}{rl}
+\bfseries Operation & \bfseries Klasse \\
+Auslesen Anfang & $\mathcal{O}(1)$ \\ 
+Auslesen Mitte & $\mathcal{O}(1)$ \\ 
+Auslesen Ende & $\mathcal{O}(1)$ \\ 
+Einfügen/löschen Anfang & $\mathcal{O}(n)$ \\ 
+Einfügen/löschen Mitte & $\mathcal{O}(n)$ \\ 
+Einfügen/löschen Ende & avg.~$\mathcal{O}(1)$, worst $\mathcal{O}(n)$
+\end{tabular}
+
+\caption{Komplexitäten dynamisches Feld}
+\end{table}
+
+
+\section{Bäume}
+\index{Baum}
+\index{Baum!Wurzel}\index{Wurzel}
+\index{Baum!Vorgänger}\index{Vorgänger}
+\index{Baum!Nachfolger}\index{Nachfolger}
+\index{Baum!Vater}\index{Vater}
+\index{Baum!Sohn}\index{Sohn}
+\index{Baum!Blatt}\index{Blatt}
+\index{Baum!Knoten}\index{Knoten}
+\index{Baum!Teil--}\index{Teilbaum}
+\index{Baum!Verzweigungsgrad}\index{Verzweigungsgrad}
+\index{Baum!binär}\index{Binärbaum}
+Hat ein Knoten mehrere Nachfolger, spricht man von einem \emph{Baum}.
+In Bäumen existiert zwischen zwei beliebigen Knoten exakt ein eindeutiger Pfad; Bäume sind Spezialfälle von Graphen, und Listen Spezialfälle von Bäumen.
+\begin{description}
+  \item[Wurzel] Einziger Knoten ohne Vater.
+  \item[Vorgänger] $A$ ist ein Vorgänger von $B$, wenn man von $B$ \enquote{nach oben gehend} irgendwann auf $A$ stößt.
+  \item[Nachfolger] $A$ ist ein Nachfolger von $B$, wenn man von $B$ \enquote{nach unten gehend} irgendwann auf $A$ stößt.
+  \item[Vater] $A$ heißt Vater von $B$, wenn $A$ ein direkter Vorgänger von $B$ ist.
+  \item[Sohn] $A$ heißt Sohn von $B$, wenn $A$ ein direkter Nachfolger von $B$ ist.
+  \item[Bruder] Hat $A$ denselben Vater wie $B$, so sind $A$ und $B$ Brüder.
+  \item[Blatt] Knoten ohne Söhne heißen Blätter.
+  \item[innerer Knoten] Knoten mit mindestens einem Sohn heißen innere Knoten.
+  \item[Teilbaum] Jeder Knoten außer der Wurzel bildet mit sämtlichen Söhnen (und deren Söhnen) jeweils einen Teilbaum.
+  \item[Verzweigungsgrad] Anzahl der Söhne.
+\end{description}
+
+\bigskip
+\begin{figure}[htb]
+\centering
+\includegraphics{tree-example.pdf}
+
+\caption{Einfacher Baum der Höhe 4}
+\end{figure}
+
+\begin{description}
+  \item[Binärbaum] Verzweigungsgrad ist höchstens 2.
+  \item[geordneter Binärbaum] Reihenfolge der Söhne ist durch einen Index bzw.~eine Relation eindeutig bestimmt.
+  \item[minimal] Ein Baum ist minimal, wenn kein anderer Baum mit den gleichen Knoten, aber geringerer Höhe existiert.
+  \item[links-/rechtsvollständig] Ein Baum ist links-/rechtsvollständig, wenn er minimal ist und die Knoten auf dem untersten Level so weit wie möglich links/rechts stehen.
+  \item[vollständig] Ein Baum ist vollständig, wenn er minimal ist und alle Blätter auf dem untersten Level sind.
+  \item[binärer Suchbaum] Für jeden Knoten im Binärbaum gilt, dass alle Knoten im linken Teilbaum kleiner, und alle knoten im rechten Teilbaum größer oder gleich dem aktuellen Knoten sind.
+\end{description}
+
+\subsection{Binäre Suchbäume}
+\index{Baum!binärer Suchbaum}
+\index{binärer Suchbaum}
+\subsubsection{Einfügen eines neuen Elements}
+\begin{enumerate}
+  \item Suchen des neuen Elements bis ein nicht-existenter Knoten erreicht wird.
+  \item Einfügen des neuen Elements an Stelle dieses Knotens.
+\end{enumerate}
+
+\noindent Ist der Baum als Liste implementiert, ist die Suche $\mathcal{O}(\log(n))$, und einfügen bzw.~löschen ist $\mathcal{O}(n)$.
+
+\begin{itemize}
+  \item Ungünstiges Einfügen kann zu entarteten Bäumen führen (lineare Listen).
+  \item Die Balanciertheit/Ausgeglichenheit ist nicht garantiert.
+  \item Ein vollständig gefüllter Binärbaum (jede Ebene ist voll besetzt) mit Höhe $h$ hat $n = 2^{h+1}-1$ Knoten.
+  \item Ein Binärbaum mit $n$ Knoten hat minimal die Höhe $\lfloor\log_2(n)\rfloor$.
+        Hier hat die Suche $\mathcal{O}(\log(n))$.
+  \item Ein Binärbaum mit $n$ Knoten hat maximal die Höhe $n-1$ (zur Liste degenerierter Baum).
+        Hier hat die Suche $\mathcal{O}(n)$.
+\end{itemize}
+
+\subsubsection{Löschen eines Elements}
+\begin{enumerate}
+  \item Knoten hat keine Kinder: Einfaches Löschen des Knotens.
+  \item Knoten hat genau ein Kind: Ersetzen des zu löschenden Knotens durch den Sohn.
+  \item Knoten hat zwei Kinder:
+  \begin{enumerate}
+    \item Nächstgrößeres Element suchen; dazu vom zu löschenden Knoten einen Schritt nach rechts, und dann (so weit es geht) nach links gehen.
+    \item Ersetzen des zu löschenden Knotens durch den gefundenen Knoten.
+    \item Den freigewordenen Platz des gefundenen Knotens durch den rechten Sohn dieses Knotens ersetzen.
+  \end{enumerate}
+\end{enumerate}
+
+\subsubsection{Binärer Suchbaum als Array}
+\begin{itemize}
+  \item Eignet sich am besten für linksvollständige Binärbäume.
+  \item Die Knoten werden ebenenweise von links nach rechts durchnummeriert.
+  \item Der Vater eines Knotens $n$ hat den Index $\lfloor n/2 \rfloor$.
+  \item Der linke Sohn hat den index $2n$, der rechte $2n+1$.
+\end{itemize}
+
+\subsubsection{Ausgleichung}
+Es existieren verschiedene Ansätze zur Balanceausgleichung:
+\begin{enumerate}
+  \item Abgeschwächte Kriterien für ausgeglichene Höhe:
+  \begin{enumerate}
+    \item AVL-Bäume
+    \item Rot-Schwarz-Bäume
+  \end{enumerate}
+  \item Einfügen neuer Knoten immer als Wurzel.
+  \item Unausgeglichener Verzweigungsgrad, z.\,B.~B-Bäume.
+\end{enumerate}
+
+
+\subsection{AVL-Bäume}
+\index{Baum!AVL}\index{AVL-Baum}
+\index{Baum!Rotation}\index{Rotation}
+\index{Baum!Ausgleich}\index{Ausgleich}
+\begin{itemize}
+  \item AVL sind die Initialen der Entwickler \noun{Georgi Maximowitsch Adelson-Vels\-ki} und \noun{Jew\-geni Michailowitsch Landis}~(1962).
+  \item Jeder Knoten im Binärbaum hat einen zusätzlichen \emph{Balance-Index} $b$, welcher die Differenz der Höhen $h_l$ und $h_r$ seiner beiden Teilbäume ist: $b = h_l - h_r$.
+  \item Die Differenz muss $-1 \leq b \leq 1$ entsprechen (AVL-Bedingung).
+  \item Beim Einfügen oder Löschen kann die AVL-Bedingung verletzt werden; dann muss durch lokale (Doppel-)Rotationen rebalanciert werden.
+  \emph{Ein Ausgleich erfordert unter Umständen weitere Ausgleiche.}
+  \item Die maximale Höhe ist $\apprle 1.45 \cdot \lfloor\log_2(n)\rfloor$.
+  \item Ein Einfügen oder Löschen rotiert maximal alle Knoten zwischen Wurzel und eingefügtem Knoten; der Ausgleich hat $\mathcal{O}(\log(n))$.
+\end{itemize}
+
+\index{Baum!Rotation!einfach}\index{Rotation!einfach}
+\begin{figure}[htb]
+\centering
+\includegraphics{tree-rot-1.pdf}
+\hfil
+\includegraphics{tree-rot-2.pdf}
+
+\caption{Einfache Rotation im AVL-Baum}
+\end{figure}
+
+\index{Baum!Rotation!doppelt}\index{Rotation!doppelt}
+\begin{figure}[htb]
+\centering
+\includegraphics{tree-rot-dbl-1.pdf}
+\hfil
+\includegraphics{tree-rot-dbl-2.pdf}
+\hfil
+\includegraphics{tree-rot-dbl-3.pdf}
+
+\caption{Doppelte Rotation im AVL-Baum}
+\end{figure}
+
+\subsection{B-Bäume}
+\index{Baum!B--}\index{B-Baum}
+\index{Baum!Ordnung}\index{B-Baum!see{Baum}}
+\index{Baum!Ausgleich}\index{Ausgleich}
+\index{Baum!Split}\index{Split}
+\index{Baum!Merge}\index{Merge}
+\begin{itemize}
+  \item 1970 von \noun{Rudolf Bayer} und \noun{Edward M.~McCreight} entwickelt.
+  \item Ziel war eine effiziente Datenstruktur, welche auf langsamen Medien gespeichert wird.
+  \item Viele Datenbanken nutzen standardmäßig B-Bäume.
+  \item Ein B-Baum der \emph{Ordnung} $d$ enthält in jedem Knoten zwischen $d$ und $2d$ Elemente; die Wurzel und die Blätter enthalten zwischen 1 und $2d$ Elementen.
+  \item Jeder Knoten ist entweder ein Blatt oder enthält bei $n$ Elementen $n+1$ Söhne (die Kanten sind zwischen den Elementen aufgehängt).
+  \item Alle Blätter liegen auf demselben Level.
+  \item Überfüllung durch Einfügeoperationen ($>2d$ Elemente) erfordern einen Split.
+  \item Unterfüllung durch Löschoperationen ($<d$ Elemente) erfordern einen Merge.
+\end{itemize}
+
+\begin{figure}[htb]
+\centering
+\noindent\includegraphics{btree.pdf}
+
+\medskip
+\noindent\includegraphics{btree-regular.pdf}
+
+{\small[Pseudo-Knoten sind grau hinterlegt.]}
+
+\caption{B-Baum der Ordnung 2 und dessen \enquote{klassische} Repräsentation}
+\end{figure}
+
+\begin{figure}[htb]
+\centering\includegraphics{btree-split.pdf}
+
+\bigskip\includegraphics{btree-split-merged.pdf}
+
+\caption{Split ein einem B-Baum}
+\end{figure}
+
+\begin{figure}[htb]
+\centering\includegraphics{btree-ausgleich-1.pdf}
+
+\bigskip\includegraphics{btree-ausgleich-2.pdf}
+
+\caption{Ausgleich in einem B-Baum}
+\end{figure}
+
+\begin{figure}[htb]
+\centering\includegraphics{btree-merge-1.pdf}
+
+\bigskip\includegraphics{btree-merge-2.pdf}
+
+\caption{Merge in einem B-Baum}
+\end{figure}
+
+
+\subsubsection{B\textsuperscript{+}-Bäume}
+\index{Baum!B+--}\index{B+-Baum|see{Baum}}
+\begin{itemize}
+  \item In inneren Knoten liegen ausschließlich Schlüssel, keine Datensätze.
+  \item Datensätze liegen nur in den Blättern.
+\end{itemize}
+
+\subsubsection{Rot-Schwarz-Bäume}
+\index{Baum!Rot-Schwarz--}\index{Rot-Schwarz-Baum!see{Baum}}
+\begin{itemize}
+  \item Grobe Struktur ist die eines B-Baums.
+  \item Jeder Knoten des B-Baums wird als Binärbaum aufgefasst.
+  \item Die Wurzel jedes Binärbaums ist schwarz, alle anderen lokalen Knoten rot.
+  \item Verhält sich ähnlich zu AVL-Bäumen.
+  \begin{itemize}
+    \item Rot-Schwarz-Bäume sind ca.~15\% bis 30\% größer als AVL-Bäume.
+    \item Einfügen/löschen ist etwas schneller.
+    \item Suchen ist etwas langsamer.
+  \end{itemize}
+\end{itemize}
+
+
+\subsection{Tries}
+\index{Baum!Trie}\index{Trie}
+\index{Silbe}\index{Wort}
+\begin{itemize}
+  \item Spezieller Baum, speziell zur Speicherung von Strings geeignet.
+  \item Aussprache wie \enquote{try}, kommt von \enquote{Information re\emph{trie}val}.
+  \item Jeder Knoten einhält eine \enquote{Silbe}.
+  \item Der Pfad von der Wurzel zu einem als Endknoten markierten Knoten ergibt ein \enquote{Wort}.
+\end{itemize}
+[Patricia-Tries sind Tries, bei denen mehrere aufeinanderfolgende Silben ohne Verzweigung zu einem einzigen Knoten zusammengefasst werden; die Knoten enthalten somit nicht Silben, sondern Wortteile aus mehreren Silben.]
+\begin{figure}[htb]
+\centering\includegraphics{trie.pdf}
+
+\begin{quote}
+    \small[Endknoten sind grau hinterlegt; z.\,B.~ergeben sich die Worte \enquote{co} und \enquote{coup}, aber nicht \enquote{cou}.]
+\end{quote}
+
+\caption{Trie}
+\end{figure}
+
+
+\subsection{\label{subsection:binheap}Binärer Heap}
+\index{Baum!binärer Heap}\index{binärer Heap}
+\begin{itemize}
+  \item Datenstruktur zur effizienten Speicherung einer Priority Queue.
+  \item Fachlich unabhängig vom Heap in der Speicherverwaltung.
+  \item Der Baum ist linksvollständig.
+  \item Die Söhne eines Knotens sind höchstens so groß wie der Knoten selbst; das größte Element steht an der Wurzel.
+  \item Neue Knoten werden in die erste freie Position des Baums (unterster Level, erstes freies Feld von links) eingefügt; ggf.~muss der neue Knoten nach Vergleich mit dem Vater wiederholt nach oben getauscht werden um die Ordnung wiederherzustellen.
+  \item Beim Entnehmen der Wurzel wird der Knoten durch den letzten Knoten (unterster Level, erster Knoten von rechts) ersetzt; in der Regel muss dieser Knoten durch Vergleich mit den Söhnen wiederholt nach unten \enquote{versickern}.
+\end{itemize}
+
+
+\section{Hash-Tabellen}
+\index{Hash}
+\index{Hash!-Funktion}
+\index{Hash!Kollision}\index{Kollision}
+\index{Hash!Füllgrad}\index{Füllgrad}
+\index{Hash!dynamisches Hashing}\index{dynamisches Hashing}
+\index{Hash!Divisionsrest-Methode}\index{Divisionsrest-Methode}
+\subsection{Allgemeines}
+\begin{description}
+  \item[Prinzip] Elemente werden in einem großen Feld gespeichert; die Position ergibt sich durch eine \emph{Hash-Funktion} $h(s)$.
+  \item[Hash-Funktion] Ermittelt aus den Schlüsseleigenschaften der Elemente die Position im Feld.
+  \item[Verhalten der Hash-Funktion] $h : S \to I$ bildet optimal die Schlüsselmenge $S$ komplett auf $I$ ab, ist also surjektiv.
+                                     \emph{Aber}: $h(a) = h(b) \nRightarrow a = b$, also nicht injektiv.
+  \item[Divisionsrest-Methode] $h(x) := x \bmod N$; bevorzugt, wenn die Schlüsselverteilung unbekannt ist.
+                               $N$ sollte eine Primzahl sein.
+  \item[Kollision] Eine Kollision tritt auf, wenn $h(a) = h(b) \land a \neq b$ gilt.
+                   \emph{Beispiel}: $h(s) := s \bmod 10$; $h(11) = h(1) = 1 \land 11 \neq 1$.
+  \item[Füllgrad] Der Füllgrad $\alpha = n/N$ ergibt sich aus der Größe $N$ der Hashtabelle und der Anzahl $n$ der gespeicherten Datensätze.
+                  Nach \noun{Sedgewick} sollte $\alpha < 1/2$ gelten.
+  \item[Dynamisches Hashing] Eine Überfüllung der Hashtabelle erfordert eine Vergrößerung und damit ein komplettes \enquote{Rehashing} der enthaltenen Werte.
+\end{description}
+Hash-Funktionen sollten gut streuen um Kollisionen zu verhindern, und schnell berechenbar sein.
+
+\subsection{Kollisionsbehandlung}
+\index{Hash!Kollision}\index{Kollision}
+\index{Hash!Sondierung}\index{Sondierung}
+\begin{description}
+  \item[Sondieren] Suche nach einer anderen freien Position über:
+  \begin{itemize}
+    \item Lineares Sondieren
+    \item Doppeltes Hashing
+    \item Quadratisches Sondieren
+  \end{itemize}
+  Das Löschen eines Wertes kann aufwändig werden!
+\end{description}
+
+\subsubsection{Hashing in Teillisten}
+\index{Hash!Teilliste}\index{Teilliste}
+Die Hash-Tabelle besteht aus Listen, sodass bei Kollisionen mehrere Elemente pro Schlüssel gespeichert werden.
+\begin{description}
+  \item[Schrittzahl] Die Schrittzahl/der Aufwand $S(s)$ ergibt sich aus der Berechnung der Hashfunktion und dem Aufwand für das Suchen/Speichern in der Teilliste.
+\end{description}
+
+\subsubsection{Lineares Sondieren}
+\index{Hash!Sondierung!linear}\index{Sondierung!linear}
+Das nächste zu überprüfende Feld wird über $h_i(s) := (h(s) + i) \bmod N$ errechnet.
+Dies führt zu \enquote{primärer Häufung}, es bilden sich Ketten belegter Plätze.
+Eine schlechte (relativ singuläre) Hashfunktion führt zu \enquote{sekundärer Häufung}.
+
+\subsubsection{Doppeltes Hashing}
+\index{Hash!Sondierung!doppeltes Hashing}\index{Sondierung!doppeltes Hashing}\index{doppeltes Hashing}
+Wie lineares Sortieren, aber das Inkrement wird durch eine zweite Hashfunktion errechnet: $h_i(s) := (h(s) + i \cdot h'(s)) \bmod N$.
+Führt in der Regel dazu, dass nicht alle Felder durchprobiert werden.
+
+\subsubsection{Quadratisches Sondieren}
+\index{Hash!Sondierung!quadratisch}\index{Sondierung!quadratisch}
+Adressen werden über $h_i(s) := (h(s) + i^2) \bmod N$ errechnet.
+Führt zu sekundärer Häufung, allerdings können nicht unbedingt alle Adressen erreicht werden.
+Ist $N$ prim, lässt sich die halbe Tabelle durchsuchen.
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{ccccc}
+\bfseries $\mathcal{O}(\ldots)$ & \bfseries Uns.~Liste & \bfseries Sort.~Liste & \bfseries Baum & \bfseries Hashtabelle \\
+Suchen                & $n$               & $\log(n)$       & $\log(n)$ & 1 \\
+Einfügen              & $n$               & $n$             & $\log(n)$ & 1, worst: $n$ \\
+Löschen               & $n$               & $n$             & $\log(n)$ & 1
+\end{tabular}
+
+\caption{Komplexitätsklassen verschiedener Datenstrukturen}
+\end{table}
+
+\section{Graphen}
+\index{Graph}
+\index{Graph!gerichtet}\index{gerichteter Graph}
+\index{Graph!ungerichtet}\index{ungerichteter Graph}
+\index{Graph!Pfad}\index{Pfad}
+\index{Graph!Pfad!trivial}\index{Pfad!trivial}
+\index{Graph!Pfad!einfach}\index{Pfad!einfach}
+\index{Graph!Zykel}\index{Zykel|see{Graph}}
+\index{Graph!Kante}\index{Kante}
+\index{Graph!gewichtet}\index{gewichteter Graph}
+\begin{itemize}
+  \item Prinzipiell Erweiterung von Bäumen: Graphen erlauben zwischen zwei Knoten auch mehrere mögliche Pfade.
+  \item Unterscheidung zwischen gerichteten Graphen (Kanten können nur in einer bestimmten Richtung \enquote{beschritten} werden) und ungerichteten Graphen.
+  \item Gerichtete Graphen erlauben eine Unterscheidung von Vorgänger- und Nachfolgerknoten.
+  \item Kanten können gewichtet sein; dann heißt der Graph ebenfalls gewichtet.
+  \item Ein Pfad, der nur eine einzige Kante mit maximal zwei Knoten hat, heißt \emph{trivialer Pfad}.
+  \item Ein Pfad ohne mehrfachen Besuch von Knoten heißt \emph{einfacher Pfad}.
+  \item Ein Pfad, bei dem Start- und Endknoten identisch sind, heißt \emph{Zykel}.
+  \item Knoten sind in einer Menge $V \subseteq \mathbb{N}$ (Vertices) gespeichert.
+  \item Kanten sind in einer Menge $E \subseteq V^2$ (Edges) gespeichert, bzw.~bei Gewichtungen mit reellen Zahlen $E \subseteq V\times V\times\mathbb{R}$.
+\end{itemize}
+
+Im Zusammenhang mit Graphen sind u.\,A.~die folgenden vier Begriffe wichtig:
+\begin{description}
+    \item[Knoten- und Kantenzahl] \index{Knotenzahl}\index{Kantenzahl}Die Anzahl der Knoten eines Graphen $G$ wird als $n(G)$ bezeichnet, die Anzahl der Kanten als $m(G)$.
+    \item[Ein- und Ausgangsgrad] \index{Eingangsgrad}\index{Ausgangsgrad}Die Anzahl Kanten eines Knotens $v$ in einem ungerichteten Graphen wird als $d_G(v)$ oder~$\deg_G(v)$ bezeichnet; in einem gerichteten Graphen bezeichnet $d^-_G(v)$ den Eingangsgrad und $d^+_G(v)$ den Ausgangsgrad.
+    Außerdem gilt in ungerichteten Graphen $d(G) := \mathrm{avg}(d_G(v))$, $\delta(G) := \min(d_G(v))$ und $\Delta(G) := \max(d_G(v))$; es gilt immer $\delta(G) \leq d(G) \leq \Delta(G)$.
+\end{description}
+
+In fortgeschritteneren Algorithmen auf Graphen, wie z.\,B.~Clustering- oder allgemeineren Netzwerk-Algorithmen, sind diese Begriffe auch wichtig:
+\begin{description}
+    \item[Multigraph] \index{Multigraph}\index{Graph!Multi--}In einem Multigraphen können zwischen zwei Knoten auch mehrere Kanten existieren.
+    \item[Hypergraph] \index{Hypergraph}\index{Graph!Hyper--}In einem Hypergraphen können Kanten auch mehr als zwei Knoten miteinander verbinden.
+    \item[Taillenweite] \index{Taillenweite}Länge des kürzesten nicht trivialen Zykels, in azyklischen Graphen~$\infty$.
+        [In \cref{fig:Graph} ist die (gewichtete) Taillenweite $1+2+0=3$, da das kürzeste (gewichtete) Zykel $3 \longrightarrow 4 \longrightarrow 1 \longrightarrow 3$ ist; die (ungewichtete) Taillenweite ist~$2$, da $1 \longrightarrow 3 \longrightarrow 1$ das nicht-triviale Zykel mit der geringsten Schrittzahl ist.]
+    \item[Exzentrität] \index{Exzentrität}Maximaler Abstand eines Knotens zu allen anderen Knoten.
+    \item[Durchmesser] \index{Durchmesser}$D(G)$ ist der größte Abstand zwischen allen Knoten; ist äquivalent zum Maximum der Exzentritäten.
+        [In \cref{fig:Graph} ist der (gewichtete) Durchmesser ohne Knoten~\enquote{$2$} $3+6+5+2=18$ über $5 \longrightarrow 3 \longrightarrow 6 \longrightarrow 4 \longrightarrow 1$; der (ungewichtete) Durchmesser ist~$4$ über den gleichen Pfad; \emph{mit} Knoten~\enquote{$2$} wäre der Durchmesser~$\infty$.]
+    \item[Radius] \index{Radius}$R(G)$ ist das Minimum der Exzentritäten.
+        [In \cref{fig:Graph} ist dieser gewichtet~$0$ über $1 \longrightarrow 3$, und ungewichtet~$1$.]
+    \item[Zentrum] \index{Zentrum}Knoten, deren Exzentrität dem Radius entsprechen.
+        [In \cref{fig:Graph} ist gewichtet Knoten~\enquote{$1$} das Zentrum, und ungewichtet alle Knoten außer Knoten~\enquote{$2$}.]
+\end{description}
+
+\begin{figure}[htb]
+\centering\includegraphics{graph-example.pdf}
+
+\caption{Gerichteter und gewichteter Graph\label{fig:Graph}}
+\end{figure}
+
+\subsection{Speicherung}
+\begin{description}
+  \item[Kantenorientiert] Jede Kante hat einen Index; für jede Kante werden Vorgänger und Nachfolger sowie ggf.~die Gewichtung gespeichert.
+  \item[Knotenorientiert] Ausprägungen sind z.\,B.~Knotenliste, Adjazenzmatrix oder Adjazenzliste.
+\end{description}
+
+\subsubsection{Kantenliste}
+\index{Graph!Kantenliste}\index{Kantenliste}
+\begin{align*}
+  \langle \hbox{Kantenliste} \rangle & :=
+  \langle \hbox{Anzahl Knoten} \rangle
+  \langle \hbox{Anzahl Kanten} \rangle
+  \langle \hbox{Kante} \rangle\ldots \\
+  \langle \hbox{Kante} \rangle & :=
+  \langle\hbox{Vorgänger}\rangle
+  \langle\hbox{Nachfolger}\rangle
+\end{align*}
+Platzbedarf ist $2 + 2 \cdot \lvert E \rvert$.
+Für \cref{fig:Graph} auf \cpageref{fig:Graph}: 6, 11, 1--2, 1--3, 3--1, 4--1, 3--4, 3--6, 5--3, 5--5, 6--5, 6--2, 6--4.
+\emph{(Die Bindestriche dienen der Übersicht und sind nicht Bestandteil der originalen Notation.)}
+
+\subsubsection{Knoten-/Adjazenzliste}
+\index{Graph!Knotenliste}\index{Knotenliste}
+\index{Graph!Adjazenzliste}\index{Adjazenzliste}
+\begin{align*}
+  \langle \hbox{Knotenliste} \rangle & :=
+  \langle \hbox{Anzahl Knoten} \rangle
+  \langle \hbox{Anzahl Kanten} \rangle
+  \langle \hbox{Knoten} \rangle\ldots \\
+  \langle \hbox{Knoten} \rangle & :=
+  \langle\hbox{Ausgangsgrad}\rangle
+  \langle\hbox{Nachfolger}\rangle\ldots
+\end{align*}
+Platzbedarf ist $2 + \lvert V \rvert + \lvert E \rvert$.
+Für \cref{fig:Graph} auf \cpageref{fig:Graph}: 6, 11, 2:2--3, 0, 3:1--4--6, 1:1, 2:3--5, 3:2--4--5.
+\emph{(Die Bindestriche und Doppelpunkte dienen der Übersicht und sind nicht Bestandteil der originalen Notation.)}
+
+\begin{description}
+  \item[Pro] Geringer Platzbedarf.
+  \item[Kontra] Überprüfung auf $(i,j) \in E$ ist im worst case $\mathcal{O}(n)$.
+\end{description}
+
+\subsubsection{Adjazenzmatrix}
+\index{Graph!Adjazenzmatrix}\index{Adjazenzmatrix}
+Eine Adjazenzmatrix $A$ ist definiert als:
+\[
+  (a_{ij}) := \begin{cases}
+    1 & \hbox{falls $(i,j) \in E$} \\
+    0 & \hbox{sonst}
+  \end{cases}
+\]
+Statt 1 und 0 können die Gewichte verwendet werden.
+Platzbedarf ist $\lvert V \rvert^2$.
+Für \cref{fig:Graph} auf \cpageref{fig:Graph}:
+\[
+  \begin{pmatrix}
+    \emptyset & 2         & 0         & \emptyset & \emptyset & \emptyset\\
+    \emptyset & \emptyset & \emptyset & \emptyset & \emptyset & \emptyset\\
+    7         & \emptyset & \emptyset & 1         & \emptyset & 6        \\
+    2         & \emptyset & \emptyset & \emptyset & \emptyset & \emptyset\\
+    \emptyset & \emptyset & 3         & \emptyset & 1         & \emptyset\\
+    \emptyset & 3         & \emptyset & 5         & 2         & \emptyset
+  \end{pmatrix}
+\]
+
+\begin{description}
+  \item[Pro] Überprüfung auf $(i,j) \in E$ ist $\mathcal{O}(1)$; erweiterbar für Kantenmarkierungen und Gewichte.
+  \item[Kontra] Platzbedarf ist immer $\lvert V \rvert^2$, ineffizient wenn $\lvert E \rvert \ll \lvert V \rvert^2$; Initialisierung ist $\mathcal{O}(n^2)$.
+\end{description}
+
+
+\chapter{Algorithmen}
+\section{Binäre Suche in Listen}
+\index{binäre Suche}
+\index{Suche!binär}
+Funktioniert ähnlich dem Bisektionsverfahren.
+\begin{mathalgo}{Binäre Suche}
+\cmt{Voraussetzung: $L$ ist sortiert.}
+\cmt{Gesucht wird nach $x$.}
+$l$ \= $1$
+$r$ \= $\#L$
+while $l \leq r$:
+\> $m$ \= $\lfloor(l+r)/2\rfloor$
+\> if $L[m] = x$:
+\>\> return $m$
+\> elseif $L[m] < x$:
+\>\> $l$ \= $m + 1$
+\> else: \cmt{$L[m] > x$}
+\>\> $r$ \= $m - 1$
+print "{}Element nicht gefunden."
+print "{}Erwartete Position: \textdollar$m$."
+\end{mathalgo}
+
+\vfil
+\section{Baumdurchläufe}
+\index{Traversierung}
+\begin{mathalgo}{Traversierung von Binärbäumen}
+traverse($n$) :=
+\> if mode $=$ preorder:
+\>\> if visit($n$):
+\>\>\> return true
+\> if traverse($n\mathtt{.left}$):
+\>\> return true
+\> if mode $=$ inorder:
+\>\> if visit($n$):
+\>\>\> return true
+\> if traverse($n\mathtt{.right}$):
+\>\> return true
+\> if mode $=$ postorder:
+\>\> if visit($n$):
+\>\>\> return true
+\> return false
+\end{mathalgo}
+\index{Levelorder}
+\begin{mathalgo}{Levelorder-Baumdurchlauf}
+Queue $q \= \{\mathtt{root}\}$
+while $q \neq \emptyset$:
+\> $u$ \= $q\mathtt{.get()}$
+\> visit($u$)
+\> $q$ \= $q \cup u\mathtt{.children}$
+\end{mathalgo}
+
+\vfil
+\pagebreak[3]
+\section{Tiefensuche}
+\ldots entspricht dem Preorder-Baumdurchlauf.
+\index{Tiefensuche}
+\index{Depth First Search}
+\begin{mathalgo}{Tiefensuche (Depth First Search)}
+DFS($v$) :=
+\> $v$.visited \= true
+\> if test($v$):
+\>\> return true
+\> for $w \in v\mathtt{.children}$:
+\>\> if $\neg w\mathtt{.visited}$:
+\>\>\> if DFS($w$):
+\>\>\>\> return true
+\> return false
+\end{mathalgo}
+
+\section{Breitensuche}
+\ldots entspricht dem Levelorder-Baumdurchlauf.
+\index{Levelorder}
+\index{Breadth First Search}
+\begin{mathalgo}{Breitensuche (Breadth First Search)}
+Queue $q$ \= $\{v_0\}$
+$v_0$.visited \= true
+while $q \neq \emptyset$:
+\> $v$ \= $q\mathtt{.get()}$:
+\> if test($v$):
+\>\> return true
+\> for $w \in v\mathtt{.children}$:
+\>\> if $\neg w\mathtt{.visited}$:
+\>\>\> $q$ \= $q \cup w$
+\>\>\> $w$.visited \= true
+\end{mathalgo}
+
+\section{Backtracking}
+\index{Backtracking}
+\ldots ist prinzipiell ein Preorder-Baumdurchlauf.
+\begin{itemize}
+  \item Jeder Knoten bzw.~der Pfad zu jedem Knoten beschreibt eine mögliche (Teil-)Lösung des Problems.
+        Zum Beispiel können in einer Wegsuche in einem Labyrinth die Knoten die Positionen des \enquote{Verirrten} angeben, und die Kanten die Bewegungsrichtungen links, geradeaus und rechts.
+  \item Der Prüfungsschritt auf die Akzeptanz eines Pfades als Lösung entspricht dem \code{visit()} im Preorder-Durchlauf.
+  \item Die Weiterverfolgung/Verfeinerung einer Lösung entspricht dem Besuch der Kindknoten.
+  \item Der Rückschritt \enquote{nach oben} im Baum ist der \enquote{Backtrack}; es werden dann andere Möglichkeiten zur Lösung gesucht.
+        Im Labyrinth entspräche dies der Entscheidung, an einem früheren Wegpunkt in eine andere Richtung zu gehen.
+  \item Das Backtracking kann optimiert werden, indem bspw.~überprüft wird, ob die aktuell betrachtete Lösung bereits schlechter ist als eine bekannte Teillösung (\emph{Branch-and-Bound}, siehe \cpageref{sec:branch-and-bound}).
+\end{itemize}
+
+\subsection{Rucksack-Problem}
+\index{Rucksack-Problem}
+Es sind von einigen Gegenständen $g_i$ mit Werten $v(g_i)$ und Gewichten $w(g_i)$ diese auszuwählen, welche in einen \enquote{Rucksack} mit Maximalbeladung $W$ passen und den maximalen Wert ergeben.
+Mathematisch (wobei $c(g_i) \in \{0,1\}$ die Entscheidung ist, ob der Gegenstand eingepackt wird):
+\[
+  \sum_i c(g_i) \cdot w(g_i) \leq W \: \land \: \sum_i c(g_i) \cdot v(g_i) = \max
+\]
+
+Da alle Kombinationen der binären Funktion $c(g_i)$ durchprobiert werden müssen, ist die Komplexität $\mathcal{O}(2^n)$.
+
+\section{\protect\noun{Dijkstra}-Algorithmus}
+\index{\noun{Dijkstra}}
+\ldots berechnet in einem Graphen die günstigsten Wege von einem bestimmten Startknoten zu allen anderen Knoten.
+Die Komplexität ist $\mathcal{O}(\lvert V \rvert^2)$.
+
+Bedingungen:
+\begin{itemize}
+  \item Jede Kante hat nicht-negative Kosten.
+  \item Nicht-existierende Kanten haben die Kosten~$\infty$.
+  \item Kanten, die denselben Knoten als Start und Ziel haben, haben die Kosten~0.
+\end{itemize}
+
+\begin{mathalgo}{\protect\noun{Dijkstra}-Algorithmus}
+\cmt{Sei $G$ der Graph und $v_0$ der Startknoten}
+for $v \in G\mathtt{.vertices}$:
+\> $v\mathtt{.cost}$ \= $\infty$
+$v_0\mathtt{.cost}$ \= $0$
+while $G\mathtt{.vertices.hasUnvisited()}$:
+\> \cmt{Unbesuchten Knoten mit minimalen Wegkosten finden}
+\> $v$ \= $G\mathtt{.vertices.findUnvisitedLeastCostVertex()}$
+\> $v\mathtt{.visited}$ \= true
+\> for $w \in v\mathtt{.unvisitedSuccessors}$:
+\>\> \cmt{Neue Gesamtwegkosten errechnen}
+\>\> $c$ \= $v\mathtt{.cost} + v\mathtt{.distanceTo(}w\mathtt{)}$
+\>\> if $c < w\mathtt{.cost}$:
+\>\>\> $w\mathtt{.cost}$ \= $c$
+\>\>\> $w\mathtt{.bestPredecessor}$ \= $v$
+\end{mathalgo}
+
+\section{\protect\noun{Bellman-Ford}-Algorithmus}
+\index{\noun{Bellman-Ford}}
+\ldots erweitert den \noun{Dijkstra}-Algorithmus um die Möglichkeit, negative Kosten (\enquote{Belohnungen}) für Kanten behandeln zu können, ohne dass negativ gewichtete Kanten mehrfach besucht werden.
+Nachteil: Die Komplexität ist~$\mathcal{O}(\lvert V \rvert \cdot \lvert E \rvert)$.
+\begin{itemize}
+  \item Baut auf dynamischer Programmierung auf.
+\end{itemize}
+\begin{mathalgo}{\protect\noun{Bellman-Ford}-Algorithmus}
+\cmt{Sei $G$ der Graph und $v_0$ der Startknoten}
+for $v \in G\mathtt{.vertices}$:
+\> $v\mathtt{.cost}$ \= $\infty$
+$v_0\mathtt{.cost}$ \= $0$
+repeat:
+\> changed \= false
+\> for $(a,b) \in G\mathtt{.edges}$:
+\>\> \cmt{$a$ und $b$ sind Start- und Zielknoten}
+\>\> if $a\mathtt{.cost} \neq \infty$:
+\>\>\> $b\mathtt{.cost}$ \= $\min\bigl( b\mathtt{.cost}; a\mathtt{.cost} + a\mathtt{.distanceTo(}b\mathtt{)} \bigr)$
+\>\>\> changed \= true
+until $\neg$changed
+\end{mathalgo}
+
+\section{\protect\noun{Floyd}-Algorithmus}
+\index{\noun{Floyd}}
+\ldots berechnet die kürzesten Wege zwischen \emph{allen} Knoten in einem Graphen.
+
+Bedingungen ähnlich wie beim \noun{Dijkstra}-Algorithmus:
+\begin{itemize}
+  \item Jede Kante hat nicht-negative Kosten.
+  \item Nicht-existierende Kanten haben die Kosten~$\infty$.
+  \item Kanten, die denselben Knoten als Start und Ziel haben, haben die Kosten~0.
+\end{itemize}
+
+Der Algorithmus nutzt eine $\lvert V \rvert \times \lvert V \rvert$-Matrix~$A$ zum Speichern der Distanzen zwischen den Knoten, sowie eine $\lvert V \rvert \times \lvert V \rvert$-Matrix~$P$ zum Speichern von Abkürzungen.
+Die Komplexität ist $\mathcal{O}(\lvert V \rvert^3)$.
+\begin{mathalgo}{\protect\noun{Floyd}-Algorithmus}
+\cmt{Gesamtwegkosten}
+$\mathbb{R}[\#G\mathtt{.vertices}, \#G\mathtt{.vertices}]$ $A$ \= $(\infty)$
+\cmt{Abkürzungen; $u \to P[u,v] \to v$ ist kürzer als $u \to v$}
+$V[\#G\mathtt{.vertices}, \#G\mathtt{.vertices}]$ $P$ \= $(\emptyset)$
+for $(u,v) \in G\mathtt{.edges}$:
+\> $A[u,v]$ \= $u\mathtt{.distanceTo(}v\mathtt{)}$
+\> $P[u,v]$ \= $u$
+for $u \in G\mathtt{.vertices}$:
+\> for $v \in G\mathtt{.vertices}$:
+\>\> for $w \in G\mathtt{.vertices}$:
+\>\>\> \cmt{Prüfen, ob der Weg von $v$ nach $w$ über $u$ kürzer ist}
+\>\>\> if $A[v,u] + A[u,w] < A[v,w]$:
+\>\>\>\> $A[v,w]$ \= $A[v,u] + A[u,w]$
+\>\>\>\> $P[v,w]$ \= $u$
+\end{mathalgo}
+
+\vfil
+\pagebreak[2]
+\section{\protect\noun{Warshall}-Algorithmus}
+\index{\noun{Warshall}}
+\ldots ist eine Modifikation des \noun{Floyd}-Algorithmus, um festzustellen, \emph{ob} ein Weg zwischen zwei Knoten existiert.
+
+Der Algorithmus nutzt eine bool'sche $\lvert V \rvert \times \lvert V \rvert$-Matrix~$A$, um zu speichern, ob Wege zwischen Knoten existieren.
+Die Komplexität ist ebenfalls $\mathcal{O}(\lvert V \rvert^3)$.
+\begin{mathalgo}{\protect\noun{Warshall}-Algorithmus}
+\cmt{Ist eine Verknüpfung vorhanden?}
+$\mathbb{B}[\#G\mathtt{.vertices}, \#G\mathtt{.vertices}]$ $A$ \= $(\mathtt{false})$
+for $(u,v) \in G\mathtt{.edges}$:
+\> $A[u,v]$ \= true
+for $u \in G\mathtt{.vertices}$:
+\> for $v \in G\mathtt{.vertices}$:
+\>\> for $w \in G\mathtt{.vertices}$:
+\>\>\> \cmt{Zwischen $v$ und $w$ ist evtl.~ein indirekter Weg über $u$}
+\>\>\> $A[v,w]$ \= $A[v,w] \lor (A[v,u] \land A[u,w])$
+\end{mathalgo}
+
+
+\chapter{Textsuche}
+\section{Allgemeines}
+\enquote{Textsuche} schließt alle Arten von Suchen ein, bei denen ein aus einem Alphabet bestehendes Wort durchsucht werden soll, und (falls vorhanden) die Position des gesuchten Musters im Wort ermittelt wird.
+Das Alphabet ist hierbei beliebig, aber definiert; so kann das Alphabet beispielsweise aus Gensequenzbausteinen bestehen oder aus Farben.
+
+\section{Naive/Brute-Force Suche}
+\index{naive Suche}
+\index{Brute Force Suche}
+Das Muster der Länge $M$ wird über das Wort der Länge $N$ geschoben, und \enquote{naiv} Zeichen für Zeichen verglichen.
+Die Komplexität ist (im Normalfall für $N \gg M$) $\mathcal{O}(N \cdot M)$, im best case $\mathcal{O}(M)$ und im worst case $\mathcal{O}(N)$.
+
+\section{\protect\noun{Knuth-Morris-Pratt}-Suche}
+\ldots verschiebt das Muster um mehr als ein Zeichen weiter, wenn der aktuelle Vergleich abgebrochen werden muss.
+Grundlage ist die Suche nach Mustern.
+Die Komplexität ist $\mathcal{O}(N+M)$, plus Aufbau einer Lookup-Tabelle $\mathcal{O}(M)$.
+
+\section{\protect\noun{Boyer-Moore-Sunday}-Suche}
+\index{\noun{Boyer-Moore-Sunday}}
+\ldots entspricht der Idee von \noun{Knuth-Morris-Pratt}, betrachtet aber das Zeichen im Wort \emph{hinter} dem Muster zur Bestimmung der neuen Suchposition.
+Das Muster wird dann solange nach rechts verschoben, bis der entsprechende Buchstabe im Wort mit einem Buchstaben im Muster übereinstimmt.
+\noindent\begin{center}
+\begin{tabular}{ll}
+text    & \ttfamily\obeyspaces UNGLEICHUNGSTEILUNG \\[-0.333em]
+pattern & \ttfamily\obeyspaces UNGLEICHUNGEN$\kern0.5pt\uparrow$ \\[-0.4em]
+        & \ttfamily\obeyspaces            $\kern0.5pt\uparrow$ \\ \hline
+text    & \ttfamily\obeyspaces UNGLEICHUNGSTEILUNG \\[-0.333em]
+pattern & \ttfamily\obeyspaces   UNGLEICHUNGEN$\kern0.5pt\uparrow$ \\[-0.4em]
+        & \ttfamily\obeyspaces      $\kern0.5pt\uparrow$ \\ \hline
+text    & \ttfamily\obeyspaces UNGLEICHUNGSTEILUNG \\[-0.333em]
+pattern & \ttfamily\obeyspaces             UNGLEIC\ldots
+\end{tabular}
+\end{center}
+
+\chapter{Reguläre Ausdrücke}
+\index{regulärer Ausdruck}
+\index{Verkettung}
+\index{Auswahl}
+\index{Hülle}
+Reguläre Ausdrücke sind eine Gruppe von Sprachen, die zur Beschreibung von Textmustern benutzt werden können; die Grundoperationen sind:
+\begin{description}
+  \item[Verkettung] Zwei reguläre Ausdrücke müssen direkt aufeinander folgen, z.\,B.~\texttt{abc}: nach \texttt{a} muss \texttt{b} folgen, danach muss \texttt{c} folgen.
+  \item[Auswahl] Von zwei (oder mehr) regulären Ausdrücken muss \emph{genau} einer zutreffen, z.\,B.~\texttt{a|b|c}: Entweder \texttt{a}, oder \texttt{b}, oder \texttt{c} muss zutreffen.
+  \item[Hüllenbildung] Ein regulärer Ausdruck darf mehrmals auftreten, z.\,B.~\texttt{a?b*c+}: nach einem optionalen \texttt{a} dürfen beliebig viele \texttt{b}'s folgen (auch null mal), danach müssen beliebig viele (mindestens eins) \texttt{c}'s folgen.
+    [Ein \emph{leerer} Match wird mit $\varepsilon$ dargestellt.]
+\end{description}
+Sofern nicht anders angegeben, wird für \enquote{echte} reguläre Ausdrücke die PCRE-Syntax benutzt, da diese die am häufigsten anzutreffende Syntax ist; aufgrund der Relevanz folgt am Ende des Kapitels eine \enquote{Übersetzungstabelle} von PCRE-Ausdrücken in Linux-Shell-Syntax, die zur Filterung von Dateinamen benutzt wird.
+
+\section{Übersicht}
+\subsection{Hüllenbildung}
+\begin{center}
+\begin{tabular}{ll}
+  \textbf{Ausdruck} & \textbf{Matcht auf\ldots} \\
+  \ttfamily\obeyspaces A? $=$ A\{0,1\} & $\varepsilon$, \texttt{A} \\
+  \ttfamily\obeyspaces A?B & \texttt{B}, \texttt{AB} \\
+  \ttfamily\obeyspaces A* $=$ A\{0,\}  & $\varepsilon$, \texttt{A}, \texttt{AA}, \texttt{AAA}, \texttt{AAAA}, \ldots \\
+  \ttfamily\obeyspaces A+ $=$ A\{1,\}  & \texttt{A}, \texttt{AA}, \texttt{AAA}, \texttt{AAAA}, \ldots \\
+  \ttfamily\obeyspaces A+B & \texttt{AB}, \texttt{AAB}, \texttt{AAAB}, \texttt{AAAAB}, \ldots
+\end{tabular}
+\end{center}
+
+\subsection{Auswahl}
+\begin{center}
+\begin{tabular}{ll}
+  \textbf{Ausdruck} & \textbf{Matcht auf\ldots} \\
+  \ttfamily\obeyspaces (A|D)C $=$ (AC|DC) & \texttt{AC}, \texttt{DC} \\
+  \ttfamily\obeyspaces [A-Z0-9] & \texttt{A}, \ldots, \texttt{Z}, \texttt{0}, \ldots, \texttt{9} \\
+  \ttfamily\obeyspaces [\^{}A-Z0-9] & Alles außer \texttt{[A-Z0-9]} \\
+  \ttfamily\obeyspaces [-\textbackslash+]?[0-9]+ & Alle Integer mit optionalem Vorzeichen \\
+\end{tabular}
+\end{center}
+
+\section{Finite Automaten}
+Reguläre Ausdrücke lassen sich durch \emph{finite Automaten} darstellen; diese sind zustandsbasierte Algorithmen, die aus den Ausdrücken generiert werden, und den zu durchsuchenden Text als Eingabe erwarten.
+
+\subsection{Graphische Darstellung}
+Finite Automaten lassen sich als gerichtete Graphen darstellen, die aus wenigen Grundkomponenten konstruiert werden können.
+\begin{figure}[htb]
+\centering\includegraphics{regexp-atom.pdf}
+
+{\footnotesize[Epsilon-Kanten können kollabiert werden, sofern sich dadurch keine neuen Zykel im Graphen ergeben.]}
+
+\caption{Komponenten finiter Automaten für reguläre Ausdrücke}
+\end{figure}
+
+Die Simulation des ermittelten Graphen erfolgt durch eine Art Breitensuche vom Startknoten aus.
+Dafür wird für jedes Eingabezeichen ermittelt, welche Kanten dem aktuellen Zeichen entsprechen, und die Zielknoten als \enquote{aktiv} markiert, sowie alle momentan besuchten Knoten als \enquote{inaktiv}; Epsilon-Kanten müssen hierbei rekursiv verfolgt und deren Knoten aktiviert werden, da diese im Prinzip nur eine künstliche Trennung von Knoten sind.
+[Schleifen von Knoten auf sich selbst verhindern ggf.~die Deaktivierung.]
+
+Der Automat ist dann erfolgreich, wenn keine Eingaben mehr vorliegen und der Ende-Knoten aktiv ist; er ist \emph{nicht} erfolgreich, wenn während der Simulation alle Knoten inaktiv werden, oder bei Ende der Eingabe der Ende-Knoten inaktiv ist.
+
+\begin{itemize}
+    \item Reguläre ausdrücke sind \emph{greedy}, d.\,h.~sie suchen das längste matchbare Muster; z.\,B.~matcht \texttt{(AB)*} den kompletten String \texttt{ABABABAB}.
+        [Eine \enquote{non-greedy} bzw.~\enquote{reluctant} Hüllenbildung lässt sich durch Anhängen eines Fragezeichens erreichen: \texttt{(AB)*?}.]
+    \item PCRE hat eine erweiterte Syntax für Auswahlen aus Zeichen (\texttt{[ABC]}), Zeichenbereichen nach ASCII (\texttt{[A-Za-z]}) und deren Komplementärmengen (\texttt{[\^{}A-Za-z]}).
+    \item Alle druckbaren Zeichen lassen sich durch \enquote{\code{.}} darstellen, Buchstaben durch \enquote{\code{\textbackslash w}} und Ziffern durch \enquote{\code{\textbackslash d}}.
+\end{itemize}
+
+\begin{table}[htb]
+\centering\begin{tabular}{ll}
+	\textbf{PCRE}     & \textbf{Bash}      \\
+	\texttt{.}        & \texttt{?}         \\
+	\texttt{.*}       & \texttt{*}         \\
+	\texttt{[a-z]}    & \texttt{[a-z]}     \\
+	\texttt{A|B|C}    & \texttt{\{A,B,C\}} \\
+	\texttt{(A|B|C)?} & \texttt{?(A|B|C)}  \\
+	\texttt{(A|B|C)*} & \texttt{*(A|B|C)}  \\
+	\texttt{(A|B|C)+} & \texttt{+(A|B|C)}  \\
+	\texttt{(A|B|C)}  & \texttt{@(A|B|C)}
+\end{tabular}
+
+\index{PCRE}\index{Bash}
+\caption{Reguläre Ausdrücke in der Bash-Shell und PCRE}
+\end{table}
+
+\begin{figure}[htb]
+\centering
+\includegraphics{regexp-float.pdf}
+
+\caption{Beispiel für einen finiten Automaten für das Matching von Gleitkommazahlen}
+\end{figure}
+
+
+
+\chapter{Sortierverfahren}
+
+\section{Allgemeines}
+\begin{table}[htb]
+\centering
+\begin{tabular}{rl}
+	                      \bfseries Komplexität & \bfseries Einordnung                                       \\
+	                    $\succ \mathcal O(n^2)$ & \enquote{Spaß}-Verfahren                                         \\
+	                                            & \small\itshape Bogo Sort                                   \\
+	                          $\mathcal O(n^2)$ & elementare Verfahren                                       \\
+	                                            & \small\itshape Bubble Sort, Insertion Sort, Selection Sort \\
+	      $\mathcal O\bigl(n\cdot\log(n)\bigr)$ & höhere Verfahren                                           \\
+	                                            & \small\itshape Heap Sort, Merge Sort, Quick Sort           \\
+	$\prec \mathcal O\bigl(n\cdot\log(n)\bigr)$ & spezialisierte Verfahren                                   \\
+	                                            & \small\itshape Radix Sort
+\end{tabular}
+
+\caption{Grobe Klassifizierung einiger Sortierverfahren}
+\end{table}
+
+\begin{table}[htb]
+\centering
+\begin{tabular}{rl}
+	\bfseries Verfahren & \bfseries Eigenschaften                        \\
+	         Quick Sort & Standardverfahren                              \\
+	         Merge Sort & für sequenzielle Daten geeignet,               \\
+	                    & wenig Speicherbedarf, stabil                   \\
+	     Insertion Sort & bei kleinen, teilweise vorsortieren Mengen     \\
+	         Radix Sort & hoher Programmieraufwand, dafür extrem schnell
+\end{tabular}
+
+\caption{Eigenschaften einiger Sortierverfahren}
+\end{table}
+
+Neben der Unterscheidung nach Komplexität werden die Verfahren auch noch danach kategorisiert, ob sie stabil sortieren (d.\,h., dass die Reihenfolge von Datensätzen mit gleichen Schlüsseln unverändert bleibt), wie viel Speicher sie benötigen, und ob sie rein vergleichsbasiert sind oder mit an das jeweilige Problem angepassten Verfahren sortieren.
+Außerdem funktionieren einige Verfahren nicht, wenn nur sequenziell auf Daten zugegriffen werden kann.
+
+\vfil
+\pagebreak[2]
+\section{Selection-Sort}
+\index{Selection-Sort}
+\ldots durchläuft die Liste und vertauscht Elemente durch Selektion lokaler Minima.
+\begin{mathalgo}{Selection Sort}
+\cmt{Sei $A$ die zu sortierende Liste.}
+for $i \= 1$ to $\#A$:
+\> \cmt{Das kleinste Element rechts von $A[i]$ ermitteln, einschließlich $A[i]$ selbst.}
+\> $m$ \= $i$
+\> for $j \= i+1$ to $\#A$:
+\>\> if $A[m] > A[j]$:
+\>\>\> $m$ \= $j$
+\> \cmt{Elemente vertauschen.}
+\> $A[m] \leftrightarrow A[j]$
+\end{mathalgo}
+
+\section{Insertion-Sort}
+\index{Insertion Sort}
+\ldots erstellt eine sortierte Liste, indem unsortierte Elemente an die sortierte Position eingefügt werden.
+\begin{mathalgo}{Insertion Sort}
+\cmt{Sei $A$ die zu sortierende Liste.}
+for $i \= 2$ to $\#A$:
+\> \cmt{Die Elemente $A[1,\ldots,i-1]$ sind an dieser Stelle sortiert, nun muss}
+\> \cmt{das Element $A[i]$ dort einsortiert werden.}
+\> $m$ \= $A[i]$
+\> for $j \= i$ downto 1:
+\>\> if $A[j-1] < m$:
+\>\>\> break
+\>\> \cmt{Elemente rechts der sortierten Position von $A[i]$ nach rechts verschieben.}
+\>\> $A[j]$ \= $A[j-1]$
+\> $A[j]$ \= $m$
+\end{mathalgo}
+
+\vfil
+\pagebreak[2]
+\section{Quick-Sort}
+\index{Quick Sort}
+\ldots sortiert durch rekursive Aufteilung der zu sortierenden Liste in zwei Teillisten.
+\begin{mathalgo}{Quick Sort}
+quicksort($A$) :=
+\> if $\#A > 1$:
+\>\> $m$ \= divide($A$)
+\>\> quicksort($A[1,\ldots,m-1]$)
+\>\> quicksort($A[m+1,\ldots,\#A]$)
+\hbox{\ }
+divide($A$) :=
+\> $l$ \= $1$ \cmt{linker Index}
+\> $r$ \= $\#A$ \cmt{rechter Index}
+\> $p$ \= $\lfloor \#A/2 \rfloor$ \cmt{Pivot-Index}
+\> repeat:
+\>\> \cmt{Erstes Element $A[l]$ größer/gleich dem Pivot-Element finden.}
+\>\> while $A[l] < A[p] \land l<\#A$:
+\>\>\> $l$ \= $l+1$
+\>\> \cmt{Letztes Element $A[r]$ kleiner/gleich dem Pivot-Element finden.}
+\>\> while $A[r] > A[p] \land r>1$:
+\>\>\> $r$ \= $r-1$
+\>\> if $l<r$:
+\>\>\> \cmt{Elemente vertauschen, sodass $A[l] \leq A[p] \leq A[r]$ gilt.}
+\>\>\> $A[l]$ $\leftrightarrow$ $A[r]$
+\> until $l = r$
+\> \cmt{$l$ und $r$ stehen nun auf einem neuen Pivot-Element;}
+\> \cmt{hier gilt nun $A[1,\ldots,l-1] \leq A[l] \leq A[l+1,\ldots,\#A]$}
+\> return $l$
+\end{mathalgo}
+
+\vfil
+\pagebreak[2]
+\section{Merge-Sort}
+\index{Merge Sort}
+\ldots sortiert durch das Mergen bereits sortierter Teillisten.
+\begin{mathalgo}{Merge Sort}
+mergesort($A$) :=
+\> if $\#A > 1$:
+\>\> mergesort($A[1,\ldots,\lfloor\#A/2\rfloor]$)
+\>\> mergesort($A[\lfloor\#A/2\rfloor+1,\ldots,\#A]$)
+\>\> merge($A$)
+\hbox{\ }
+merge($A$) :=
+\> $l$ \= 1 \cmt{linker Index}
+\> $m$ \= $\lfloor \#A/2 \rfloor$ \cmt{letzter Index der linken Teilliste}
+\> $r$ \= $m+1$ \cmt{rechter Index}
+\> while $l \leq m \land r\leq\#A$:
+\>\> if $A[l] \leq A[r]$:
+\>\>\> $M$ \= $M \cup A[l]$
+\>\>\> $l$ \= $l+1$
+\>\> else:
+\>\>\> $M$ \= $M \cup A[r]$
+\>\>\> $r$ \= $r+1$
+\> $A$ \= $M \cup A[l,\ldots,m] \cup A[r,\ldots,\#A]$
+\end{mathalgo}
+
+\section{Heap-Sort}
+\index{Heap Sort}
+\ldots sortiert durch Aufbau eines Heaps (siehe \cpageref{subsection:binheap}) und der Entnahme der Elemente in sortierter Reihenfolge.
+\begin{mathalgo}{Heap Sort}
+heapsort($A$) :=
+\> convertToHeap($A$) \cmt{Die Konvertierung ist hier nicht näher erläutert.}
+\> for $i \= \#A$ downto $1$:
+\>\> \cmt{Größtes Element entnehmen und ans Ende einfügen.}
+\>\> $A[i]$ \= $A\mathtt{.takeTop()}$
+\end{mathalgo}
+
+\section{Radix-Sort}
+\index{Radix Sort}
+\ldots bezeichnet eine Gruppe von Sortierverfahren, bei denen die Elemente wiederholt anhand eines Schlüsselteils in Gruppen aufgeteilt werden (Partitionierungsphase).
+Diese Gruppen werden dann anhand des Teilschlüssels wieder zu einer Gesamtliste verbunden (Sammelphase), und eine erneute Gruppierung anhand des nächst-niederwertigen Schlüsselteils vorgenommen.
+[Z.\,B.~lassen sich Integer bis $999$ sortieren, indem zunächst anhand der höchsten Ziffer gruppiert wird, dann anhand der mittleren Ziffer, und zuletzt anhand der niedrigsten Ziffer.]
+
+\subsection{Bucket-Sort}
+\index{Bucket Sort}
+\ldots beschreibt einen Spezialfall des Radix-Sort, bei dem nur die erste Partitionierungsphase durchgeführt wird, und die Gruppen mit herkömmlichen Algorithmen sortiert werden.
+
+\chapter{Entwurfsprinzipien}
+\index{Greedy}
+\section{Greedy}
+Wenn ein Algorithmus \enquote{greedy} bzw.~\enquote{gierig} ist, verfolgt dieser nur das \emph{lokale} Optimum, ohne das globale Optimum im Blick zu haben; dies führt in der Regel nur zu Näherungslösungen.
+In der Tiefensuche in einem Graphen entspricht dies der Verfolgung von Kanten mit niedrigsten Kosten, obwohl dies über viele günstige Kanten summiert schlechter sein kann als ein direkter Weg über eine dadurch nicht betrachtete Kante.
+
+\section{Divide and Conquer}
+\index{Divide and Conquer}
+\enquote{Teile und herrsche} (korrekterweise eigentlich \enquote{aufteilen und erobern}); beschreibt den Fall, in dem ein großes Problem rekursiv in gleichartige Teilprobleme zerlegt werden kann (divide), deren Teillösungen in Summe das Gesamtproblem lösen (conquer).
+
+\section{\label{sec:branch-and-bound}Branch and Bound}
+Das Problem wird in mehrere Teilprobleme aufgeteilt (branching), von denen diejenigen nicht weiter betrachtet werden, deren obere Schranke für die Lösungsqualität nicht besser als eine bereits bekannte Gesamtlösung sein kann (bounding).

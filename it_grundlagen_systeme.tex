@@ -1,0 +1,1714 @@
+% !TeX root = matze_fruehstueckt.tex
+\newminted{nasm}{linenos,numbersep=5pt,frame=lines,framesep=2mm}
+\newminted{cpp}{linenos,numbersep=5pt,frame=lines,framesep=2mm}
+
+\index{Endlosschleife|see{Schleife!endlos}}
+\index{Schleife!endlos|see{Endlosschleife}}
+\index{Rekursion|see{Rekursion}}
+
+
+\chapter{Zahlendarstellungen}
+\begin{description}
+  \item [{Byte}] \index{Zahlendarstellung}\index{Byte|see{Zahlendarstellung}}\index{Zahlendarstellung!Byte}
+	8 Bit
+  \item [{Vorzeichenlos}] \index{vorzeichenlos}\index{Zahlendarstellung!vorzeichenlos}
+	Wertebereich bei $n$ Stellen: 0 bis $2^n-1$.
+  \item [{Vorzeichenbit}] \index{Vorzeichenbit}\index{Zahlendarstellung!Vorzeichenbit}
+    Das höchste Bit wird als Vorzeichen gewertet. [Daraus ergibt sich der Umstand, dass zwei Darstellungen für die 0 möglich sind: $+0$ und $-0$.]
+    Der Wertebereich bei $n$ Stellen ist $-(2^{n-1}-1)$ bis $2^{n-1}-1$.
+
+	Die Subtraktion kann nicht auf die Addition zurückgeführt werden, daher ist ein zusätzliches Steuerwerk zur Subtraktion nötig.
+
+  \item [{Einerkomplement}] \index{Komplement!logisches}\index{Komplement!Einer--}\index{Zahlendarstellung!Einerkomplement}\index{Einerkomplement}
+	\emph{Logische Komplementbildung}
+
+	Erweiterung der einfachen Vorzeichenbitdarstellung um Subtraktionen auf Additionen zurückführen zu können.
+	\begin{itemize}
+	  \item Der Wertebereich bei $n$ Stellen ist $-(2^{n-1}-1)$ bis $2^{n-1}-1$.
+	  \item Das höchstwertige Bit ist gesetzt, falls die Zahl negativ ist.
+	  \item Negation durch binäre Komplementbildung (\code{NOT}).
+	\end{itemize}
+
+	Addition und Subtraktion benötigen hier keine besondere Vorzeichenbehandlung, allerdings ist die Berechnung komplexer als beim Zweierkomplement, da der Übertrag bei der Addition zum Ergebnis hinzu addiert werden muss.
+
+	Siehe \cite{wiki:Einerkomplement}.
+
+  \item [{Zweierkomplement}] \index{Komplement!arithmetisches}\index{Komplement!Zweier--}\index{Zahlendarstellung!Zweierkomplement}\index{Zweierkomplement}
+	\emph{Arithmetische Komplementbildung}
+
+	\begin{itemize}
+	  \item Erweiterung des Einerkomplements.
+	  \item Der Wertebereich bei $n$ Stellen ist $-2^{n-1}$ bis $2^{n-1}-1$.
+	  \item Negation durch binäre Komplementbildung (mit \code{NOT}) und Addition von~$1$.
+	  \item Addition und Subtraktion benötigen keine besondere Vorzeichenbehandlung.
+	\end{itemize}
+
+	Dadurch werden das Problem der doppelten Null und das Problem der Addition des Übertrags behoben.
+	[Daraus ergibt sich allerdings der Umstand, dass die kleinste darstellbare negative Zahl $-2^{n-1}$ bei Negation wieder sich selbst ergibt.]
+
+	Siehe \cite{wiki:Zweierkomplement}.
+
+  \item [{Festkommazahlen}] \index{Zahlendarstellung!Festkommazahl}\index{Festkommazahl}
+	Bestehen aus $n$ Vorkommabits und $m$ Nachkommabits.
+
+	Siehe \cite{wiki:Festkommazahl}.
+
+  \item [{Gleitkommazahlen~(IEEE~754)}] \label{Gleitkommazahlen(IEEE754)}\index{single|see{Gleitkommazahl}}\index{IEEE 754|see{Gleitkommazahl}}\index{Zahlendarstellung!Gleitkommazahl}\index{Gleitkommazahl}
+
+	Der \mbox{\emph{single}}-Datentyp ist 32~Bit groß.
+	Mathematische Darstellung: $(-1)^s \cdot m\cdot2^e$.
+	Der \emph{Exponent} $e$ hat den Wertebereich $-126$ bis 127 (wobei $e=E-B$ gilt, und $E$ im Datenwort gespeichert wird; $B$ ist der sog.~\emph{Bias} und beträgt 127).
+	Die \index{Mantisse|see{Gleitkommazahl}}\emph{Mantisse} $m$ belegt 23~Bit.
+	Die Darstellung ist \emph{normalisiert}, d.\,h.~der Exponent wird so berechnet, dass genau eine 1 vor dem Komma steht; somit kann dieses eine Bit gespart werden (\mbox{\emph{Hidden Bit}})\index{Hidden Bit|see{Gleitkommazahl}} und steht dem \index{Vorzeichenbit}\emph{Vorzeichenbit} $s$ zur Verfügung.
+
+	Berechnungen erfordern Angleichung der Exponenten und anschließende Normalisierung des Ergebnisses; Berechnungen werden mit der maximal möglichen Genauigkeit durchgeführt.
+	Die Zahlen sind logarithmisch verteilt (zwischen 1 und 10 liegen genauso viele Werte wie zwischen 10 und 100).
+	Die ersten Prozessoren besaßen noch keine eingebaute FPU, diese konnte jedoch nachträglich als Zusatzprozessor eingebaut werden.
+
+	Siehe \cite{wiki:IEEE754,wiki:Gleitkommazahl}.
+
+\end{description}
+
+\begin{table}
+\centering
+\begin{tabular}{ccc}
+\bfseries Exponent $e$ & \bfseries Mantisse $m$ & \bfseries Bedeutung \\
+$-127$ & $=0$ & $\pm0$ \\
+$-127$ & $\neq0$ & $0.m$ \\
+$-126\leq e\leq127$ & $\neq0$ & $1.m$ \\
+$-128$ & $=0$ & $\pm\infty$ \\
+$-128$ & $\neq0$ & NaN
+\end{tabular}
+\caption{Sonderwerte IEEE 754}
+\end{table}
+
+
+\begin{table}
+\centering
+\begin{tabular}{cccc}
+\bfseries Größe & \bfseries Wertebereich & \bfseries C++ & \bfseries Java \\
+8 Bit & $-128\ldots+127$ & \code{char} & \code{byte} \\
+16 Bit & $-32\,768\ldots+32\,767$ & \code{short} & \code{short} \\
+32 Bit & $-2\,147\,483\,648\ldots+2\,147\,483\,647$ & \code{int} & \code{int} \\
+64 Bit & ca.~$\pm9\cdot10^{18}$ & \code{long} & \code{long} \\
+32 Bit & $\pm1.4\cdot10^{-45}\ldots\pm3.4\cdot10^{38}$ & \code{float} & \code{float} \\
+64 Bit & $\pm4.9\cdot10^{-324}\ldots\pm1.7\cdot10^{308}$ & \code{double} & \code{double}
+\end{tabular}
+\caption{Wertebereiche Datentypen}
+\end{table}
+
+
+
+\section{Stellenwertsystem}
+
+\index{Stellenwertsystem}
+Aus einem Eingabealphabet $\Sigma_E$ mit der Basis $b = \lvert \Sigma_E \rvert$ und den Stellen $\sigma_i$ lässt sich ein Stellenwertsystem nach dem Schema $\sum_i b^i \sigma_i$ aufbauen.
+Das Eingabealphabet $\Sigma_E$ wird bijektiv auf die Werte $0\ldots\lvert\Sigma_E\rvert-1$ abgebildet.
+
+Als Symbol für das Eingabealphabet wird i.\,d.\,R.~das große Sigma $\Sigma$ verwendet.
+Schreibt man Zahlen auf, die eine andere \index{Stellenwertsystem!Basis}Basis als 10 haben, so setzt man die Zahl in Klammern und schreibt die Basis als Index: $(1111)_2=15$.
+
+Beispiel \index{Stellenwertsystem!Dezimalsystem}\index{Dezimalsystem|see{Stellenwertsystem}}
+Dezimalsystem mit $\Sigma_E = \{0,\ldots,9\}$ und $b=10$: $5678=\sum_i \sigma_i 10^i = 10^0 \cdot 8 + 10^1 \cdot 7 + 10^2 \cdot 6 + 10^3 \cdot 5$.
+
+Beispiel \index{Stellenwertsystem!Hexadezimalsystem}\index{Hexadezimalsystem|see{Stellenwertsystem}}Hexadezimalsystem mit $\Sigma_E = \{0,\ldots,9,A,\ldots,F\}$ und $b=16$, wobei $A\mapsto10,\ldots,F\mapsto15$: $(123)_{16} = 3 \cdot 16^0 + 2 \cdot 16^1 + 1 \cdot 16^2 = 3+32+256 = 291$.
+
+
+\chapter{Codierungen}
+
+
+\section{ASCII}
+
+\index{ASCII}
+ASCII steht für \foreignlanguage{english}{\emph{American Standard Code for Information Interchange}}.
+
+Wichtige Zeichen:
+
+\noindent\begin{center}
+\begin{tabular}{rl}
+  \code{0x00}         & \code{NUL}\\
+  \code{0x0A}         & \code{LF} (\mbox{Line Feed})\\
+  \code{0x0D}         & \code{CR} (\mbox{Carriage Return})\\
+  \code{0x20}         & \code{SP} (\mbox{Space}\slash{}Leerzeichen)\\
+  \code{0x30-{}-0x39} & Ziffern \code{0} bis \code{9}\\
+  \code{0x40}         & \code{@}\\
+  \code{0x41-{}-0x5A} & \code{A} bis \code{Z}\\
+  \code{0x61-{}-0x7A} & \code{a} bis \code{z}
+\end{tabular}
+\end{center}
+
+
+\section{Unicode}
+\begin{description}
+  \item [{Zielsetzung}] \index{Unicode}
+	Ein eindeutige Code für jedes Zeichen weltweit.
+  \item [{Aufbau}]
+	16 Bit Wortlänge, die ersten 128~Zeichen entsprechen dem ASCII-Code.
+\end{description}
+
+\section{Unicode Transformation Format~(UTF)}
+
+\begin{description}
+  \item [{Zielsetzung}] \index{Unicode Transformation Format}\index{UTF|see{Unicode Transformation Format}}
+	Verlustfreie Kompression von Unicode.
+  \item [{UTF-8}]
+	Je Zeichen 1--4 Bytes, variable Länge.
+  \item [{UTF-16}]
+	Je Zeichen 2 oder 4 Bytes, variable Länge.
+  \item [{UTF-32}]
+	Je Zeichen 4 Bytes, feste Länge.
+  \item [{Codierung~von~UTF-8}]
+	Das erste Byte beginnt mit $n$ Einsen, gefolgt von einer 0.
+	Die Anzahl $n$ der Einsen gibt an, aus wie vielen Bytes das Zeichen besteht.
+	Ist $n>0$, so beginnen die folgenden $n-1$ Bytes jeweils mit den Bits $(10)_2$.
+	Die restlichen Bits stehen jeweils für die Codierung des Zeichens zur Verfügung.
+
+	Beispiel $1110 \, xxxx \mid 10xx \, xxxx \mid 10xx \, xxxx$: Es ist $n=3$, und es stehen 16 Bits zur Zeichencodierung zur Verfügung.
+\end{description}
+
+\section{\protect\noun{Hamming}-Code}
+\begin{description}
+  \item [{Motivation}] \index{Hamming}
+	Erkennung und Korrektur von \index{Übertragungsfehler}Übertragungsfehlern.
+  \item [{Prinzip}]
+	Ein Datenwort aus $N$ Bits wird in $A$ Datenbits und $P$ \index{Korrekturbit}\index{Paritätsbit}Korrektur-/Pa\-ri\-täts\-bits mit $N=A+P$ unterteilt.
+
+	Beispiel für $A=4$ und $P=3$: Errechnung der Korrekturbits mit 
+	\begin{align*}
+	  e_1 & = a_1 + a_2 + a_3 \bmod 2\\
+	  e_2 & = a_2 + a_3 + a_4 \bmod 2\\
+	  e_3 & = a_1 + a_2 + a_4 \bmod 2
+	\end{align*}
+
+	Wenn $\forall i:\, p_i = e_i$ erfüllt ist, so sind die Daten korrekt übermittelt worden.
+
+	Siehe \cite{wiki:Hammingcode,Voss2011}
+\end{description}
+
+\section{EAN (\foreignlanguage{english}{European Article Number})}
+\begin{description}
+  \item [{Aufbau}]
+	Besteht aus 13 Ziffern
+
+	2 Ziffern Ländercode, 5 Ziffern Hersteller, 5 Ziffern Produktnummer, 1 \index{Prüfziffer}Prüfziffer
+
+  \item [{Prüfsummenberechnung}]
+	Jede Ziffer mit geradem Index wird zunächst mit 3 multipliziert, dann werden alle Zahlen aufaddiert.
+	Die Prüfziffer der Summe $s=\sum_{i=0}^{12} a_i\cdot \bigl( 1+2\cdot(i\bmod 2) \bigr)$ ist dann $p=(-s)\bmod 10$ (somit ist $(s+p)\bmod 10=0$).
+\end{description}
+
+\section{Hash-Summen}
+\begin{description}
+  \item [{Motivation}] \index{Hash}
+	Erkennung von Übertragungsfehlern.
+  \item [{Prinzip}] 
+	Mit komplexen mathematischen Verfahren wird dafür gesorgt, dass die Veränderung eines einzelnen Bits im Eingabedatenstrom mit großer Wahrscheinlichkeit eine große Veränderung des Ausgabeworts verursacht.
+  \item [{Bekannte~Verfahren}]
+	\gls{md5}, \gls{sha1}, \gls{crc32}
+\end{description}
+
+\section{\protect\noun{Huffman}-Codierung}
+\begin{description}
+  \item [{Zielsetzung}] \index{Huffman}
+	Verlustfreie \index{Kompression}Kompression durch Codierung von häufig vorkommenden Zeichen mit kurzen Codes und selten vorkommenden Zeichen mit langen Codes.
+\end{description}
+\paragraph*{Prinzip}
+\begin{labeling}{Schritt~1}
+    \item [{\emph{Schritt~1}}]
+        Zählen der Häufigkeiten aller Zeichen im Eingabestrom.
+        Kombination aus Häufigkeit und Zeichen als Knoten notieren.
+    \item [{\emph{Schritt~2}}]
+        Bilde einen neuen Knoten, der die zwei geringsten Häuf\-ig\-keit\-en als Unterknoten hat.
+        Der Wert des neuen Knotens ist die Summe der beiden Unterknoten.
+        Wiederhole diesen Schritt mit allen \enquote{Top-Level-Knoten}, bis nur noch ein einziger Wurzelknoten übrig ist.
+    \item [{\emph{Schritt~3}}]
+        Kodierung des Pfades von der Wurzel zu den Zeichen, wobei Links und Rechts eindeutig als 0 und 1 (oder andersherum) kodiert werden.
+\end{labeling}
+
+\begin{figure}[htb]
+\noindent\centering\includegraphics{huffman-tree.pdf}
+
+\begin{quote}
+    \small[Bananenbonbon: A=\code{101}, B=\code{11}, E=\code{1000}, N=\code{0}, O=\code{1001}, gesamt \code{11101\,01010100\,00111001\,01110010} (30~bits).
+Bei einfacher Zeichencodierung wären bei 5~Bits pro Zeichen $5\cdot13=65$~Bits nötig.]
+\end{quote}
+
+\caption{Huffman-Codierung}
+\end{figure}
+
+
+\chapter{\noun{Von-Neumann} Rechnerarchitektur}
+
+
+\section{Komponenten}
+\begin{description}
+  \item [\gls{alu}] \index{Arithmetic Logic Unit}
+	Arithmetic Logic Unit; führt Rechenoperationen und logische Ver\-knüpf\-ung\-en durch.
+  \item [{Control~Unit}] \index{Control Unit}\index{Leitwerk}\index{Steuerwerk}
+	Steuer-/Leitwerk; interpretiert Programmanweisungen und koordiniert Datentransfers und ALU.
+  \item [\gls{cpu}] \index{Central Processing Unit}
+	besteht aus \gls{alu} und Control Unit.
+  \item [\gls{ram}] \index{Random Access Memory}
+	Lese- und Schreibzugriffe möglich, für Programme und Daten genutzt.
+  \item [\gls{rom}] \index{Read Only Memory}
+	Nur Lesezugriff möglich.
+  \item [{Memory}] \index{Memory}\index{Speicherwerk}
+	Speicherwerk; Speichert Programme und Daten, besteht aus RAM und ROM.
+  \item [{Bus-System}] \index{Adressbus}\index{Datenbus}\index{Bus-System}
+	Besteht aus Datenbus zur Übertragung von Daten zwischen CPU und Speicher und Adressbus zur Bestimmung der benutzten Daten im Speicher.
+  \item [{I/O-Unit}] \index{I/O-Unit}
+	Steuert das Bus-System.
+\end{description}
+
+Kernpunkte:
+\begin{itemize}
+  \item Rechnerstruktur ist unabhängig vom bearbeiteten Problem.
+  \item Programme und Daten sind im selben Speicher und können modifiziert werden.
+  \item Der Hauptspeicher besteht aus adressierbaren Zellen gleicher Größe.
+  \item Alle Komponenten sind der \foreignlanguage{english}{Control Unit} unterworfen.
+\end{itemize}
+
+\subsection{CPU}
+
+\index{Central Processing Unit}
+Ausführung von arithmetischen und logischen Operationen. Zwischenspeicherung mittels sog.~\enquote{\index{Register}Registern}:
+\begin{itemize}
+  \item \index{Akkumulator}
+	Akkumulator-Register \emph{A} (Intel-Architektur: \code{al} (8 Bit), \code{ah} (8 Bit), \code{ax} (16 Bit), \code{eax} (32 Bit), \code{rax} (64 Bit))
+  \item Operanden-Register \emph{MBR} (\foreignlanguage{english}{Memory Buffer Register})
+  \item \index{Übertrag}
+	Übertrags-Register \emph{L} (\mbox{Latch})
+	[Auch als \index{Carry Bit}\foreignlanguage{english}{\emph{Carry Bit}} bekannt.]
+\end{itemize}
+
+\subsection{Control Unit}
+
+\index{Control Unit}
+Überwachung der Programmdurchführung:
+\begin{enumerate}
+  \item Adresse des ersten Befehls in den \index{Befehls-Zähler}\emph{Befehls-Zähler}
+	(\gls{pc} \index{Program Counter}) laden.
+
+	Intel-Architektur: \index{Instruction Pointer}\emph{Instruction Pointer}\emph{ \code{\emph{ip}} (16 Bit), \code{\emph{eip}} (32 Bit), \code{\emph{rip}} (64 Bit).}
+
+  \item Control Unit holt den Befehl in das \emph{Befehls-Register}.
+
+	Intel-Architektur: intern im Prozessor.
+
+  \item Befehlszähler um 1 erhöhen.
+
+	Intel-Architektur: Da die Befehlslängen variabel sind, wird der Instruction Pointer entsprechend verändert.
+
+  \item Ausführung des Befehls.
+  
+  \item Weiter zu 2.
+\end{enumerate}
+
+\subsection{RAM}
+\begin{description}
+  \item [\gls{sram}] \index{Random Access Memory}\index{Random Access Memory!Static}\index{Static RAM|see{Random Access Memory}}
+	Schneller Befehlsspeicher (Cache).
+
+	Größenordnung des SRAM bei ca.~4 bis 256 KB, Zugriffszeit entspricht i.\,d.\,R.~der Taktfrequenz des Prozessors.
+	Sehr teuer.
+	Als \emph{$1^{\hbox{st}}$ Level Cache} direkt im Prozessor integriert.
+
+  \item [\gls{dram}] \index{Random Access Memory!Dynamic}\index{Dynamic RAM|see{Random Access Memory}}
+	Eigentlicher Arbeitsspeicher.
+
+	Größere Kapazität, aber auch höhere Zugriffszeiten, siehe dazu auch \cref{sec:Flaschenhals}; wesentlich kostengünstiger als SRAM.
+\end{description}
+
+\subsection{Bus}
+\begin{description}
+  \item [{Datenbus}] \index{Bus-System}\index{Datenbus}
+	Bidirektional.
+
+	Überträgt die Daten zwischen den Komponenten im Computer.
+	Die \index{Computerarchitektur}\index{Architektur|see{Computerarchitektur}}Computerarchitektur (16, 32 oder 64 Bit) gibt i.\,d.\,R.~Auskunft darüber, wie viele Bits der Datenbus parallel übertragen kann.
+
+  \item [{Adressbus}] \index{Adressbus}
+	Unidirektional.
+
+	Gibt die Speicheradressen an, auf die über den Datenbus zugegriffen wird.
+	Die Computerarchitektur gibt die Breite des Busses an, bei $n$ Leitungen kann man auf $2^n$ Speicherstellen zugreifen (daher ist die 32-Bit Architektur auf $2^{32}$ Bytes bzw.~4~GB Arbeitsspeicher begrenzt).
+
+  \item [{Steuer-/Kontrollbus}] \index{Kontrollbus}\index{Steuerbus}
+	Koordiniert Daten- und Adressbus.
+\end{description}
+
+\section{\label{sec:Flaschenhals}Flaschenhals}
+
+\index{Flaschenhals}
+Während die \index{Ausführungszeit}Ausführungszeit für einen Befehl relativ kurz ist, dauert das Lesen und Schreiben von Speicher i.\,d.\,R.~relativ lange.
+Die CPU muss also auf den Speicher warten.
+
+Der Kommunikationsengpass zwischen Speicher und CPU heißt \noun{Von-Neu\-mann}-Flasch\-en\-hals.
+
+
+\subsection[Erweiterungen]{Erweiterungen zur Umgehung des Problems}
+\begin{itemize}
+  \item Parallelität zwischen Verarbeitungs- und Ein-/Ausgabevorgängen.
+
+	Stichwort: \gls{dma}\index{Direct Memory Access}.
+	Dies ist normalerweise eine eigene Komponente im Prozessor oder Rechner, die ohne Belastung der CPU parallel Daten kopieren kann.
+
+  \item Große Registeranzahl: Ermöglicht, dass Zwischenwerte in der CPU gehalten werden können und somit nicht in den Speicher geschrieben werden müssen.
+
+  \item \index{Cache}
+	Caches: Kleiner, aber schneller CPU-interner Zwischenspeicher.
+	Basiert auf der Idee, dass Speicherzugriffe i.\,d.\,R.~\enquote{räumlich nahe} stattfinden.
+	Siehe \cpageref{sec:caches}.
+
+	Ist eine Kopie eines Arbeitsspeicherbereichs, der nur bei Bedarf zu\-rück\-ge\-schrieb\-en wird.
+\end{itemize}
+
+\subsection{\noun{Harvard}-Architektur}
+\begin{description}
+  \item [{Idee}] \index{Harvard-Architektur}
+	Aufteilung von Befehls- und Datenspeicher, sowie Trennung der Busse für Befehle und Daten.
+  \item [{Ziele}]
+	Parallele Bereitstellung von Befehlen und Daten sowie erhöhte Sicherheit, da Befehle sich nicht mehr selbst modifizieren können (Über\-lauf\-schutz).
+\end{description}
+
+\section{RISC/CISC}
+\begin{description}
+  \item [\gls{risc}] \index{Reduced Instruction Set Computer}
+	Verzichtet auf komplexe Befehle, einzelne Befehle sind fest \index{verdrahtet}verdrahtet (in Hardware gegossen).
+	I.\,d.\,R.~sind viele Register vorhanden; die Abarbeitungszeit pro Befehl ist nahezu gleich.
+
+	\begin{description}
+	  \item [{Pro}]
+		Bessere \index{Optimierung}Optimierung durch Compiler.
+	  \item [{Kontra}]
+		Größere Programmdateien wegen gleich großer Befehle.
+	\end{description}
+
+	\begin{description}
+	  \item [{Kriterien~für~RISC-Architekturen}] ~
+		\begin{itemize}
+		  \item Mindestens 80\% aller Befehle werden in einem einzigen \index{Taktzyklus}Taktzyklus durchgeführt.
+		  \item Alle Befehle benötigen höchstens ein \index{Maschinenwort}Maschinenwort zur Codierung.
+		  \item Weniger als 128 \index{Maschinenbefehl}Maschinenbefehle.
+		  \item Weniger als 4 \index{Adressierungsart}Adressierungsarten.
+		  \item Weniger als 4 \index{Befehlsformat}Befehlsformate.
+		  \item Speicherzugriffe nur über Load/Store-Befehle.
+		  \item Mehr als 32 \index{Prozessorregister}Prozessorregister.
+		  \item Festverdrahtete Befehlsverarbeitung, also keine \index{Mikroprogrammierung}Mikroprogrammierung wie bei CISC.
+		\end{itemize}
+	  \item [{Pipelining}] \index{Pipelining}
+		Idee: Unabhängige Hardwareeinheiten werden, sofern möglich, unbedingt parallel benutzt.
+		Im Falle der RISC-Architektur können folgende Schritte einer \index{Befehlsverarbeitung}Befehlsverarbeitung parallelisiert werden:
+		\begin{labeling}{MEM}
+		  \item [{IF}]  Instruction Fetch; Befehl lesen
+		  \item [{ID}]  Instruction Decode; Befehl identifizieren und Daten bereitstellen
+		  \item [{EX}]  Execute; Ausführung
+		  \item [{MEM}] Memory Access; Speicherzugriff (Load/Store)
+		  \item [{WB}]  Writeback; Zurückschreiben des Operationsergebnisses
+		\end{labeling}
+
+		Problematisch sind \emph{Data Hazards}, \emph{Structural Hazards} und \emph{Control Hazards}, welche das Pipelining verhindern.
+		\begin{description}
+		  \item [{Data~Hazard}] \index{Data Hazard}\index{Hazard!Data--}
+			beschreibt den Fall, dass ein auszuführender Befehl auf das Ergebnis des vorherigen Befehls warten muss.
+			Lösungen sind prozessorinterne \enquote{Shortcuts} zwischen den Stufen einer Befehlsverarbeitung oder gezieltes Einfügen von \enquote{No-Ops} in den Code durch den Compiler.
+		  \item [{Structural~Hazard}] \index{Structural Hazard}\index{Hazard!Structural--}
+			beschreibt den Fall, dass nicht-parallelisierbare Hardware von aufeinanderfolgenden Befehlen benutzt wird.
+			Wird durch \index{Replizierung}Replizierung der entsprechenden Hardware und Reorganisation der Befehle umgangen.
+		  \item [{Control~Hazard}] \index{Control Hazard}\index{Hazard!Control--}
+			beschreibt den Fall, dass Sprünge im Programm den nächsten auszuführenden Befehl verändern und das Pipelining damit unterbrechen.
+			Lösungen sind \index{Branch Prediction}\enquote{Branch Prediction} (\index{Sprungvorhersage}Sprungvorhersage) und \index{Branch Delay Slot}\enquote{Branch Delay Slots}.
+		\end{description}
+	\end{description}
+
+  \item [\gls{cisc}] \index{Complex Instruction Set Computer}
+    Komplexe Befehle, Befehlssatz meist in Form von \index{Microcode}Microcode (quasi Software für einen Befehlsprozessor im Prozessor); enthält weniger Register; die Abarbeitungszeit pro Befehl ist unterschiedlich.
+	\begin{description}
+	  \item [{Pro}]    Weniger Hauptspeicherbedarf durch die komplexen Befehle.
+	  \item [{Kontra}] Die komplexen Befehle werden häufig nicht voll ausgenutzt.
+	\end{description}
+\end{description}
+
+\section{\label{sec:caches}Caches}
+
+\index{Cache}
+Caches sind schnell, aber klein.
+Sie enthalten nur kleine Teile des Hauptspeichers, um die Datenverarbeitung aufgrund von örtlicher und zeitlicher \index{Lokalität}Lokalität (\emph{Lokalitätsprinzip}) zu beschleunigen.
+\begin{description}
+  \item [{Fully~associative~cache}] \index{Fully associative cache}
+	Der gesamte Cache ist in Blöcke aufgeteilt, welche gesteuert durch einen Controller einen jeweils anderen Teil des Hauptspeichers enthalten können.
+  \item [{Direct~mapped~cache}] \index{Direct mapped cache}
+	Der Cacheblock wird aus der Hauptspeicheradresse ermittelt (bspw.~durch Modulo-Operation).
+  \item [{Set~associative~cache}] \index{Set associative cache}
+	Der Cache ist in \emph{fully associative cache sets} unterteilt, die Ermittlung des entsprechenden Sets erfolgt als \emph{direct mapped cache}.
+	Damit ist dies ein Hybrid aus Fully Associative Cache und Set Associative Cache.
+\end{description}
+
+Bei den assoziativen Caches greifen zur Bestimmung, welcher Block bei vollgeschriebenem Cache verworfen wird, die in \cref{sub:Auslagerungsstrategien} beschriebenen Verfahren.
+
+
+
+\chapter{Parallele Architekturen}
+
+\section{Geschwindigkeit}
+
+Die Verarbeitungsgeschwindigkeit ist durch physikalische Gesetze begrenzt:
+\begin{itemize}
+  \item Je höher die \index{Taktrate}Taktrate eines Prozessors/Chips, desto höher die Abwärme, da zur Signaldifferenzierung (aufgrund von Verwischung) von 0 und 1 die Spannung erhöht werden muss.
+  \item Die Datenübertragungsgeschwindigkeit ist durch die Lichtgeschwindigkeit begrenzt, d.\,h., ab einem gewissen Punkt können nicht mehr so viele Daten geliefert werden wie der Prozessor verarbeiten kann.
+
+	\emph{Beispiel}:
+	Um 1 Terabyte pro Sekunde verarbeiten zu können, müsste die gesamte Datenmenge auf einem Rechteck mit $0.3\,\unit{mm}$ Seitenlänge gespeichert werden, welches sich direkt auf der CPU befindet; ein einzelnes Bit hätte damit eine Seitenlänge von ca.~$0.11\,\unit{pm} = 1.1\cdot10^{-10}\,\unit{mm}$ und wäre damit 1\,000-mal kleiner als ein Atom.
+\end{itemize}
+
+\section[SMP]{\gls{smp}}
+
+\index{SMP}
+\begin{itemize}
+  \item Zugriff auf Hauptspeicher dauert für jeden \index{Prozessorkern}Prozessorkern gleich lang.
+  \item Limitierte \index{Skalierbarkeit}Skalierbarkeit.
+\end{itemize}
+Beispiel: \index{Intel Woodcrest}Intel Woodcrest Architektur.
+\begin{itemize}
+  \item Zwei Kerne pro Chip, welche sich denselben Cache teilen.
+  \item Der Hauptspeicherzugriff jedes Paares läuft über denselben \index{Bus}Bus auf einen gemeinsamen Speicher.
+\end{itemize}
+
+\section[ccNUMA]{\gls{ccnuma}}
+
+\index{ccNUMA}
+\begin{itemize}
+  \item Zugriff auf Hauptspeicher dauert für jeden Prozessorkern unterschiedlich lang.
+  \item Gute \index{Skalierbarkeit}Skalierbarkeit.
+\end{itemize}
+Beispiel: \index{AMD Opteron}AMD Opteron Architektur.
+\begin{itemize}
+  \item Zwei Kerne pro Chip mit jeweils eigenem Cache.
+  \item Der Hauptspeicherzugriff jedes Paares läuft über den Bus auf einen geteilten Speicher (ähnlich RAID-1), welcher durch einen \index{Interconnect}\emph{Interconnect} synchron gehalten wird.
+\end{itemize}
+
+\section{Distributed Memory Systeme}
+
+\index{Distributed Memory}\index{Memory!Distributed--}
+\begin{itemize}
+  \item Physische Trennung von Prozessen, bspw.~durch \index{MPI}\gls{mpi} auf mehreren Rechnern verteilt.
+  \item Explizite Datenverteilung und Kommunikation.
+  \item Gute \index{Skalierbarkeit}Skalierbarkeit.
+\end{itemize}
+
+\section{\protect\noun{Amdahl}'s Law}
+
+\index{Amdahl's Law}
+[Die Bezeichnungen sind konform zu DIN~1304/ISO~80000.]
+\begin{itemize}
+  \item Zeitverbrauch bei einer CPU (Gesamtlaufzeit): $T = t_S + t_P$; hier ist $t_S$ der serielle Zeitanteil und $t_P$ der parallele Teil.
+  \item Idealer Zeitverbrauch bei $n_p$ CPUs: $t_S + t_P/n_P$.
+  \item Laufzeit für Synchronisierungsaufwand: $t_{O(n_P)}$.
+  \item Damit: Pessimistischer Zeitverbrauch ist $t_S + t_P/n_P + t_{O(n_P)}$.
+  \item \index{Speedup-Faktor}Speedup-Faktor: $\eta_S = T / (t_S + t_{O(n_P)} + (t_P / n_P)) \leq T / (T-t_P)$.
+  \item \index{parallelisierbar}\index{seriell} Die Skalierbarkeit ist durch den seriellen Programmteil $t_S$ limitiert.
+  \item Threads haben die gleichen möglichen Zustände wie Prozesse (siehe \cpageref{sec:Task-Scheduler}).
+\end{itemize}
+
+\begin{figure}[htb]
+\centering\includegraphics{amdahl.pdf}
+
+{\small[Gestrichelte Linien stellen $\eta_S$ mit $t_{O(n_P)} = 0.005 n_P$ dar.]}
+
+\caption{Amdahl's Law}
+\end{figure}
+
+\section{Parallelprogrammierung}
+
+\index{Parallelprogrammierung}
+
+
+\subsection{Race Conditions}
+
+\index{Race Condition}
+Zwei oder mehr Threads greifen gleichzeitig auf denselben Speicherbereich zu und starten ein \emph{Race} (Rennen): Welcher \index{Thread}Thread liest den Wert zuerst und welcher Thread schreibt sein Ergebnis als erster zurück?
+
+Lösungen: \index{Mutex}\emph{Mutex} (\emph{mutually exclusive lock}) zur Sicherstellung exklusiven Datenzugriffs von maximal 1 Thread, \index{Semaphore}\emph{Semaphore} für $n$ Threads, \index{Barrier}\emph{Barrier} zur Synchronisierung aller Threads zu einem Ausführungspunkt.
+Die \emph{Barrier} blockiert bis alle Threads an der Barriere angekommen sind.
+
+Eine \index{atomare Operation}\emph{atomare Operation} ist eine ununterbrechbare Operation.
+
+
+\subsection{Deadlocks}
+
+\index{Deadlock}
+
+Treten auf, wenn zwei oder mehr Threads auf gegenseitigen exklusiven Zugriff auf Daten warten.
+
+Beispiel: Thread A sperrt den Mutex für Variable X um Daten zu schreiben, Thread B wartet zum Lesen auf das Entsperren, was Thread A aber \enquote{vergisst}; beide Threads warten auf den jeweils anderen und sind \enquote{tot}, da sie keine Daten mehr verarbeiten können.
+
+
+\subsection{Weiteres}
+\begin{description}
+  \item [{Threadpool}] \index{Threadpool}
+	Gruppe von Threads. Jeder Thread im \index{Pool}Pool schläft, bis er eine Aufgabe zugeteilt bekommt.
+  \item [{Future}] \index{Future}
+	Platzhalter für noch nicht berechnete Daten eines Threads.
+\end{description}
+
+
+
+\chapter{Betriebssysteme}
+
+
+\section{Definition}
+\begin{description}
+  \item [{DIN~44330}] \index{Betriebssystem}\index{DIN 44330|see{Betriebssystem}}
+	Ein Betriebssystem umfasst die Programme eines digitalen Rechnersystems, die zusammen mit den Eigenschaften der Rechenanlage die Grundlage der möglichen Betriebsarten des digitalen Rechnersystems bilden und insbesondere die Abwicklung von Programmen steuern und überwachen.
+\end{description}
+
+Das Betriebssystem liegt als Softwareschicht zwischen Hardware und Anwendungen.
+Die Komplexität der Hardware wird somit vor den Anwendungen verborgen (\gls{hal}).
+
+
+\section{Anforderungen}
+\begin{description}
+  \item [{Hohe~Zuverlässigkeit}]
+	Korrektheit, Sicherheit, Verfügbarkeit, Robustheit und Schutz von Benutzerdaten
+  \item [{Hohe~Leistung}]
+	Gute Auslastung der Systemressourcen, kleiner Verwaltungsaufwand, hoher Durchsatz, kurze Reaktionszeit
+  \item [{Hohe~Benutzerfreundlichkeit}]
+	Angepasste Funktionalität, einfache Benutzerschnittstelle, Hilfestellung
+  \item [{Einfache~Wartbarkeit}]
+	Einfache Upgrades, einfache Erweiterbarkeit, Portierbarkeit
+  \item [{Geringe~Kosten}]
+	Sowohl für Anschaffung als auch Betrieb.
+\end{description}
+
+\section{Aufgaben}
+\begin{itemize}
+  \item \index{Prozessverwaltung}
+	Prozessverwaltung (\index{Task Management}Task Management, \index{Task Scheduling}Task Scheduling)
+  \begin{itemize}
+    \item Zuteilung von Ressourcen
+    \item Prozess Besteht aus Programmcode und Umgebung (Kontext). Der Kontext beinhaltet:
+	  \begin{itemize}
+	    \item den privaten Adressraum
+	    \item globale Variablen
+	    \item geöffnete Streams (Dateien, Sockets,\ldots{})
+	    \item abhängige Prozesse
+	  \end{itemize}
+    \item \index{Multitasking}
+	  Multitasking
+	  \begin{itemize}
+	    \item \index{Multitasking!präemptiv}
+		  präemptives Multitasking: das Betriebssystem entscheidet wann welcher Prozess für wie lange ausgeführt wird
+	    \item \index{Multitasking!kooperativ}
+		  kooperatives Multitasking: der Prozess muss die Kontrolle selbst abgeben
+	  \end{itemize}
+  \end{itemize}
+  \item \index{Speicherverwaltung}
+	Speicherverwaltung
+  \item \index{Betriebsmittelverwaltung}
+	Betriebsmittelverwaltung (Konfliktverwaltung)
+	\begin{itemize}
+	  \item Aktive, zeitlich aufteilbare (CPU)
+	  \item Passive, exklusiv nutzbare (I/O-Geräte)
+	  \item Passive, räumlich aufteilbare (RAM)
+	\end{itemize}
+  \item \index{Dateiverwaltung}
+	Dateiverwaltung
+	\begin{itemize}
+	  \item Überprüfung auf Existenz, Zugriffs- und Rechteverwaltung, sowie Lese- und Schreibkonflikte
+	\end{itemize}
+  \item \index{Rechteverwaltung}
+	Rechteverwaltung
+  \item \ldots{}
+	\Todo{Punkte durch was sinnvolleres ersetzen}
+\end{itemize}
+
+\section{Typen}
+\begin{description}
+  \item [{Stapelverarbeitungssysteme}] \index{Stapelverarbeitungssystem}
+	Auch \index{Batch-System}Batch-Systeme genannt.
+
+	Das System arbeitet nicht interaktiv, sondern nimmt nur Aufträge an und legt diese in einer Job-Queue ab.
+	Die Queue wird vollkommen autonom abgearbeitet, die Ausgabe erfolgt über Dateien oder sonstige Geräte (Monitor nicht sinnvoll).
+
+  \item [{Interaktive~Systeme/Dialogsysteme}] \index{Dialogsystem}\index{interaktives System|see{Dialogsystem}}
+	Der Benutzer steuert die Programme beispielsweise über Maus\slash{}Tastatur.
+	Die Ausgabe der Programmergebnisse kann auf beliebigen Geräten erfolgen.
+  \item [{Echtzeitsysteme}] \index{Echtzeitsystem}
+	Meist mit Sensoren eingesetzt.
+	Hat harte Anforderungen an die Reaktionsfähigkeit.
+	Beispiel: Airbag-System.
+\end{description}
+
+\section{\label{sec:Task-Scheduler}Task Scheduler}
+
+\index{Task Scheduler}
+Ein \index{Prozess}Prozess kann sich in folgenden Zuständen befinden:
+\begin{description}
+  \item [{rechnend}] \index{rechnend}
+	Der Prozessor ist dem Prozess zugeteilt.
+  \item [{blockiert}] \index{blockiert}
+	Der Prozess wartet auf ein externes Ereignis.
+  \item [{rechenbereit}] \index{rechenbereit}
+	Der Prozess ist ausführbar, doch der Prozessor führt einen anderen Prozess aus.
+\end{description}
+
+Ein guter \foreignlanguage{english}{Scheduling} Algorithmus muss folgende Anforderungen erfüllen:
+\begin{description}
+  \item [{Fairness}]  Jeder Prozess erhält einen gerechten Anteil der Ressourcen (auch Berücksichtigung der \emph{Prozessprioritäten}).
+  \item [{Effizienz}] Die Ressourcen sind möglichst gleichmäßig ausgelastet.
+\end{description}
+
+\subsection{Batch-Systeme}
+\begin{itemize}
+  \item \index{Batch-System}Es sollte nicht vorkommen, dass die CPU Leertakte hat.
+  \item Die Anzahl der bearbeiteten Aufgaben pro Zeit-Einheit sollte maximal sein.
+  \item Die Zeit von der Einreihung eines Jobs in die Job-Queue bis zur Fertigstellung sollte minimal sein.
+\end{itemize}
+
+\subsection{Dialogsysteme}
+\begin{itemize}
+  \item \index{Dialogsystem}Der Benutzer sollte möglichst zeitnah Rückmeldung auf Aktionen bekommen.
+  \item Prozesse, die Interaktion erfordern, sollten vor anderen Prozessen bevorzugt werden.
+  \item Die Antwortzeit der Prozesse sollte mit der Benutzererwartung korrelieren.
+  \item Aus Benutzersicht einfache Aufgaben sollten schneller erledigt werden als andere.
+\end{itemize}
+
+\subsection{Echtzeitsysteme}
+\begin{itemize}
+  \item \index{Echtzeitsystem}Die Zeitfenster der Prozesse müssen eingehalten werden.
+  \item Das System muss vorhersagbar\slash{}deterministisch reagieren.
+\end{itemize}
+
+\subsection{Strategien}
+\begin{description}
+  \item [FIFO] \index{First Come, First Serve}
+	\gls{fcfs} bzw.~\gls{fifo} \index{First In, First Out}
+
+	Prozesse werden der Reihenfolge ihres Starts nach bearbeitet.
+	Ein Prozesswechsel findet nur statt, wenn der aktuelle Prozess sich beendet oder zu warten beginnt.
+
+  \item [\gls{sjf}] \index{Shortest Job First}
+	Wird auf Batch-Systemen angewendet.
+	Jobs werden nach einer manuell oder automatisch geschätzten Ausführungszeit aufsteigend sortiert verarbeitet.
+	Nachteil: Große Jobs bekommen möglicherweise nie Rechenzeit wenn sich immer wieder kleinere Jobs davor drängeln.
+
+  \item [{Round-Robin}] \index{Round-Robin}
+	Prozessen wird der Reihe nach eine (gleichgroße) \index{Zeitscheibe}Zeitscheibe auf der CPU zugeteilt.
+\end{description}
+
+\section{Speicherverwaltung}
+
+\index{Speicherverwaltung}
+\ldots{}ermöglicht den Prozessen Zugriff auf den Arbeitsspeicher.
+Es wird zwischen physischer und virtueller Speicherverwaltung unterschieden.
+Die Speicherverwaltung muss des Weiteren die Speicherbereiche verschiedener Prozesse voneinander abkapseln (Stichwort Viren).
+
+
+\subsection{Physische Speicherverwaltung}
+\begin{itemize}
+  \item \index{Speicherverwaltung!physische --}\index{Physische Speicherverwaltung|see{Speicherverwaltung}}
+	Die Summe des von den gleichzeitig geladenen Prozessen verwendeten Arbeitsspeichers kann nicht größer sein als der physisch vorhandene Speicher.
+  \item \index{Speicherverwaltung!Swapping}\index{Swapping|see{Speicherverwaltung}}
+	Es kann \emph{Swapping} benutzt werden damit mehr Prozesse quasi-parallel betrieben werden können.
+  \item Probleme:
+      \begin{itemize}
+	\item \index{Speicherverwaltung!Fragmentierung}\index{Fragmentierung|see{Speicherverwaltung}}Fragmentierung des Speichers
+	\item Suche nach freien Blöcken mittels Belegungstabelle sehr aufwändig
+      \end{itemize}
+\end{itemize}
+
+Gebräuchliche Varianten um einen freien Block zu finden sind:
+\begin{description}
+  \item [{First~Fit}] \index{Speicherverwaltung!First Fit}\index{First Fit|see{Speicherverwaltung}}
+	Verwendet den erstbesten freien Speicherblock.
+	Ist schnell, verkleinert aber evtl.~große freie Blöcke, so dass anschließend evtl.~ein großer Prozess nicht mehr geladen werden kann.
+  \item [{Next~Fit}] \index{Speicherverwaltung!Next Fit}\index{Next Fit|see{Speicherverwaltung}}
+	Wie First Fit, startet die Suche aber nicht am Anfang des Speichers, sondern dort, wo der letzte Prozess eingefügt wurde.
+  \item [{Best~Fit}] \index{Speicherverwaltung!Best Fit}\index{Best Fit|see{Speicherverwaltung}}
+	Sucht den kleinsten passenden freien Block. Verteilt den Speicher gut, ist aber sehr langsam.
+\end{description}
+
+\subsection{\label{sub:Virtuelle-Speicherverwaltung}Virtuelle Speicherverwaltung}
+
+\index{Speicherverwaltung!virtuelle --}\index{virtuelle Speicherverwaltung|see{Speicherverwaltung}}
+\ldots{}behebt die Probleme physischer Speicherverwaltung.
+
+\index{Adressraum|see{Speicherverwaltung}}
+Jedem Prozess wird ein logisch zusammenhängender \index{Speicherbereich}Speicherbereich zur Verfügung gestellt, tatsächlich kann der physische Speicher aber fragmentiert sein (ähnlich RAID, siehe \cref{sec:RAID}).
+Die Gesamtheit aller virtuellen Adressen heißt \index{Virtueller Adressraum|see{Speicherverwaltung}}\index{Speicherverwaltung!Adressraum!virtueller --}\emph{virtueller Adressraum}, der physische Speicher ist in sog.~\emph{Pages}\index{Speicherverwaltung!Page}\index{Page|see{Speicherverwaltung}} unterteilt.
+Die virtuellen Pages werden auf die physischen Pages abgebildet.
+
+Greift ein Prozess auf eine virtuelle Page zu, so versucht der Prozessor mit Hilfe der \index{Speicherverwaltung!Pagetable}\index{Pagetable|see{Speicherverwaltung}}\emph{Pagetable} auf die abgebildete physische Page zuzugreifen.
+Schlägt der Zugriff fehl, löst der Prozessor einen \index{Speicherverwaltung!Page Fault}\index{Page Fault|see{Speicherverwaltung}}\emph{Page Fault} aus.
+Dieser wird i.\,d.\,R.~dazu genutzt, ausgelagerte physische Pages von der Festplatte wieder in den Arbeitsspeicher zu laden.
+
+
+\subsubsection{\label{sub:Auslagerungsstrategien}Auslagerungsstrategien}
+\begin{description}
+  \item [{FIFO}] \index{First In, First Out}
+	First In, First Out
+
+	Die am längsten im Speicher liegende Page wird ausgelagert.
+
+  \item [\gls{lru}, \gls{lfu}] \index{Least Recently Used}\index{Least Frequently Used}
+	Die am längsten nicht mehr benutzte/am wenigsten benutzte Page wird ausgelagert.
+
+  \item [{Unversehrtheit}]
+	Es werden die Pages ausgelagert, welche sich im Arbeitsspeicher nicht verändert haben und somit keine teure Schreiboperation auf der Festplatte erfordern.
+  \item [\gls{nru}] \index{Not Recently Used}
+	Eine Page wird ausgelagert, wenn sie innerhalb eines Zeitfensters weder gelesen noch beschrieben wurde.
+  \item [{Future}] \index{Future}
+	Die Anwendung oder das Betriebssystem treffen die Vorhersage, dass eine Page in nächster Zeit nicht benutzt wird, und lagert diese aus.
+\end{description}
+
+\subsubsection{Pagetable}
+
+\index{Pagetable}
+Die sog.~\emph{Pagetable} enthält Einträge zur Umsetzung \index{virtuelle Adresse}\index{Adresse!virtuell}virtueller Adressen auf die \index{physische Adresse}\index{Adresse!physisch}physischen Adressen.
+
+Eine \emph{virtuelle Adresse} besteht aus einer \index{Seitennummer}\emph{Seitennummer} und einem \emph{Offset}.
+Die Seitennummer wird benutzt, um den entsprechenden (evtl.~nicht existierenden) Eintrag in der Pagetable zu ermitteln.
+Mit diesem Eintrag wird an\-schließ\-end überprüft, ob die entsprechende \index{Speicherseite}Speicherseite gültig ist.
+Falls dies der Fall ist, wird der Seitennummeranteil in der virtuellen Adresse durch den in der Tabelle vermerkten \index{Seitenrahmen}\emph{Seitenrahmen} ersetzt, um so die physische Adresse zu ermitteln.
+
+
+
+\chapter{Grafische Algorithmendarstellungen}
+
+
+\section{Struktogramme}
+
+\index{Struktogramm}
+\noindent\begin{center}
+\begin{struktogramm}(80,56)
+\forever
+  \ifthenelse{3}{3}{Chef da?}{Nein}{Ja}
+    \while{while Student m"ude}
+      \assign{Wecker auf n"achste volle Stunde stellen}
+      \assign{Schlafen}
+    \whileend
+    \sub{Kaffee machen}
+    \assign{Kaffee trinken}
+  \change
+    \until{until Uhrzeit $\geq 17$}
+      \assign{Arbeit vort"auschen}
+    \untilend
+  \ifend
+  \assign{Nach Hause gehen}
+\foreverend
+\end{struktogramm}
+\end{center}
+
+
+\section{Flussdiagramme}
+\index{Flussdiagramm}
+\begin{figure}[htb]
+\centering
+\includegraphics{flussdiagramm.pdf}
+
+\caption{Elemente eines Flussdiagramms}
+\end{figure}
+
+
+
+\chapter{Speichermedien}
+\begin{description}
+  \item [{Magnetisch}]
+	\index{Speichermedien}
+	\index{Speichermedien!magnetisch}
+	\index{Speichermedien!Magnetkarten}
+	\index{Magnetkarten|see{Speichermedien}}
+	\index{Speichermedien!Magnetbänder}
+	\index{Magnetbänder|see{Speichermedien}}
+	Magnetkarten/-bänder,
+	\index{Speichermedien!Disketten}
+	\index{Disketten|see{Speichermedien}}
+	Disketten,
+	\index{Speichermedien!Magnetplatte}
+	\index{Magnetplatte|see{Speichermedien}}
+	Magnetplatte
+  \item [{Optisch}]
+	\index{Speichermedien!optisch}
+	\index{Speichermedien!Mikrofilme}
+	\index{Mikrofilme|see{Speichermedien}}
+	Mikrofilme, optische Speicherkarten/-platten/-bänder
+	\index{Speichermedien!Speicherbänder}
+	\index{Speicherbänder|see{Speichermedien}}
+	\index{Speichermedien!Speicherplatten}
+	\index{Speicherplatten|see{Speichermedien}}
+	\index{Speichermedien!Speicherkarten}
+	\index{Speicherkarten|see{Speichermedien}}
+  \item [{Elektronisch}]
+	\index{Speichermedien!elektronisch}
+	\index{Chipkarten|see{Speichermedien}}
+	\index{Speichermedien!Chipkarten}
+	Chipkarten,
+	\index{Halbleiterspeicher|see{Speichermedien}}
+	\index{Speichermedien!Halbleiterspeicher}
+	Halbleiterspeicher
+\end{description}
+
+\section{Diskette}
+\begin{description}
+  \item [{Zugriffszeit}] \index{Speichermedien!Disketten}90--100~ms
+  \item [{Datenübertragungsrate}] 60~KB/s bei 300~U/min.
+  \item [{Typische~Größe}] $1.44$~MB
+\end{description}
+
+\section{Magnetplatte}
+\begin{description}
+  \item [{Zugriffszeit}] \index{Speichermedien!Magnetplatten}$3.5$~ms
+  \item [{Datenübertragungsrate}] 150~MB/s
+  \item [{Typische~Größe}] 250~bis 1\,000~GB
+\end{description}
+
+\section[SSD]{\gls{ssd}}
+\begin{description}
+  \item [{Zugriffszeit}] \index{Speichermedien!Solid State Disk}\index{Solid State Disk|see{Speichermedien}}
+	$0.3$~ms
+  \item [{Datenübertragungsrate}] 480~MB/s
+  \item [{Typische~Größe}] 960~GB
+\end{description}
+Erhöhte Stoßfestigkeit, erhöhte Schreib-/Lesegeschwindigkeit, geringerer Energieverbrauch.
+
+Besteht aus NAND-Flash. Bauweisen sind \index{Speichermedien!Single Level Cells}\index{Single Level Cells|see{Speichermedien}}\gls{slc} mit einem Bit pro Zelle und \index{Speichermedien!Multi Level Cells}\index{Multi Level Cells|see{Speichermedien}}\gls{mlc} mit zwei Bits pro Zelle.
+
+Nachteil: Zellen sind nur begrenzt beschreibbar, üblicherweise ca.~3\,000 bis 100\,000 mal.
+
+\section[CD-ROM]{\gls{cdrom}}
+\begin{description}
+  \item [{Zugriffszeit}] \index{Compact Disc|see{Speichermedien}}\index{Speichermedien!Compact Disc}
+	$0.3$~ms
+  \item [{Datenübertragungsrate}]
+	1\,228~MBit/s
+  \item [{Typische~Größe}]
+	540~bis 900~MB
+\end{description}
+\begin{itemize}
+  \item Oberfläche besteht aus \enquote{Pits} (Hügel) und \enquote{Lands} (Täler).
+  \item Ein Wechsel zwischen Pit und Land entspricht einer binären 1.
+	Findet kein Wechsel statt, so ist das eine binäre 0.
+  \item Technische Randbedingung: Mindestens 2 und höchstens 11 Nullen zwischen zwei Einsen.
+  \item Daher sind 8-Bit-Codes nicht zu benutzen, es werden stattdessen 14-Bit-Codes benutzt.
+	Siehe \gls{efm}.
+\end{itemize}
+
+\section[RAID]{\label{sec:RAID}\gls{raid}}
+
+\index{Redundant Array of Independent Disks}
+\begin{description}
+  \item [{Idee}]
+	Paralleler Einsatz mehrerer Festplatten mit gleichem Inhalt, um I/O-An\-fra\-gen parallel verarbeiten zu können.
+  \item [{Prinzip}]
+	Mehrere Festplatten (u.\,U.~auch Partitionen) werden entweder von einer Hardwarekomponente oder vom Betriebssystem so gekapselt, dass sie wie eine einzige logische Platte erscheinen.
+	Die Daten werden verteilt abgespeichert.
+\end{description}
+
+\subsection{RAID Typen}
+\begin{description}
+  \item [{RAID-0}]
+	Mehrere physische Platten werden zu einer logischen zusammengefasst.
+
+	Die logische Platte wird in Streifen aufgeteilt, die \enquote{round robin} auf die physischen Platten verteilt werden.
+
+	Keine Redundanz/Ausfallsicherheit der Daten.
+
+  \item [{RAID-1}]
+	Physische Platten haben denselben Inhalt, wodurch Lesezugriffe parallelisiert werden können.
+
+	Bei 2 Platten können defekte Daten wahrscheinlich nicht wiederhergestellt werden, bei mehreren Platten steigt die Wahrscheinlichkeit, allerdings ohne jemals sicher über die Korrektheit der wiederhergestellten Daten sein zu können.
+
+  \item [{RAID-0+1}]
+	Dies ist ein via RAID-1 gespiegeltes RAID-0 System.
+  \item [{RAID-3}]
+	Prüfsummen werden zusätzlich auf einer weiteren physischen Platte gespeichert.
+  \item [{RAID-5}]
+	Prüfsummen werden verteilt auf den physische Platten gespeichert.
+	Somit enthält jede Platte gleichzeitig Daten und Prüfsummen.
+\end{description}
+
+\section{\label{sec:Dateisysteme}Dateisysteme}
+
+\index{Dateisystem}
+Dateisysteme sind Systeme zur Organisation von Dateien.
+\begin{itemize}
+  \item Dateien müssen geöffnet und wieder geschlossen werden können.
+  \item Dateinamen müssen physischen Daten zugeordnet werden können.
+  \item Spezielle Eigenschaften eines Datenträgers (Festplatte, USB-Stick, CD-ROM,\ldots{}) müssen im System berücksichtigt werden.
+\end{itemize}
+
+Abhängig vom Dateisystem habe Dateien unterschiedliche Attribute:
+\begin{itemize}
+  \item Dateiname
+  \item Ablageort (Ordner)
+  \item Größe
+  \item Zugriffsrechte
+  \item Meta-Daten
+\end{itemize}
+Die Anforderungen an ein modernes Dateisystem umfassen:
+\begin{description}
+  \item [{Paralleler~Zugriff}]
+	Bereitstellung von Locks (\foreignlanguage{english}{\emph{Multiple Readers, Single Writer}}), welche für die gesamte Datei oder (bspw.~bei Datenbanksystemen) nur für Bereiche einer Datei bestimmt werden können.
+  \item [{Ausfallsicherheit}]
+	Bspw.~bei Stromausfall muss Datenkonsistenz gewährleistet werden. Lösung: \foreignlanguage{english}{\emph{Journaling}}.
+\end{description}
+
+\subsection{\label{sub:Journaling}Journaling}
+
+\index{Dateisystem!Journaling}\index{Journaling|see{Dateisystem}}
+\ldots{}beschreibt eine Methode zur Datenkonsistenzsicherung.
+\begin{description}
+  \item [{Prinzip}]
+	Alle Schreibaktionen werden, ohne zunächst die Originaldaten zu verändern, in ein Protokoll (\foreignlanguage{english}{Journal}) geschrieben.
+	Erst wenn im Journal der Abschluss einer Schreiboperation vermerkt wurde, werden (durch Umschreiben des Dateimappings) die neuen Daten referenziert.
+	Stürzt das System also ab, so bleibt das Dateisystem konsistent, da die Ver\-än\-der\-ung\-en bislang nur im Journal durchgeführt wurden.
+  \item [{Metadaten-Journaling}] \index{Metadaten-Journaling|see{Dateisystem}}
+	beschränkt sich auf die Konsistenzsicherung des Dateisystems an sich, d.\,h.~nur die Konsistenz der Attribute von Dateien ist garantiert, aber nicht die Konsistenz der Dateiinhalte.
+  \item [{Full-Journaling}] \index{Full-Journaling|see{Dateisystem}}
+	garantiert die Konsistenz des gesamten Datenträgers, da auch Dateiinhalte mit dem \foreignlanguage{english}{Journaling} verwaltet werden.
+\end{description}
+
+\subsection{Dateisystemtypen}
+\begin{description}
+  \item [{Lineare~Dateisysteme}] \index{Dateisystem!linear}
+	werden auf Lochstreifen/-karten und Magnetbändern verwendet, die Daten werden direkt hintereinander geschrieben.
+  \item [{Hierarchische~Dateisysteme}] \index{Dateisystem!hierarchisch}
+	werden auf modernen Datenträgern verwendet.
+	Die Daten werden in einer Ordnerstruktur abgelegt.
+	Es gibt genau ein Wurzelverzeichnis.
+	In jedem Verzeichnis können Dateien und/oder weitere Verzeichnisse liegen.
+  \item [{Netzwerkdateisysteme}] \index{Dateisystem!Netzwerk--}
+	werden lokal wie normale Dateisysteme verwendet, die Daten liegen jedoch auf einem entfernten Server (bspw.~FTP, Netzlaufwerke).
+\end{description}
+
+\subsection{Windows}
+\begin{itemize}
+  \item \index{Windows|see{Betriebssystem}}\index{Betriebssystem!Windows}
+	Datenträger (Partitionen auf physischen Speichermedien) werden mit einem Buchstaben gefolgt von einem Doppelpunkt und einem Backslash dargestellt (bekannt: \code{C:\textbackslash}).
+  \item Jeder Datenträger hat einen eigenen Verzeichnisbaum und ein eigenes Wurzelverzeichnis.
+  \item Auf NT-Technologie basierende Windows-Systeme arbeiten intern wie ein Unix-System, verbergen dies aber vor dem Anwender.
+\end{itemize}
+
+\subsection{Unix/Linux}
+\begin{itemize}
+  \item \index{Unix|see{Betriebssystem}}\index{Linux|see{Betriebssystem}}\index{Betriebssystem!Unix/Linux}
+	Es gibt nur einen einzigen Verzeichnisbaum (mit \enquote{\code{/}} als Wurzelverzeichnis).
+  \item Datenträger können an beliebigen Stellen des Baums eingehängt werden (auch rekursiv und mit unterschiedlichen Dateisystemen).
+\end{itemize}
+
+\subsection[Rechteverwaltung]{Rechteverwaltung am Beispiel von Unix/Linux}
+
+\index{Rechteverwaltung}
+Unix hat verschiedene Ebenen der Rechteverwaltung:
+\begin{enumerate}
+  \item Es gibt den Systemadministrator \enquote{root}.
+    Dieser existiert auf allen Unix\slash Linux-Systemen und darf per Definition alles.
+  \item Es gibt die Benutzergruppe einer Datei.
+    Ein Benutzer, der auf eine Datei zugreift, die seiner Benutzergruppe gehört, die er aber nicht selbst erstellt hat, kann diese in der Regel nur lesen und ausführen, jedoch nicht verändern.
+  \item Es gibt den Eigentümer einer Datei.
+    Dieser darf in der Regel Dateien lesen, schreiben und ausführen.
+	Ein Benutzer ist Mitglied in einer oder mehreren Benutzergruppen.
+  \item Es gibt dann noch solche Benutzer, die weder Eigentümer einer Datei noch in der Benutzergruppe der Datei sind.
+	Diese Benutzer haben in der Regel nur Lesezugriff.
+\end{enumerate}
+Somit hat eine Datei folgende Attribute:
+\begin{description}
+  \item [{Dateiname~und~-ort}]~
+  \item [{Dateigröße}]~
+  \item [{Erstellungszeitpunkt}]~
+  \item [{Modifikationszeitpunkt}]~
+  \item [{Referenzierungszähler}]~
+  \item [{Eigentümer}]~
+  \item [{Eigentümerrechte}] I.\,d.\,R.~lesbar, schreibbar, ausführbar.
+  \item [{Gruppe}]~
+  \item [{Gruppenrechte}] I.\,d.\,R.~lesbar, manchmal auch noch ausführbar.
+  \item [{Fremdrechte}] I.\,d.\,R.~nur lesbar.
+\end{description}
+
+\newpage{}
+
+\begin{minipage}[t]{1\columnwidth}%
+Als Beispiel ein \foreignlanguage{english}{Directory-Listing} eines Verzeichnisses meines Linux-Systems:
+\footnotesize\begin{verbatim}
+sto@linux-oknc:~/Dokumente/matse> la
+insgesamt 11396
+drwxr-xr-x 3 sto users    4096  7. Feb 11:47 .
+drwxr-xr-x 4 sto users    4096  6. Feb 09:59 ..
+-rw-r--r-- 1 sto users     569  7. Feb 09:56 3c.asm
+-rw-r--r-- 1 sto users 1333953  6. Feb 08:37 IT-Grundlagen....
+-rw-r--r-- 1 sto users  411971  6. Feb 08:37 IT_Grundlagen_...
+-rw-r--r-- 1 sto users  369857  6. Feb 08:36 IT_Grundlagen_...
+-rw-r--r-- 1 sto users  360684  6. Feb 08:37 IT_Grundlagen_...
+-rw-r--r-- 1 sto users  407807  6. Feb 08:36 IT_Grundlagen_...
+-rw-r--r-- 1 sto users  311985  6. Feb 08:36 IT_Grundlagen_...
+-rw-r--r-- 1 sto users 7471963  6. Feb 08:36 IT Grundlagen ...
+-rw-r--r-- 1 sto users  127652  6. Feb 08:37 IT-Grundlagen_...
+-rw-r--r-- 1 sto users  282285  6. Feb 08:37 IT-grundlagen_...
+-rw-r--r-- 1 sto users  551371  6. Feb 08:37 Kryptologie.pdf
+drwxr-xr-x 2 sto users    4096  7. Feb 11:47 verzeichnis
+\end{verbatim}
+\medskip
+\end{minipage}
+
+Der erste Buchstabe \enquote{\code{d}} gibt an, ob es sich um ein Verzeichnis handelt.
+Dann folgen drei Buchstaben für die Benutzerzugriffsrechte (\foreignlanguage{english}{\emph{Read, Write, eXecute}}), anschließend drei Buchstaben für die Gruppenrechte und dann drei Buchstaben für die Fremdzugriffsrechte.
+In diesem Falle ist \enquote{\code{sto}} der Benutzername und \enquote{\code{users}} der Gruppenname.
+
+Die Zahl hinter den Zugriffsrechten gibt an, wie oft die Datei referenziert wurde.
+So wird das Verzeichnis \enquote{\code{verzeichnis}} zweimal referenziert: einmal durch dieses Verzeichnis \enquote{\code{matse}}, und einmal durch das \enquote{\code{.}} im Verzeichnis \enquote{\code{verzeichnis}}.
+Das \enquote{\code{.}} in diesem Verzeichnis \enquote{\code{matse}} wird durch den Verzeichnisnamen im übergeordneten Verzeichnis \enquote{\code{Dokumente}} referenziert, durch das Verzeichnis \enquote{\code{matse}} selbst, und durch das \enquote{\code{..}} im Verzeichnis \enquote{\code{ver\-zeich\-nis}}.
+
+
+\chapter{Kryptologie}
+
+
+\section{Definitionen}
+\begin{description}
+  \item [{Kryptografie}] \index{Kryptologie}\index{Kryptografie}
+	ist die Wissenschaft der Verschlüsselung von Informationen.
+  \item [{Kryptoanalyse}] \index{Kryptoanalyse}
+	bezeichnet Methoden zur unbefugten Entschlüsselung von verschlüsselten Informationen.
+	[Achtung: Es ist eine \emph{Analyse}, d.\,h.~die Entschlüsselung an sich fällt unter Kryptografie.]
+  \item [{Klartext~$M$}] \index{Klartext}
+	Unverschlüsselte Nachricht.
+  \item [{Geheimtext~(Chiffretext)~$C$}] \index{Chiffretext}\index{Geheimtext}
+	Verschlüsselte Nachricht.
+  \item [{(De-)Chiffrierung}] \index{Verschlüsselung}\index{Entschlüsselung}\index{Dechiffrierung}\index{Chiffrierung}
+	Ent-~bzw.~Verschlüsselung von Informationen.
+  \item [{Schlüssel}] \index{Schlüssel}
+	Vertrauliche Information zum Ver-~bzw.~Entschlüsseln.
+\end{description}
+
+\section{Einsatzgebiete und Anforderungen}
+
+
+\subsection{Einsatzgebiete}
+\begin{itemize}
+  \item Sichere \index{Kommunikation|see{Kryptologie}}
+	Kommunikation über ein unsicheres Medium.
+  \item Integrität/Signierung von Nachrichten, Authentifizierung von Kommunikationspartnern.
+\end{itemize}
+
+\subsection{Anforderungen}
+
+\index{Kerckhoff|see{Kryptologie}}\index{Kryptologie!Kerckhoff}
+\noun{Kerckhoff}s Prinzip (1883):
+\begin{itemize}
+  \item Das System muss unentzifferbar sein.
+  \item Das System selbst darf keine Geheimhaltung erfordern.
+  \item Der Algorithmus muss leicht zu übermitteln sein und ein Mensch muss sich den Schlüssel ohne schriftliche Aufzeichnung merken können.
+  \item Das System sollte (muss) mit telegrafischer Kommunikation kompatibel sein (Telefon, E-Mail, etc.).
+  \item Das System muss transportabel sein und die Bedienung darf nicht mehr als eine Person erfordern.
+  \item Das System muss einfach anwendbar sein.
+\end{itemize}
+
+\section{Klassische Verfahren}
+
+\ldots{}basieren größtenteils auf Alphabeten und werden schon seit
+der Antike verwendet.
+\begin{description}
+  \item [{Transpositionschiffre}] \index{Transpositionschiffre}
+	bedeutet eine Umordnung der Zeichen.
+	Einfaches Beispiel: Die zu verschlüsselnde Nachricht rückwärts schreiben.
+  \item [{Substitutionschiffre}] \index{Substitutionschiffre}
+	bedeutet eine Ersetzung der Zeichen.
+	Einfaches Beispiel: Die Buchstaben einer Nachricht durch die im Alphabet folgenden Buchstaben ersetzen.
+  \item [{Skytale}] \index{Skytale}
+	ist ein Transpositionschiffre.
+
+	Man nehme ein Pergament und wickle es spiralförmig um einen Stab und schreibe die Nachricht quer auf das Pergament, sodass jedes Wort mehrere Streifen belegt.
+
+	Hier ist der Klartext das um den Holzstab gewickelte Pergament, der Geheimtext das Pergament ohne den Stab und der Schlüssel ist der Durchmesser des Stabes.
+
+  \item [{Monoalphabetisches~Substitutionschiffre}] \index{Substitutionschiffre!monoalphabetisch}
+	Jedem Buchstaben im Eingabe\-al\-pha\-bet ist bijektiv ein anderer Buchstabe im Geheimalphabet zugeordnet.
+	Der Schlüssel ist das Geheimalphabet.
+
+  \item [{\noun{Cäsar}chiffre}] \index{Cäsarchiffre}
+	ist ein monoalphabetisches Substitutionschiffre bei dem zwei zunächst identische Alphabete um $n$ Zeichen zueinander rotiert werden.
+	Der Schlüssel ist das $n$.
+
+	Eine Variante hiervon ist die Erstellung eines zufällig erzeugten Geheimalphabets.
+
+  \item [{Polyalphabetisches~Substitutionschiffre}] \index{Substitutionschiffre!polyalphabetisch}
+	ist ein Substitutionschiffre mit mehreren Geheimalphabeten.
+	Jedem Zeichen wird abhängig von seiner Position ein anderes Geheimalphabet zugeordnet.
+
+  \item [{\noun{Viginère}-Verschlüsselung}] \index{Viginère}
+	ist ein polyalphabetisches Substitutionschiffre.
+
+	Ein Schlüsselwort bestimmt, wie viele und welche Geheimalphabete verwendet werden.
+	Die einzelnen Geheimalphabete leiten sich aus der Cäsarchiffre ab: Das erste $n_1$ wird so bestimmt, dass das $A$ durch den ersten Buchstaben $c_1$ des Geheimalphabets substituiert wird.
+	$n_2$ wird so bestimmt, dass $A$ durch $c_2$ substituiert wird, usw..
+\end{description}
+
+\section{Moderne Verfahren}
+
+\ldots{}basieren auf mathematischen Problemstellungen und werden seit Mitte des 20. Jahrhunderts verwendet.
+\begin{description}
+  \item [{Symmetrische~Verfahren}] \index{symmetrisch}
+	sind Block- und Stromchiffren.
+	Zum Ver- und Entschlüsseln wird derselbe Schlüssel verwendet.
+  \item [{Asymmetrische~Verfahren}] \index{asymmetrisch}\index{Hybridverfahren}
+	sind Hybridverfahren.
+	Zum Ver- und Entschlüsseln werden verschiedene Schlüssel verwendet.
+\end{description}
+
+\subsection{Symmetrische Verfahren}
+\begin{description}
+  \item [{Vorteile}] \index{symmetrisch}
+	Geringer Rechenaufwand zur Ver- und Entschlüsselung.
+  \item [{Nachteile}]
+	Der geheime Schlüssel muss über ein unsicheres Medium transportiert werden.
+	Für $n$ Personen benötigt man $\frac{n\cdot(n-1)}{2}$ verschiedene Schlüssel.
+  \item [{Bekannte~Verfahren}] \index{symmetrisch!DES}\index{symmetrisch!AES}
+    DES (\foreignlanguage{english}{Data Encryption Standard}), AES (\foreignlanguage{english}{Advanced Encryption Standard}), Blowfish,\ldots{}
+  \item [{Blockchiffre}] \index{Blockchiffre}
+	Der Klartext wird in Blöcke gleicher Größe unterteilt und blockweise mit dem gleichen Schlüssel verschlüsselt.
+	Der letzte Block muss daher ggf.~mit \index{Füllbits}Füllbits gefüllt werden.
+  \item [{Stromchiffre}] \index{Stromchiffre}
+	Der Klartext wird zeichenweise anhand eines \index{Schlüsselstrom}\emph{Schlüsselstroms} verschlüsselt.
+	Schlüsselstrom, Klartext und Geheimtext haben dieselbe Länge.
+\end{description}
+
+\subsection{Asymmetrische Verfahren}
+
+\index{asymmetrisch}\index{Schlüssel!privat}\index{Schlüssel!öffentlich}
+Es gibt zwei Schlüssel: einen \emph{privaten Schlüssel} zum Entschlüsseln und einen \emph{öffentlichen Schlüssel} zum Verschlüsseln.
+\begin{description}
+  \item [{Vorteile}]           Der private Schlüssel muss nicht übertragen werden, und es werden für $n$ Personen nur noch $2n$ Schlüssel benötigt.
+  \item [{Nachteile}]          Hoher Rechenaufwand (ca.~Faktor $10^3$).
+  \item [{Bekannte~Verfahren}] RSA
+\end{description}
+
+\subsection{RSA}
+\begin{itemize}
+  \item \index{RSA}Basiert auf Primfaktorzerlegung.
+  \item Am häufigsten genutztes asymmetrisches Verfahren.
+\end{itemize}
+
+\subsubsection{Verfahren}
+\begin{labeling}{00.00.0000}
+  \item [{Schlüsselpaare}]  Privat $(d,n)$ und öffentlich $(e,n)$.
+  \item [{Verschlüsselung}] $C=M^{e}\bmod  n$
+  \item [{Entschlüsselung}] $M=C^{d}\bmod  n$
+\end{labeling}
+
+Schlüsselerstellung:
+\begin{enumerate}
+  \item Wähle zwei Primzahlen $p,q$ mit $p\neq q$.
+  \item Berechne $N=p\cdot q$ und $\varphi(N)=(p-1)\cdot(q-1)$.
+  \item Wähle ein $e$ so dass $e\nmid\varphi(N)\,\land\,1<e<\varphi(N)$.
+  \item Berechne $d$ mit $e\cdot d\equiv1\:(\bmod\varphi(N))$.
+  \item $p,q,\varphi(N)$ werden nicht mehr benötigt und müssen \emph{sicher} vernichtet werden.
+  \item Die Schlüssel sind nun $(d,N)$ und $(e,N)$.
+\end{enumerate}
+
+\section[Anwendungsgebiete]{Anwendungsgebiete moderner Verfahren}
+
+
+\subsection{Signierung von Nachrichten}
+\begin{enumerate}
+  \item \index{Nachrichtensignierung}\index{Signierung}Berechnung der \index{Hashsumme}Hashsumme einer Nachricht (bspw.~mit \index{MD5}MD5).
+  \item Verschlüsselung der Hashsumme mit dem privaten Schlüssel.
+  \item Der Empfänger entschlüsselt die übermittelte verschlüsselte Hashsumme mit dem öffentlichen Schlüssel.
+  \item Der Empfänger vergleicht die selbst errechnete Hashsumme mit der entschlüsselten Hashsumme.
+\end{enumerate}
+
+\subsection[Hybridverfahren]{Hybridverfahren zur Verschlüsselung von Daten}
+\begin{enumerate}
+  \item \index{Hybridverfahren}Der verhältnismäßig kurze Schlüssel $S$ eines symmetrischen Verfahrens wird
+	mit dem öffentlichen Schlüssel des Empfängers in $S_e$ verschlüsselt.
+  \item Die Daten $D$ an sich werden mit dem symmetrischen Verfahren und dem Schlüssel $S$ nach $D_e$verschlüsselt.
+  \item Der Sender übermittelt $D_e$ und $S_e$.
+  \item Der Empfänger entschlüsselt $S_e$ mit seinem privaten Schlüssel und kann damit nun $D_e$ entschlüsseln.
+\end{enumerate}
+
+\section{Kryptoanalyse}
+
+\index{Kryptoanalyse}
+\ldots{}wird oftmals mit kriminellem Hintergrund genutzt um geheime Informationen auszuspähen.
+
+Angriffsarten:
+\begin{description}
+  \item [{Brute~Force}] \index{Kryptoanalyse!Brute Force}\index{Brute Force}
+	Ausprobieren aller möglichen Schlüssel, das Ergebnis pro Schlüssel muss jeweils inhaltlich geprüft werden.
+  \item [{Wörterbuchangriff}] \index{Kryptoanalyse!Wörterbuchangriff}\index{Wörterbuchangriff}
+	Annahme, dass der Schlüssel einem Muster unterliegt.
+	Ist schneller als reines \foreignlanguage{english}{Brute Force}, schlägt aber fehl, wenn der Schlüssel nicht im Wörterbuch vorhanden ist.
+  \item [{Häufigkeitsanalyse}] \index{Kryptoanalyse!Häufigkeitsanalyse}\index{Häufigkeitsanalyse}
+	Funktioniert nur bei monoalphabetischen Chiffren.
+	Es wird die Häufigkeit der Buchstaben in einer Sprache ausgenutzt.
+\end{description}
+
+Durch wachsende Rechenleistung schrumpft die Sicherheit heutiger Algorithmen, es müssen daher neue Verfahren erdacht werden.
+
+
+\chapter{Datensicherheit}
+\begin{description}
+  \item [{Datenschutz}] \index{Daten!--schutz}
+	ist der Schutz von Daten vor Missbrauch, unbefugter Einsicht\slash Verwendung und vor Änderung/Verfälschung.
+  \item [{Datensicherung}] \index{Daten!--sicherung}
+	beschreibt die Menge aller Maßnahmen gegen Verlust, Manipulation und unbefugten Zugriff von Daten,
+	die durch menschliches\slash technisches Versagen, Katastrophen und/oder vorsätzliche Taten hervorgerufen werden können.
+  \item [{Datensicherheit}] \index{Daten!--sicherheit}
+	ist ein durch die Datensicherung angestrebter Zustand.
+	Absolute Datensicherheit gibt es nicht.
+\end{description}
+
+\section{Sicherheitsrisiken}
+\begin{itemize}
+  \item Diebstahl
+  \item Zerstörung durch Feuer, Sabotage, Naturkatastrophen, Wassereinbruch, Transportschäden, Betriebsdefekten,\ldots{}
+  \item Unbefugter Zugriff (Hacker, oder einfach eine offen gelassene Tür)
+  \item Menschliche Fehler (Bedienungsfehler, Nachlässigkeit)
+  \item Malware (\enquote{Ach schau mal an, ein USB-Stick, mal sehen was da drauf ist\ldots{}})
+  \item Viren, Würmer, Trojaner, \foreignlanguage{english}{Backdoors}, \foreignlanguage{english}{Spyware}, \foreignlanguage{english}{Phishing}
+\end{itemize}
+
+\section{Sicherheitsmaßnahmen}
+\begin{itemize}
+  \item Bauliche Maßnahmen (Feuerschutz, Diebstahlsicherung, physische Abschottung)
+  \item Redundanz der Geräte erhöhen
+  \item Gewissenhafte Backups und Verschlüsselung
+  \item Ausschließlich autorisierte Software verwenden
+  \item Arbeitsplatzrechner ohne Nutzbarkeit externer Datenträger
+  \item Gesundes Misstrauen und Aufmerksamkeit
+\end{itemize}
+
+\section{Bundesdatenschutzgesetz}
+
+\index{Bundesdatenschutzgesetz}
+\begin{quotation}
+  \uline{§ 9 Technische und organisatorische Maßnahmen}
+
+  Öffentliche und nicht-öffentliche Stellen, die selbst oder im Auftrag personenbezogene Daten erheben, verarbeiten oder nutzen, haben die technischen und organisatorischen Maßnahmen zu treffen, die erforderlich sind, um die Ausführung der Vorschriften dieses Gesetzes, insbesondere die in der Anlage zu diesem Gesetz genannten Anforderungen, zu gewährleisten.
+  Erforderlich sind Maßnahmen nur, wenn ihr Aufwand in einem angemessenen Verhältnis zu dem angestrebten Schutzzweck steht.
+
+  \begin{flushright}
+    \emph{Quelle: \cite{BDSG9}}
+  \end{flushright}
+\end{quotation}
+
+
+
+\section{IT Security}
+\index{IT Security}
+\index{Security}
+Jeder, der elektronische Datenverarbeitung in jedweder Form nutzt, ist potenzielles Ziel eines Angreifers.
+Die Angreifer haben dabei unterschiedlichste Interessen: monetäre Gründe, Datendiebstahl, Ressourcennutzung, Erpressung, Angeberei, etc..
+Angriffspunkte können Softwarefehler (Buffer Overflows, Vertrauen auf korrekte Eingabedaten,\ldots), Konfigurationsfehler (z.\,B.~eine Firewall, die bestimmte Ports nicht sperrt, oder ein leicht zu erratendes Passwort), oder blindes Vertrauen (Fremde Personen an ein an sich geschütztes System lassen) sein.
+
+\index{XSS}
+\index{Cross Site Scripting}
+\index{CSRF}
+\index{Cross Site Request Forgery}
+\index{Buffer Overflow}
+\index{SQL Injection}
+\begin{description}
+    \item[Buffer Overflow] ermöglicht das Einschleusen von fremden Programmcode in eine Anwendung.
+    \item[\gls{xss}] ist eine Art, auf einer Website bspw.~über eingeschleustes Javascript Malware auf dem PC des Benutzers zu installieren oder sensible Daten abzugreifen; z.\,B.~könnte nicht maskierter HTML-Code wie etwa ein \code{<script>}-Tag in einer Kommentarfunktion dazu benutzt werden, eine Seite unbenutzbar zu machen.
+    \item[\gls{csrf}] ist eine Abart von \gls{xss}, da die Aktivitäten nicht (nur) auf der manipulierten Seite stattfinden, sondern eine zweite Seite angesprochen wird; so könnte z.\,B.~eine Fake-Seite Aufrufe an die echte Seite weiterleiten, um authentisch zu wirken.
+    \item[SQL Injection] ist ähnlich \gls{xss}, bezieht sich aber darauf, dass Eingabedaten des Benutzers einfach per Stringverkettung zu einem SQL-Statement umgeformt werden; eine Benutzereingabe wie z.\,B.~\enquote{\code{'; DELETE FROM XYZ;}} wäre somit bei einer \enquote{Bastelei} wie \code{\textquotedblleft SELECT * FROM XYZ WHERE user\-name='\textquotedblright\ + \$username + \textquotedblleft'\textquotedblright} möglich.
+\end{description}
+
+Zur Absicherung von Benutzerpasswörtern, die fremd gespeichert werden, sollte eine als sicher geltende Hash-Funktion in Kombination mit einem Salt eingesetzt werden (z.\,B.~SHA-128).
+
+
+\chapter[Assembler]{\gls{asm}}
+\begin{quotation}
+  Eine \index{Assembler}\index{Assemblersprache}Assemblersprache ist eine spezielle Programmiersprache, welche die Maschinensprache einer spezifischen Prozessorarchitektur in einer für den Menschen lesbaren Form repräsentiert.
+  Jede Computerarchitektur hat folglich ihre eigene Assemblersprache.
+
+  \begin{flushright}
+    \emph{Quelle: \cite{wiki:Assemblersprache}}
+  \end{flushright}
+\end{quotation}
+
+An dieser Stelle sei erwähnt, dass \noun{Donald E.~Knuth} eine hypothetische \gls{risc}-Architektur namens \emph{MMIX} entworfen hat, die explizit zum Studium der Arbeitsweisen eines Computers entworfen wurde (siehe \cite{KnuthMMIX}, online unter \url{http://mmix.cs.hm.edu/doc/fasc1.pdf} einsehbar).
+Angesichts dieser Basis existiert eine umfangreiche (größtenteils englischsprachige) Dokumentation, welche der geneigte Leser unter \url{http://mmix.cs.hm.edu/doc/index.html} entdecken kann.
+Die MMIX-Architektur wird seit über 10 Jahren erfolgreich in der Lehre an der Universität München eingesetzt, und es existiert eine ausgereifte Sammlung an Programmen, genannt \emph{MMIXware}, für verschiedene Plattformen zur Simulation dieser Architektur.
+
+
+\section{Grundlagen}
+
+Beim Datentransfer gilt zu beachten:
+\begin{enumerate}
+  \item Man kann Daten zwischen Registern transferieren.
+  \item Man kann Daten zwischen Registern und Speicher transferieren.
+  \item Es ist keine direkter Transfer im Arbeitsspeicher möglich, man muss den Umweg über die Register gehen.
+  \item Jede arithmetische oder logische Operation setzt die sog.~\index{Flags}Flags, die mit den bedingten \index{Sprungbefehle}Sprungbefehlen benutzt werden können.
+\end{enumerate}
+
+\subsection{Register}
+
+Die Intel x86 (32 Bit) Architektur besitzt folgende \index{Register}Register:
+\begin{description}
+  \item [{al,~ah,~ax,~eax}] \index{Akkumulator}
+	\foreignlanguage{english}{\emph{Accumulator}}; Akkumulator, wird für mathematische/logische Operationen benutzt.
+  \item [{bl,~bh,~bx,~ebx}]
+	\foreignlanguage{english}{\emph{Base}}; Basis, wird für die dynamische Berechnung einer
+	\index{Speicheradresse}Speicheradresse benutzt.
+  \item [{cl,~ch,~cx,~ecx}] \index{Zähler}
+	\foreignlanguage{english}{\emph{Counter}}; Zähler, wird für einfache Schleifen benutzt.
+  \item [{dl,~dh,~dx,~edx}] \index{Datenregister}
+	\foreignlanguage{english}{\emph{Data}}; Datenregister, wird für Datentransfers über rechnerinterne Ports benutzt.
+	  \index{Peripherie}[Achtung: Gemeint sind nicht die Internet-Ports. Die Ports hier sind Datenkanäle um mit der rechnerinternen Peripherie (wie z.\,B.~Soundkarte, DMA, Tastatur, etc.) kommunizieren zu können.]
+  \item [{cs}] \index{Segment}
+	\foreignlanguage{english}{\emph{Code Segment}}; \code{eip} ist relativ zu diesem Segment (vgl.~\cref{sub:Virtuelle-Speicherverwaltung}).
+  \item [{ss}]
+      \foreignlanguage{english}{\emph{Stack Segment}}; \code{esp} ist relativ zu diesem Segment (vgl.~\cref{sub:Virtuelle-Speicherverwaltung}).
+  \item [{ds,~es,~fs,~gs}]
+	\foreignlanguage{english}{\emph{Data Segment, Extra Segments}}; \code{esi}, \code{edi} sind relativ zu diesem Segment (vgl.~\cref{sub:Virtuelle-Speicherverwaltung}).
+  \item [{eip}]
+	\foreignlanguage{english}{\emph{Instruction Pointer}}; Zeigt auf die nächste auszuführende Anweisung.
+  \item [{esp}] \index{Stack Pointer}
+	\foreignlanguage{english}{\emph{Stack Pointer}}; Zeigt auf die Adresse im Stack, auf der die nächsten Daten gepusht werden.
+  \item [{ebp}] \index{Base Pointer}\index{Stack Frame}
+	\foreignlanguage{english}{\emph{Base Pointer}}; Wird bei Funktionsaufrufen benutzt um Stack-Frames anlegen zu können.
+  \item [{esi}] \index{Quelladresse}
+	\foreignlanguage{english}{\emph{Source Index}}; Quelladresse für sog.~String-Opcodes,
+	relativ zu \code{ds}.
+  \item [{edi}] \index{Zieladresse}
+	\foreignlanguage{english}{\emph{Destination Index}}; Zieladresse für sog.~String-Opcodes, relativ zu \code{es}.
+\end{description}
+\begin{table}
+\centering
+\begin{tabular}{|c|c|c|c|}
+  \hline 
+  \multicolumn{4}{|c|}{\code{e{*}x} (32 Bit)}\\
+  \hline 
+  \multicolumn{2}{|c|}{$\emptyset$} & \multicolumn{2}{c|}{\code{{*}x} (16 Bit)}\\
+  \hline
+  $\emptyset$& $\emptyset$ & \code{{*}h} (8 Bit) & \code{{*}l} (8 Bit)\\
+  \hline
+\end{tabular}
+\caption{Aufbau Register}
+\end{table}
+
+
+\subsection{Mnemonics}
+\index{Mnemonics}
+Mnemonics sind menschenlesbare Darstellungen für die \index{Opcodes}Opcodes.
+Die Opcodes sind die Binärdarstellungen der \index{Maschinensprache}Maschinensprache.
+
+\vfill{}
+
+\section{Datenbefehle}
+
+\begin{minipage}[t]{1\columnwidth}%
+\begin{nasmcode}
+mov eax, 123
+mov [0], eax
+mov eax, [4]
+mov word ptr [8], 123
+xchg eax, edx
+xchg eax, [9]
+\end{nasmcode}
+
+\begin{enumerate}
+  \item Ins Register \code{eax} wird 123 geschrieben.
+  \item An die Speicherstelle 0 werden die 4 Bytes aus \code{eax} kopiert.
+  \item In das Register \code{eax} werden 4 Bytes von der Speicherstelle 4 kopiert.
+  \item An die Speicherstelle 8 werden 2 Bytes geschrieben.
+    Die Angabe \code{word ptr} muss angegeben werden, da der Assemblierer sonst nicht weiß, wie viele Bytes geschrieben werden sollen.
+  \item Inhalt von \code{eax} und \code{edx} vertauschen.
+  \item Inhalt von \code{eax} mit den 4 Bytes an Speicherstelle 9 vertauschen.
+\end{enumerate}
+\end{minipage}
+
+\vfill{}
+
+\section{Mathematische Befehle}
+\begin{minipage}[t]{1\columnwidth}%
+\begin{nasmcode}
+mul eax, 4
+imul eax, -3
+idiv eax, -3
+div eax, 4
+add eax, 9
+sub eax, -3
+mul eax, edx
+\end{nasmcode}
+
+\begin{enumerate}
+  \item \code{eax} mit 4 multiplizieren, das Ergebnis steht im Registerpaar \code{edx:eax}, da \code{eax} bei einer Multiplikation überlaufen kann.
+  \item \code{eax} vorzeichenbehaftet mit $-3$ multiplizieren (\emph{i} steht für \emph{int}).
+	Vorzeichenbehaftet deswegen, weil die $-3$ sonst als \code{0xFFFFFFFD} interpretiert werden würde.
+  \item \code{eax} vorzeichenbehaftet durch $-3$ dividieren.
+    Das Divisionsergebnis steht in \code{eax}, das Moduloergebnis in \code{edx}.
+  \item \code{eax} durch 4 dividieren.
+    Das Divisionsergebnis steht in \code{eax}, das Moduloergebnis in \code{edx}.
+  \item 9 zu \code{eax} addieren, es wird bei einem Überlauf das \foreignlanguage{english}{\emph{Carry-Flag}} gesetzt.
+  \item $-3$ von \code{eax} subtrahieren, es wird bei einem Überlauf das \foreignlanguage{english}{\emph{Carry-Flag}} gesetzt.
+  \item \code{eax} mit \code{edx} multiplizieren.
+\end{enumerate}
+\end{minipage}
+
+\vfill{}
+
+
+\section{Sprünge}
+\begin{description}
+  \item [{cmp}]      Zwei Werte vergleichen (Speicher und Register, Speicher und Wert, Register und Wert, Register und Register).
+  \item [{jmp}]      Sprung ohne Bedingung (wird in jedem Fall ausgeführt).
+  \item [{jc}]       Sprung wenn das \foreignlanguage{english}{Carry-Flag} gesetzt ist.
+  \item [{jz,~je}]   \foreignlanguage{english}{Zero-Flag} gesetzt (wenn beide Werte gleich sind).
+  \item [{ja,~jb}]   \foreignlanguage{english}{Above, Below} (bei vorzeichenbehafteten Vergleichen).
+  \item [{jae,~jbe}] \foreignlanguage{english}{Above or Equal, Below or Equal} (bei vorzeichenbehafteten Vergleichen).
+  \item [{jg,~jl}]   \foreignlanguage{english}{Greater, Less} (ohne Vorzeichenbeachtung).
+  \item [{jge,~jle}] \foreignlanguage{english}{Greater or Equal, Less or Equal} (ohne Vorzeichenbeachtung).
+\end{description}
+Zusätzlich kann hinter das \emph{j} ein \emph{n} (\code{not}) angehängt werden um die Bedeutung des Vergleiches umzukehren (\code{jnae} und \code{jb} sind bspw.~somit identisch).
+
+
+\section{Beispiele}
+
+Zählt die Bits in \code{eax} und gibt die Anzahl der Bits in \code{eax} zurück.
+
+\vfill{}
+
+
+\subsection{Muster von \noun{Dr.~Alexander Voß}}
+
+\begin{minipage}[t]{1\columnwidth}%
+\begin{nasmcode}
+mov eax,0x001a ; -> 0001 1010 -> 3 Bits
+call A03c
+mov eax, 0
+call A03c
+mov eax, 0xffffffff ; -> 32 Bits
+call A03c
+jmp end
+;----------------------------------------------------------
+
+A03c:
+  push ebx ; Register auf dem Stack sichern
+  push ecx
+  mov ecx, 32 ; Anzahl Schleifendurchläufe
+  mov ebx, 0 ; Bit-Zähler
+A03c_loop:
+  shr eax, 1 ; eax um 1 Bit nach rechts schieben, das
+             ; herausgeschobene Bit steht im Carry-Flag
+  jnc A03c_next ; Carry nicht gesetzt?
+  inc ebx ; Bit-Zähler um 1 erhöhen (inkrementieren)
+A03c_next:
+  cmp eax, 0 ; eax mit 0 vergleichen
+  jz A03c_end ; Wenn eax==0 ist, dann brauchen wir nicht
+              ; weiter zu zählen
+  dec ecx ; Durchlaufzähler-- (dekrementieren)
+  jnz A03c_loop ; falls ecx!=0: nächster Durchlauf
+A03c_end:
+  mov eax, ebx ; Bit-Zähler nach eax kopieren
+  pop ecx ; Register wiederherstellen
+  pop ebx
+  ret ; Rücksprungadresse vom Stack holen und nach
+      ; eip schreiben
+
+end:
+\end{nasmcode}
+\end{minipage}
+
+\vfill{}
+
+
+
+\subsection{Alternative 1}
+
+\begin{minipage}[t]{1\columnwidth}%
+Hier werden die Befehle \code{loop} und \code{adc} benutzt um den Code zu verkürzen.
+
+\begin{nasmcode}
+; ...
+A03c:
+  push ebx ; Register auf dem Stack sichern
+  push ecx
+  mov ecx, 32 ; Anzahl Schleifendurchläufe
+  mov ebx, 0 ; Bit-Zähler
+A03c_loop:
+  shr eax, 1 ; eax um 1 Bit nach rechts schieben, das
+             ; herausgeschobene Bit steht im Carry-Flag
+  adc ebx, 0 ; 0+CarryFlag auf ebx aufaddieren
+  loop A03c_loop ; loop führt ein "dec ecx" durch und
+                 ; springt zum angegebenen Label, wenn
+                 ; ecx!=0
+A03c_end:
+ mov eax, ebx ; Bit-Zähler nach eax kopieren
+ pop ecx ; Register wiederherstellen
+ pop ebx
+ ret ; Rücksprungadresse vom Stack holen und nach
+     ; eip schreiben
+\end{nasmcode}
+\end{minipage}
+
+\vfill{}
+
+
+
+\subsection{\label{sub:Asm-Alternative-2}Alternative 2}
+
+\begin{minipage}[t]{1\columnwidth}%
+Hier wird die Schleifenvariable \code{ecx} gespart.
+
+\begin{nasmcode}
+; ...
+A03c:
+  push ebx ; Register auf dem Stack sichern
+  mov ebx, 0 ; Bit-Zähler
+A03c_loop:
+  shr eax, 1 ; eax um 1 Bit nach rechts schieben, das
+             ; herausgeschobene Bit steht im Carry-Flag
+  adc ebx, 0 ; 0+CarryFlag auf ebx aufaddieren
+  cmp eax, 0
+  jne A03c_loop
+A03c_end:
+  mov eax, ebx ; Bit-Zähler nach eax kopieren
+  pop ebx
+  ret ; Rücksprungadresse vom Stack holen und nach
+      ; eip schreiben
+\end{nasmcode}
+\end{minipage}
+
+\vfill{}
+
+
+
+\section{Compiler-Optimierungen}
+
+\noindent %
+\begin{minipage}[t]{1\columnwidth}%
+Original C++ Code:
+\begin{cppcode}
+unsigned int countBits(unsigned int value) {
+  unsigned int count = 0;
+  while(value != 0) {
+    count += value%2;
+    value /= 2;
+  }
+  return count;
+}
+\end{cppcode}
+
+Vom GCC optimierte Version:
+\begin{nasmcode}
+A03c: ; hier ist die zu untersuchende Zahl in edi
+  xor eax, eax ; xor geht schneller als mov (hier: =0)
+  test edi, edi ; test ist ein Bittest (hier: ==0)
+  jz A03c_end ; Parameter ist 0
+  nop ; no-operation: eingefügt, weil der
+      ; Prozessor bei gewissen "alignments"
+      ; die Anweisungen schneller verarbeiten kann
+  ; ... es folgen noch 9 nop's für 16-Byte Alignment
+A03c_loop:
+  mov edx, edi
+  and edx, 1
+  add eax, edx ; eax ist der Bitzähler
+  shr edi, 1
+  jnz A03c_loop ; Zero-Flag ist nur gesetzt, wenn
+                ; edi beim shr auf 0 gesetzt wurde
+A03c_end:
+  repz ret
+\end{nasmcode}
+
+Dieser kurze Code ist übrigens nicht wirklich optimierbar, bei komplexeren Algorithmen kommen die Optimierungsalgorithmen im GCC wesentlich besser zum Tragen, allerdings sind diese optimierten Codes zu lang und zu kompliziert für diesen kurzen Ausflug.%
+\end{minipage}
+
+Zum Weiterlesen empfiehlt sich \cite{wikibook:AsmProgr} und unter \url{http://jasmin.sourceforge.net/} findet sich ein in Java geschriebener x86-Simulator, mit dem sich sehr schön die Funktionsweise von Assembler nachvollziehen lässt.
+
+
+\chapter{Komplexitätstheorie}
+
+
+\section{\protect\noun{Turing}maschine}
+
+\index{Turinmaschine}
+\begin{itemize}
+  \item Theoretisches Rechnermodell.
+  \item Unendlich langes \index{Speicherband}Speicherband mit genau einem Zeichen aus dem \index{Bandalphabet}Bandalphabet $\Gamma$ pro Zelle.
+  \item Das aktuelle betrachtete Zeichen ist $a\in\Gamma$.
+  \item Der Lese-/Schreibkopf kann sich nur um ein Feld nach links oder rechts bewegen oder stehen bleiben ($\{L,R,N\}$).
+  \item \index{Kopfposition}Kopfposition und \index{Bandzustand}Bandzustand bilden den \index{Zustandsraum}Zustandsraum $Q$.
+  \item Das Programm besteht aus einem \index{Anfangszustand}Anfangszustand $q_0\in Q$, einem \index{Stoppzustand}Stoppzustand $\bar{q}\in Q$, der Eingabe auf dem Band und einer \index{Zustandsübergangfunktion}Zustandsübergangfunktion $\delta:(Q\setminus\{\bar{q}\})\times\Gamma\rightarrow Q\times\Gamma\times\{L,R,N\}$.
+  \item Damit: $\delta(q,a)=(q',a',d)$
+	\begin{itemize}
+	  \item $q\in Q$: aktueller Zustand der Maschine
+	  \item $a\in\Gamma$: aktuelles Zeichen auf dem Band
+	  \item $q'\in Q$: \index{Folgezustand}Folgezustand
+	  \item $a'\in\Gamma$: Auf das Band geschriebene Zeichen
+	  \item $d\in\{L,R,N\}$: Bewegung des Kopfes
+	  \item $\delta$ wird immer wieder aufgerufen, bis $\bar{q}$ erreicht ist.
+	\end{itemize}
+\end{itemize}
+
+\section{Komplexitätsklassen}
+
+\index{Komplexitätsklasse}
+\begin{description}
+  \item [{P}] Alle Probleme, welche in polynomieller Laufzeit zu berechnen sind; $\mathcal{O}(n^c)$.
+  \item [{NP}] Probleme, deren Lösungen in polynomieller Laufzeit überprüft werden können.
+	\begin{description}
+	  \item [{NP-schwer}] Das Problem ist mindestens so schwer wie ein beliebiges Problem in NP\@.
+	  \item [{NP-vollständig}] Das Problem liegt ausschließlich in NP\@.
+	\end{description}
+  \item [{EXP}] Alle Probleme, welche in exponentieller Laufzeit zu berechnen sind; $\mathcal{O}(2^{n^c})$.
+  \item [{R}] Alle Probleme, welche in endlicher Zeit zu berechnen sind (\enquote{rekursive} Probleme).
+\end{description}
+
+\noindent\begin{center}
+  P $\subset$ NP $\subset$ EXP $\subset$ R
+\end{center}
+
+
+\section{Randomisierte Algorithmen}
+
+\index{randomisierter Algorithmus}\index{Algorithmus!randomisiert}
+
+\ldots{}enthalten durch Zufall gesteuerte Lösungsansätze.
+\begin{itemize}
+  \item Sind meist wesentlich einfacher zu implementieren als deterministische Algorithmen (bspw.~sehr oft in der künstlichen Intelligenz angewendet).
+  \item Liefern meist sehr gute Näherungen an die exakte Lösung des Problems in kurzer Zeit.
+\end{itemize}
+
+\begin{description}
+  \item [{Monte-Carlo-Algorithmus}] \index{Monte-Carlo-Algorithmus}\index{Algorithmus!Monte-Carlo--}
+	Randomisierter Algorithmus, welcher mit einer beschränkten Wahrscheinlichkeit ein falsches Ergebnis liefern darf.
+  \item [{Las-Vegas-Algorithmus}] \index{Las-Vegas-Algorithmus}\index{Algorithmus!Las-Vegas--}
+	Randomisierter Algorithmus, welcher \emph{niemals} ein falsches Ergebnis liefern darf.
+\end{description}
+
+
+\section{Quantencomputer}
+\index{Quanten!--computer}
+\index{Qubit}
+\index{Superposition}
+Im Gegensatz zu \enquote{herkömmlichen} Bits können die Bits in Quantencomputern (\emph{Qubits}, Darstellung $\lvert \psi \rangle$) gleichzeitig die Zustände~0 und~1 annehmen (Superposition):
+\[
+    \lvert \psi \rangle := c_0 \lvert 0 \rangle + c_1 \lvert 1 \rangle,
+    \quad \lvert c_0 \rvert^2 + \lvert c_1 \rvert^2 = 1,
+    \quad c_0,c_1 \in \mathbb{C}
+\]
+
+Das Auslesen eines Qubits ergibt jedoch immer nur die Werte~0 oder~1, deren \enquote{Beobachtungswahrscheinlichkeiten} durch $c_0$ und $c_1$ bestimmt sind; sobald das Qubit ausgelesen wird, nimmt es einen definierten Zustand (0 oder~1) an, und setzt ggf.~verschränkte Qubits ebenfalls auf einen definierten Zustand.
+\index{Quanten!--register}
+\index{Quanten!--gatter}
+Ein Quantenregister besteht aus mehreren Qubits, und die Operationen darauf werden \emph{Quantengatter} genannt und manipulieren die \emph{Amplituden} $c_0$ und $c_1$.
+
+\index{Quanten!--parallelismus}
+Die Superposition der Quanten ermöglicht \emph{Quantenparallelismus}, indem mehrere Zustände mit einer einzigen Operation berechnet werden können (vgl.~SIMD).
+Dieser Parallelismus ermöglicht z.\,B.~die Faktorisierung von Zahlen in polynomieller Laufzeit, da viele verschiedene Faktorisierungen gleichzeitig berechnet werden; \noun{Shor}s Algorithmus zur Faktorisierung basiert (vereinfacht) darauf, \emph{sämtliche} Faktorisierungen (auch ungültige) auszuprobieren, und durch Quantengatter die Beobachtungswahrscheinlichkeit der ungültigen Lösungen auf~0 zu bringen.
+
+
+\section{Virtualisierung}
+\index{Virtualisierung}
+\index{Virtualisierung!virtuelle Maschine}
+\index{Virtualisierung!Aggregation}
+\index{VM|see{Virtualisierung}}
+\index{Emulation}
+\begin{description}
+    \item[Emulation] bezeichnet die komplette Simulation von Hardware, z.\,B.~die eines GameBoys oder einer PlayStation auf dem PC.
+    \item[Virtualisierung] ermöglicht es, z.\,B.~mehrere Betriebssysteme parallel auf \emph{derselben} Hardware auszuführen oder mehrere PCs zu einer \emph{virtuellen Maschine} zusammenzufassen (Aggregation); in einem engeren Sinne nutzen bspw.~Anti\-viren-Programme Virtualisierung, um bestimmten (evtl.~schädlichen) Programmen den Vollzugriff auf das System zu verweigern, ohne dass diese das merken (Sandkasten-Modus).
+\end{description}
+
+\Todo{User Interfaces}
+
+\Todo{Virtualisierung}
