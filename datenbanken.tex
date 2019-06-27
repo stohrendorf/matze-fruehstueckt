@@ -1,0 +1,881 @@
+% !TeX root = matze_fruehstueckt.tex
+\newminted{sql}{linenos,numbersep=5pt,frame=lines,framesep=2mm}
+\newmintinline[sqli]{sql}{}
+%\newcommand{\sqli}{\mintinline{sql}}
+
+\Todo{Recherchieren und überarbeiten}
+
+
+\chapter{Dateibasierte Datenverwaltung}
+
+
+\section{Definitionen}
+\begin{description}
+  \item [{Daten}] \index{Daten}\index{Syntax}
+	Strukturierte Objekte (Syntax), die durch Anwendung auf Rechner verarbeitet werden
+  \item [{Information}] \index{Shannon}\index{Semantik}\index{Information}
+	Daten mit Bedeutung (Semantik) für Empfänger
+
+	\noun{Shannon}: Wert---Info: Zuwachs der nach Kenntnis der Information beantwortbaren Ja\slash{}Nein-Fragen
+
+  \item [{Wissen}] \index{Wissen}
+	Verknüpfung von Informationen, um Prognosen/Erklärungen abzugeben
+\end{description}
+
+\subsection{Informationen und Daten}
+\begin{itemize}
+  \item Daten sind der Rohstoff, aus dem Informationen abgeleitet werden
+  \item Informationen basieren auf Daten
+  \item Gleiche Daten sind stets verschiedene Informationen---??? Backspace{} ,,stets`` konnte nicht genau aus den Aufzeichnungen entnommen werden!\Todo{Fix me}
+\end{itemize}
+
+\subsection{Festplatte}
+\begin{itemize}
+  \item \index{Achse}\index{Festplatte}
+	$x$ Platten rotieren um eine Achse
+  \item \index{Lesekopf}\index{Schreibkopf}
+	Schreib-/Leseköpfe schweben (ca.~1\,\textmu{}m Abstand)
+  \item \index{Positionierungslogik}
+	Elektronischer Bereich: Positionierungslogik, Schreib-/Leseverstärker, De-/Kodierungslogik, Ein-/Ausgabelogik
+\end{itemize}
+\begin{description}
+  \item [{Platte}] \index{Oberfläche}
+	Oberfläche
+  \item [{Spur}] \index{Spur}\index{Sektor}
+	Sektor
+  \item [{Spuren}]
+	Konzentrische Kreise mit gleichem Abstand zur Aufnahme von Informationen
+  \item [{Zylinder}] \index{Plattenstapel}\index{Zylinder}
+	Übereinander liegende Spuren des Plattenstapels, die mit einer Bewegung der Schreib-/Leseköpfe erreicht werden können.
+	Alle Spuren im Zylinder können ohne neue Positionierung verarbeitet werden.
+  \item [{Sektoren}]
+	Kleinste adressierbare Einheit einer Festplatte. Jede auf einer Festplatte gespeicherte Datei belegt eine ganzzahlige Anzahl von Sektoren.
+\end{description}
+
+\subsubsection{Sektorzugriffe}
+\begin{description}
+  \item [{Mittlere~Suchzeit}] \index{Mittlere!Suchzeit}\index{Suchzeit}
+	Zeit, um $\nicefrac{1}{3}$ aller Zylinder zu überfahren
+  \item [{Mittlere~Drehwartezeit}] \index{Mittlere!Drehwartezeit}\index{Drehwartezeit}
+	Zeit, die eine halbe Umdrehung benötigt
+  \item [{Mittlere~Zugriffszeit}] \index{Mittlere!Zugriffszeit}\index{Zugriffszeit}
+	Summe aus mittlerer Suchzeit und Drehwartezeit
+\end{description}
+
+\subsection{Dateisysteme}
+
+\index{Dateisystem}\index{Betriebssystem}
+Betriebssystem unterstützen den Benutzer durch Dateisysteme.\footnote{
+	Siehe auch \vref{sec:Dateisysteme}.
+}
+\begin{description}
+  \item [{Dateien}] \index{Datei}
+	Ansammlung von logisch zusammenhängenden Daten
+  \item [{Dateisystem}] \index{Datei!--system}
+	Liefert die Struktur zur Speicherung von Dateien auf Datenträger
+  \item [{Dateidaten}] \index{Datei!--daten}
+	müssen nicht physisch zusammenhängend gespeichert werden
+  \item [{Dateieigenschaften~und~-referenzen}] \index{Metadaten}
+	werden in einer Verwaltungsstruktur (\emph{Metadaten}) gespeichert
+\end{description}
+
+\subsubsection{Unix/Windows}
+\begin{description}
+  \item [{Daten}]     \index{Daten}\index{Linux}\index{Windows}\index{Unix}Unstrukturierte Folge von Bytes
+  \item [{Bedeutung}] Anwendungsspezifisch
+\end{description}
+
+Die Anwendungen nutzen die Abstraktion des Betriebssystems zur Abspeicherung
+der Informationen als Daten. Programmiersprachen bieten i.\,d.\,R.~entsprechende
+Abstraktionen:
+\index{Java}\index{Stream}
+\begin{itemize}
+  \item Ein-/Ausgabe: Stream
+  \item Streams entkoppeln die Anwendung von den Betriebssystem-Details
+  \item Streams kapseln den Dateizugriff in Methoden (lesen, schreiben)
+  \item In Java: \code{InputStream} und \code{OutputStream} zur Kapselung
+\end{itemize}
+\begin{description}
+  \item [{Probleme}] \index{Daten!Inkonsistenz}Zeit-/Ressourcenintensiv, Zugriffe mehrerer Anwendungen führen zu Dateninkonsistenz
+\end{description}
+
+\subsection{Vermeidung von Redundanz}
+\begin{description}
+  \item [{Ziel}] \index{Syntax}\index{Abhängigkeit}\index{Redundanz}
+	Reduktion der Abhängigkeiten zwischen Anwendung von Syntax der Daten (bei Erhalt der ableitbaren Informationen).
+\end{description}
+Auftretende Probleme:
+\begin{itemize}
+  \item Änderung der logischen/physischen Struktur der Daten erfordert Änderung der Anwendungen.
+  \item \index{Zugriffskontrolle}\index{Daten!--sicherheit}\index{Daten!--schutz}
+	Datenschutz und -sicherheit: unflexible Zugriffskontrolle, Systemabstürze, Hardwaredefekte
+  \item Unflexible Gewinnung von Informationen
+  \item Verarbeitung großer Datenmengen
+\end{itemize}
+
+\subsection{Datenunabhängigkeit}
+\begin{description}
+  \item [{Ziel}] \index{Daten!Unabhängigkeit}
+	Strukturelle Änderungen dürfen sich nicht unmittelbar auf Anwendungsprogramme auswirken.
+  \item [{Logisch}]
+	Daten als eigenständige Ressource modellieren (abstrakte Syntax, z.\,B.~SQL); Nutzer sieht nur, was er sehen muss\slash{}möchte
+  \item [{Physisch}]
+	Flexibles Abspeichern der Daten
+\end{description}
+
+\chapter{Aufgaben und Aufbau eines Datenbank-Systems}
+
+
+\section{Konzept der Datenbank}
+\begin{itemize}
+  \item Relevante Daten werden nicht mehr indirekt durch die Anwendungsentwickler modelliert, sondern eigenständig und anwendungsübergreifend
+  \item \index{Daten!--struktur}\index{Ressource}Daten als eigene Ressource (analog zur Datenstruktur einer Anwendung)
+  \item \index{Softwareschicht}Eine eigene Softwareschicht stellt der Anwendung die benötigten Daten zur Verfügung.
+\end{itemize}
+
+\section{Definitionen}
+\nomenclature{DBS}{Database System; Kombination von Datenbank und DBMS}
+\nomenclature{DBMS}{Database Management System; Gesamtheit aller Programme zur Erzeugung, Verwaltung und Manipulation einer Datenbank}
+\begin{description}
+  \item [{Datenbank}] \index{Redundanz}\index{Metadaten}\index{Datenbestand}\index{Datenbank}
+	Integrierter, persistenter Datenbestand, einschließlich aller Metadaten, die einer Gruppe von Nutzern zur Verfügung
+	gestellt wird und durch spezielle Software möglichst redundanzfrei verwaltet wird.
+  \item [{Database~Management~System (DBMS)}] \index{DBMS}
+	Gesamtheit aller Programme zur Erzeugung, Verwaltung und Manipulation einer Datenbank
+  \item [{Datenbanksystem~(DBS)}] \index{DBS}
+	Kombination von Datenbank und DBMS
+\end{description}
+
+\section{Trennung von Verwaltung und Verwendung}
+
+Abstraktionsebenen:
+\begin{itemize}
+  \item Wie ist die Struktur für die einzelne Anwendung?
+  \item Wie sind die Daten insgesamt strukturiert?
+  \item Wie werden die Daten effizient gespeichert?
+\end{itemize}
+
+\subsection{Relationales Modell}
+\begin{itemize}
+  \item Daten werden in Form von \emph{Relationen} (Tabellen) gespeichert
+      \begin{itemize}
+	\item Zeile: \emph{Tupel}
+	\item Spalten: \emph{Attribute}
+	\item Eine Zeile wird über gewählte Attributkombination eindeutig identifiziert (\emph{Primärschlüssel})
+      \end{itemize}
+  \item Attribute sind atomare Datentypen
+  \item Sachlogische Zusammenhänge: Verknüpfung der Tabellen, redundante Speicherung der Primärschlüssel
+  \item Kommunikation über die \emph{Structured Query Language} (SQL)
+  \item Datenmodellierung legt die sachlogischen Zusammenhänge über \emph{Relationen} der Tabellen fest
+\end{itemize}
+
+\begin{description}
+  \item [{Datenmodell}]
+	Formalismus, um interessierende Daten und sachlogische Zusammenhänge zu beschreiben.
+  \item [{Datenbankschema}]
+	definiert die Metastruktur, die alle möglichen Ausprägungen des konkreten Modells beschreibt.
+	Das DBMS überwacht die Übereinstimmung zwischen dem Schema und dem Zustand, d.\,h., das DBMS benötigt mehrere Datenbestände.
+\end{description}
+
+\subsection{Drei-Ebenen-Konzept}
+\begin{description}
+  \item [{Logische~Datenunabhängigkeit}]
+	Die logische Struktur der Datenbank ist unabhängig von der Schnittstelle:
+	Das Datenbanksystem kann verändert werden, ohne dass die Anwendungen angepasst werden müssen.
+  \item [{Physische~Datenunabhängigkeit}]
+	Das Datenmodell ist unabhängig vom verwendeten Speicher(-gerät).
+\end{description}
+
+\subsubsection{Konzeptuelle Ebene}
+\begin{itemize}
+  \item Unternehmensweite Aufgabe, Möglichkeit zur Kontrolle stabiler Bezugspunkte
+  \item Beschreibt die Gesamtheit der Daten
+  \item Wird durch datenbankspezifisches Schema realisiert
+      \begin{itemize}
+	\item Ergebnis des Datenbankentwurfs
+	\item Formuliert im DBMS des Betriebssystems
+	\item Keine Details der Speicherung
+	\item Keine anwendungsspezifischen Details
+	\item Spezifiziert mit Hilfe der \emph{Data Definition Language} (DDL)
+	\item ??? Backspace{} (nicht entzifferbar) mit separaten Anweisungen\Todo{Fix me}
+	\item Zugriffsregeln spezifizieren alle relevanten Daten und Beziehungen
+      \end{itemize}
+\end{itemize}
+
+\subsubsection{Interne Ebene}
+\begin{itemize}
+  \item Daten werden in den Speicher der Datenbank abgelegt
+  \item Subformat\slash{}Zugriffsmöglichkeiten werden geklärt
+  \item Beschreibt physische Speicherung (Aufbau der Datensätze, Zugriffsmethode)
+  \item Bestimmt das Leistungsverhalten des Datenbanksystems
+  \item Zugriffsmechanismen, Informationen
+\end{itemize}
+
+\subsubsection{Externe Ebene}
+\begin{itemize}
+  \item Liefert dem Nutzer die relevanten Daten
+  \item Übersichtlichkeit
+  \item Datenschutz
+  \item Beschreibt die Sichten einzelner Anwendungsgruppen
+\end{itemize}
+
+\subsection{Aufgaben eines DBMS}
+\begin{itemize}
+  \item Datenbankmanagement und Zugriffsstrukturen mittels formalisierter Sprache
+  \item Ausliefern und Speichern von Daten mittels Anfragen
+  \item Redundanzfreie Datenhaltung des gesamten Datenbestandes
+  \item Sammeln statischer Daten (Optimierung)
+  \item Zentrale Konsistenzsicherung
+	\begin{itemize}
+	  \item Nur konsistente Änderungen möglich
+	  \item Elementares Prinzip der unkollierten Änderung
+	\end{itemize}
+  \item Unterstützung Mehrbenutzerbetrieb (Sicherstellen der Nebenläufigkeit, Skalierbarkeit)
+  \item Datenschutz und Sicherheit
+  \item Einfache und flexible Nutzung der Daten
+  \item Effizienz
+\end{itemize}
+
+\section{Transaktionen}
+
+Abgeschlossene Folge von Befehlen, welche die Datenbank von einem
+logisch konsistenten Zustand in einen anderen überführt. Ein Arbeitspaket,
+so klein wie möglich, aber so groß wie nötig (\emph{Integritätsbedingung}).
+
+Kernbedingungen:
+\nomenclature{ACID}{Atomarity, Consistency, Isolation, Durability---Kernprinzipien eines DBMS}
+\begin{labeling}{AA}
+  \item [{A}] \foreignlanguage{english}{Atomarity} (Atomarität)---Entweder ist alles erfolgreich,
+	      oder die Änderungen werden zurück gerollt (\foreignlanguage{english}{\emph{rollback}}).
+  \item [{C}] \foreignlanguage{english}{Consistency} (Konsistenz)---Die Integritätsregeln müssen beim Abschluss der Transaktion erfüllt sein.
+  \item [{I}] \foreignlanguage{english}{Isolation} (Nebenläufigkeit)---Mehrere gleichzeitige Transaktionen müssen zum gleichen
+	      Ergebnis führen (Serialisierbarkeit).
+  \item [{D}] \foreignlanguage{english}{Durability} (Dauerhaftigkeit)
+\end{labeling}
+
+\subsection{Zwei-Phasen-Sperrprotokoll}
+\begin{itemize}
+  \item Objekte vor Nutzung sperren
+  \item Transaktion fordert Sperre, die sie bereits hat, nicht erneut an
+  \item Transaktion respektiert vorhandene Sperren gemäß Verträglichkeitsmatrix und wird in eine Warteschlange eingereiht
+  \item Spätestens bei Abschluss werden alle Sperren freigegeben.
+\end{itemize}
+\Todo{Grafik Sperrprotokoll}
+
+
+\subsection{Dauerhaftigkeit}
+\begin{itemize}
+	\item Recoverysystem garantiert Atomarität und Dauerhaftigkeit.\footnote{%
+		Das Recoverysystem nutzt Journaling in Form von Log-Dateien, siehe
+		Seite \pageref{sub:Journaling}.%
+	}
+	\item Überprüfung der Konsistenzregeln am Ende entscheidet über gesamten
+		Erfolg/Misserfolg
+\end{itemize}
+
+\subsection{Transaktionsfehler}
+\begin{itemize}
+\item Rollbackbefehl durch Anwendung
+\item Verletzung von Integritäts-\slash{}Zugriffsrechten
+\item Abbruch zur Auflösung von Blockaden (\foreignlanguage{english}{\emph{Deadlock}})
+\end{itemize}
+
+\subsection{Systemfehler}
+\begin{itemize}
+\item Stromausfall
+\item Betriebssystemabsturz
+\item Sonstige Hardware- oder Speicherfehler
+\end{itemize}
+
+\subsection{Plattenfehler}
+\begin{itemize}
+\item Physische Fehler der Platten
+\item Hardwarefehler (bspw.~Controller defekt)
+\end{itemize}
+
+\subsection{Protokollierung}
+\begin{description}
+\item [{Logische~Protokollierung}] Aufzeichnung von Undo-\slash{}Redo-Operationen
+\item [{Physische~Protokollierung}] Snapshots des Systems zu bestimmten
+Zeitpunkten
+\end{description}
+
+\subsection{Behebung von Transaktionsfehlern}
+
+\ldots{}durch Neustart des Systems und Rollback der letzten aktiven
+Transaktion sowie Einspielung der gesicherten Protokolle.
+
+
+\chapter{Grundlagen Datenbankentwurf}
+\begin{itemize}
+\item Orientiert an ANSI-SPARC-Modell
+\item Analytisch
+\item IT-Kenntnisse sind erst beim konzeptuellen Modell benötigt\end{itemize}
+\begin{enumerate}
+\item Anforderungsanalyse zur informellen Beschreibung des Fachproblems
+
+\begin{itemize}
+\item Struktur, Abhängigkeiten, Operationen, Anwendung
+\end{itemize}
+\item Konzeptueller Datenbankentwurf zur formalen High-Level-Beschreibung
+der Daten und deren Beziehungen
+
+\begin{itemize}
+\item Formalisieren der Entwürfe
+\item Semantische Struktur festlegen
+\end{itemize}
+\item Logischer Datenbankentwurf zur Erstellung der grundsätzlichen Metadatenstruktur
+des DBMS
+
+\begin{itemize}
+\item Übersetzung des konzeptuellen Entwurfs in die Modellierungskonzepte
+des konkreten DBMS
+\item Formalisierung des Verfahrens zur Vermeidung schlechter Entwürfe (\emph{Anomalien})
+\end{itemize}
+\item Entwurf externer Sichten für Transformationsregeln
+
+\begin{itemize}
+\item Anwendungsspezifische Fortsetzung
+\end{itemize}
+\item Physischer Entwurf zur Planung und Errichtung von Zugriffspfaden
+
+\begin{itemize}
+\item Optimierte Abbildung des logischen Datenmodells auf interne Strukturen
+und Organisationsformen des DBMS zur Durchsatzoptimierung
+\end{itemize}
+\end{enumerate}
+
+\chapter{Datenbankmodelle}
+
+\nomenclature{DBM}{Datenbankmodell; beschreibt, wie konkrete Datensätze einer Datenbank miteinander in Verbindung stehen}Ein
+Datenbankmodell (DBM) beschreibt, wie konkrete Datensätze einer Datenbank
+miteinander in Verbindung stehen.
+
+
+\section{Komponenten}
+
+Nach \noun{Codd} besteht ein Datenbankmodell aus drei Komponenten:
+\begin{enumerate}
+\item Generische Metadaten zur Beschreibung der Struktur der Daten.
+\item Eine Menge von Operatoren zur Verarbeitung des Datenbestands.
+\item Integritätsbedingungen.
+\end{enumerate}
+
+\section{Wichtige Modelle}
+\begin{itemize}
+\item Hierarchisches DBM
+\item Netzwerk-DBM
+\item Relationales DBM
+\item Objektorientiertes DBM
+\item Objektrationales DBM
+\end{itemize}
+
+\section{Das \foreignlanguage{english}{Entity-Relationship}-Modell}
+\begin{itemize}
+\item Formales Verfahren zur Erstellung eines konzeptuellen Modells
+\item Entwickelt 1976 von \noun{Chen}, seitdem mehrfach verbessert
+\selectlanguage{english}%
+\item Entity-Relationship\foreignlanguage{ngerman}{-Diagramme}
+\end{itemize}
+
+\subsection{Elemente}
+
+\begin{center}
+\begin{tabular}{rcl}
+Was interessiert? & \lyxarrow{} & Entities und Entity-Sets \\
+Ihre Eigenschaften? & \lyxarrow{} & Attribute und Domänen (Wertebereiche) \\
+Identifikation? & \lyxarrow{} & Schlüssel und Primärschlüssel \\
+Sachlogische Zusammenhänge? & \lyxarrow{} & Beziehungen und deren Kardinalität
+\end{tabular}
+\end{center}
+
+
+\subsection{Definitionen}
+\begin{description}
+\item [{Entity}] Konkretes Objekt, für welches Sachverhalte festzustellen
+sind.\footnote{
+	Bspw.~Abteilungen, Vorlesungen, Kostenstellen,\ldots{}
+}
+\item [{Entity-Set}] Gleichartige Entitäten (z.\,B.~Menge von Studenten).
+\item [{Entitätstypen}] Menge von Entitäten mit gleicher Struktur der Merkmale.
+\item [{Attribute}] Charakterisierung der Entität, atomare Werte; jede
+Entität muss über eine Attributmenge eindeutig identifizierbar sein.
+\item [{Domäne}] Typisierte Menge von Werten (bspw.~alle Zahlen von 1
+bis 42).
+\item [{Beziehungen}] Sachlogische Zusammenhänge zwischen zwei oder mehr
+Entitäten\slash{}Attributen, auch rekursiv möglich.
+\item [{Kardinalität}] Multiplizität der Beziehung (vgl.~UML: Aggregation
+und Komposition).
+\item [{Superschlüssel}] Beliebige Menge von Attributen, die eine Entität
+eindeutig identifizieren.
+\item [{Schlüsselkandidat}] Beliebiger Superschlüssel mit minimaler Anzahl
+an Attributen, der zur eindeutigen Identifizierung benutzt werden
+kann.
+\item [{Primärschlüssel}] Minimale Menge von Attributen, die eine Entität
+eindeutig identifizieren; beliebiger Schlüsselkandidat.
+\end{description}
+
+\subsection{\protect\noun{Chen}-Notation}
+\begin{description}
+\item [{1:1-Beziehung}] Jede Entität steht mit genau einer anderen Entität
+in Beziehung (,,A ist verheiratet mit B``).
+\item [{1:n/n:1-Beziehung}] Jede Entität hat genau eine ,,Elternentität``,
+bzw.~jede Entität hat beliebig viele (auch 0) ,,Kinder``.
+\item [{m:n-Beziehung}] Jede Entität steht mit beliebig vielen anderen
+Entitäten in Beziehung (z.\,B.~,,Student hört Vorlesungen`` und
+,,Vorlesung besteht aus Studenten``).
+\end{description}
+Zwischen den Entitätstypen können auch mehrere Beziehungen unterschiedlichen
+Typs existieren.
+
+\Todo{Grafiken Chen-Notation}
+
+
+\subsection{(1,c,m)-Notation}
+\begin{description}
+\item [{1}] Einfache 1:1-Beziehung.
+\item [{c}] Choice; Beziehung ist möglich, aber nicht nötig (UML: $0..1$-Multiplizität).
+\item [{m}] Multiple; Beziehung mit beliebiger Kardinalität $\geq1$ ist
+möglich (UML: $1..*$).
+\item [{mc}] Multiple\slash{}Choice; Beziehung mit beliebiger Kardinalität
+ist möglich (UML: $*$).
+\end{description}
+
+\Todo{Grafik (1,c,m)-Notation}
+
+
+\subsection{Min-Max-Notation}
+
+Notation der Kardinalität als Tupel, z.\,B.~$(1;3)$.
+
+\emph{Achtung}: Die Kardinalitäten werden jeweils auf der \emph{anderen
+Seite} der Beziehung notiert!
+
+\Todo{Grafik Min-Max-Notation}
+
+
+\subsection{Ternäre und n-stellige Beziehungen}
+
+Ausdruckskraft: Die Kardinalitätsangaben der klassischen ER-Diagramme
+und (min,max)-Notation ist bei $n$-stelligen Beziehung mit $n>2$
+nicht vergleichbar.
+
+\Todo{Grafik ternäre und n-stellige Beziehungen}
+
+
+\subsection{Is-A-Beziehung}
+\begin{description}
+\item [{Total~(t)}] Es gibt außer den genannten Spezialisierungen keine
+weiteren.
+\item [{Partiell~(p)}] Neben den genannten Spezialisierungen kann es weitere
+geben.
+\item [{Disjunkt}] Die Spezialisierungen schließen sich gegenseitig aus
+(Pfeil zur Spezialisierung); z.\,B.~ist eine Person entweder ein
+Mann oder eine Frau.
+\item [{Nicht~disjunkt}] Die Spezialisierungen schließen sich \emph{nicht}
+gegenseitig aus (Pfeil zum Obertyp); z.\,B.~kann eine Person gleichzeitig
+ein Mann und ein Angestellter sein.
+\end{description}
+\Todo{Grafik is-a-Beziehung}
+
+
+\subsection{Assoziationen}
+
+UML, einfache Linie, evtl.~mit Assoziationsklasse.
+
+\Todo{Grafik UML-Assoziation}
+
+
+\subsection{Aggregationen}
+
+UML, Aggregation durch leere Raute, Komposition durch gefüllte Raute.
+
+\Todo{Grafik UML-Aggregation}
+
+
+\section{Relationales Datenbankmodell}
+\begin{description}
+\item [{Relation}] Seien $D_{1},\ldots,D_{n}$ Mengen von Werten, so ist
+$R\subseteq D_{1}\times\cdots\times D_{n}$ eine $n$-stellige Relation
+über diese Mengen.
+\item [{Relationsschema}] beschreibt die Struktur des DBMS durch die Angabe
+aller möglichen Relationen ($D_{1}\times\cdots\times D_{n}$, kartesisches
+Produkt).
+\item [{Geordnetes~Relationsschema}] Attribute können anhand ihrer Position
+im Tupel referenziert werden, die Position \emph{kann} auch (eindeutig)
+benannt sein (z.\,B.~,,Spalte \quotesinglbase id``` statt ,,Spalte
+0``, $R=(A_{1}:D_{1},\ldots,A_{k}:D_{k})$).
+
+\begin{description}
+\item [{Vorteile}] Notation ist prägnant, Änderungen der Daten sind leichter\slash{}freier
+durchzuführen
+\item [{Nachteile}] Einschränkung bei logischer Datenverarbeitung, neue
+Attribute dürfen die bisherige Ordnung nicht tangieren
+\end{description}
+\item [{Ungeordnetes~Relationsschema}] Entspricht dem geordneten Relationsschema,
+jedoch ohne die Möglichkeit, Attribute über ihren numerischen Index
+referenzieren zu können.
+
+\begin{itemize}
+\item $R$ ist eine Menge von Attributnamen $A_i \to D_i$ ($A_i$
+ist einer Domäne zugeordnet).
+\item Die Namen $A_{i}$ sind Referenzen und eindeutig.
+\end{itemize}
+\item [{Schlüsselkandidaten}] müssen eindeutig und minimal sein.
+\item [{Geschachtelte~Relationen}] Attribute in Relationen können selbst
+wieder Relationen sein.
+\item [{Referenz-Attribute}] können Referenzen als Wert haben (alternative
+Nutzung von Fremdschlüsseln).
+\end{description}
+
+\subsection{Anomalien und Normalformen}
+
+
+\subsubsection{Anomalien}
+
+
+\subsubsection{Funktionale Abhängigkeiten}
+
+
+\subsubsection{\protect\noun{Armstrong}-Axiome}
+
+
+\subsubsection{Bestimmung der Hülle}
+
+
+\subsubsection{Kanonische Überdeckung}
+
+
+\subsubsection{Erste Normalform}
+
+Alle Attribute sind atomar (in relationalen Datenbanken nur bei Verwendung von bspw.~\sqli!GROUP BY! indirekt nicht erfüllt, in relationalen Datenbanken sind die Attribute immer atomar).
+
+
+\subsubsection{Zweite Normalform}
+
+Alle Attribute sind funktional nur vom gesamten Schlüssel abhängig,
+nicht nur von einem Teil.
+\begin{itemize}
+\item Erfordert erste Normalform.
+\item Jedes Attribut muss voll funktional abhängig von allen Schlüsselkandidaten
+oder Teil eines Schlüsselkandidaten sein.
+\item Nur verletzbar bei mehr als einem Attribut als Schlüsselkandidat.
+\end{itemize}
+
+\paragraph*{Transformation}
+\begin{itemize}
+\item Wenn die Attribute voll funktional abhängig vom Schlüsselkandidaten
+sind: Ursprungsrelation $R$ beibehalten.
+\item Sonst $A_{i}\to B_{i}$:
+
+\begin{enumerate}
+\item Lösche $B_{i}$ aus $R$.
+\item Nach den linken Seiten gruppieren.
+\item Für jede Gruppe eine neue Relation $R'$ mit $A_{i}\to B_{i}$ bilden.
+\item $A_{i}$ als Schlüssel von $R'$ nehmen.
+\end{enumerate}
+\end{itemize}
+Dies ergibt möglichst kompakte Schlüssel und beseitigt einige Anomalien,
+aber entitätsfremde Daten werden in der Relation u.\,U.~nicht beseitigt.
+
+
+\subsubsection{Dritte Normalform}
+
+Keine nicht-transitive funktionale Abhängigkeit eines Nicht-Schlüssel-Attributs
+von Nicht-Schlüssel-Attributen (es sollte jedes Nicht-Schlüssel-Attribut
+nur ein einziges Mal im gesamten Schema in seiner entsprechenden Bedeutung
+vorliegen).
+
+
+\paragraph*{Synthesealgorithmus}
+\begin{enumerate}
+\item Kanonische Überdeckung $F_C$ bestimmen.
+\item Für jede funktionale Abhängigkeit $\alpha\mapsto\beta\in F_{C}$:
+
+\begin{enumerate}
+\item $R_{\alpha}:=\alpha\cup\beta$
+\item $F_{\alpha}:=\{ \alpha'\mapsto\beta'\in F_{C}\mid\alpha'\cup\beta'\subseteq R_{\alpha}\} $
+\end{enumerate}
+\item Abgeschlossen falls ein $R_{\alpha}$ aus 2.~einen Schlüsselkandidaten
+aus $R$ bzgl.~$F_{C}$ enthält, sonst $R_{R}:=R$, $F_{R}:=\emptyset$.
+\item Eliminiere alle $R_{\alpha}$, die in $R_{\alpha'}$ enthalten sind,
+also $R_{\alpha}\subseteq R_{\alpha'}$.
+\end{enumerate}
+Nicht vermeidbar sind Abhängigkeiten mit Schlüsselkandidaten.
+
+
+\subsubsection{\protect\noun{Boyce}-\protect\noun{Codd}-Normalform}
+
+Dritte Normalform erweitert um die Bedingung, dass auch die Schlüsselkandidaten-Attribute
+funktional unabhängig sind.
+\begin{itemize}
+\item Bei allen nicht-trivialen $\alpha\mapsto\beta$ mit $\beta\notin\alpha$
+enthält $\alpha$ einen Schlüsselkandidaten von $R$.
+\item Anders als bei der dritten Normalform kann ein Teil eines Schlüsselkandidaten
+\emph{nicht} funktional abhängig von einem anderen Teil des Schlüsselkandidaten
+sein.
+\end{itemize}
+
+\chapter{SQL}
+
+\nomenclature{SQL}{Structured Query Language; Standardisierte Sprache zur Kommunikation mit relationalen DBMS}
+\begin{itemize}
+\item Standardisierte Sprache für relationale Datenbanken, basierend auf
+Schlüsselworten
+\item 1970 erste Ansätze, seit 1986 ANSI-Standard und immer wieder weiter
+entwickelt
+\item Aktuelle DBS unterstützen weitestgehend SQL-3 und SQL-03
+\item Keine Unterscheidung zwischen Groß- und Kleinschreibung
+\item Mengenorientiert: Arbeitet auf Tabellen, nicht auf einzelnen Daten
+\item Basiert auf relationaler Algebra und ist relational vollständig
+\item SQL beschreibt, \emph{was} zu machen ist, das DBMS beschreibt, \emph{wie}
+es zu machen ist
+\item Es gibt günstige und ungünstige Abfragen\end{itemize}
+\begin{description}
+\item [{Direct~SQL}] Eingabe in Shell-ähnliche Oberflächen des DBMS, ergänzt
+durch Einsatz von Web-Portalen (bspw.~phpMyAdmin).
+\item [{Embedded~SQL}] Einbettung von SQL-Statements in die Wirtssprache.
+\item [{Call~Level~Interface~(CLI)}] Programmierschnittstelle für Datenbankzugriffe,
+i.\,d.\,R.~SQL (oder ein Dialekt davon), z.\,B.: JDBC, Hibernate.
+\end{description}
+
+\section{Datentypen}
+
+\begin{sqlcode}
+INTEGER; INT; -- 32 Bit
+SMALLINT; -- 16 Bit
+TINYINT; MEDIUMINT; BIGINT; -- Nur MySQL
+DECIMAL; DEC; NUMERIC; -- Dezimalzahlen
+DEC(6,2); -- 6 Ziffern, 2 Nachkommastellen
+FLOAT; DOUBLE; REAL;
+CHARACTER; CHAR; -- Einzelnes Zeichen
+CHAR(4); -- Zeichenkette mit genau 4 Zeichen
+VARCHAR(4);-- Zeichenkette mit maximal 4 Zeichen
+TEXT; -- 65535 Zeichen max.
+MEDIUMTEXT; -- 16.7 Mio. Zeichen max.
+LONGTEXT; -- 4 Mrd. Zeichen max.
+BLOB; -- Binary Large Object, für Binärdaten
+DATE; TIME; DATETIME; YEAR; TIMESTAMP; -- Für Datum/Zeit
+\end{sqlcode}
+
+
+
+\subsection{NULL}
+\begin{itemize}
+  \item Bei Vergleichen \emph{immer} \code{false}.
+  \item Ausdrücke, die \sqli!NULL! enthalten, geben \emph{immer} \sqli!NULL! zurück.
+  \item Um nach \sqli!NULL! zu suchen, ist \sqli!IS NULL! zu verwenden.
+  \item Bei \sqli!ORDER BY! werden \sqli!NULL!-Werte zuerst aufgeführt.
+  \item Bei \sqli!ORDER BY! werden \sqli!NULL!-Werte gleich behandelt.
+\end{itemize}
+
+\subsection{Wahrheitstabellen}
+
+w: Wahr, f: Falsch; n: \sqli!NULL!
+
+\begin{center}
+\begin{tabular}{cccc}
+\bfseries \code{AND} & \bfseries w & \bfseries f & \bfseries n \\
+\bfseries w & w & f & n \\
+\bfseries f & f & f & f \\
+\bfseries n & n & f & n
+\end{tabular}
+\hfill
+\begin{tabular}{cccc}
+\bfseries \code{OR} & \bfseries w & \bfseries f & \bfseries n \\
+\bfseries w & w & w & w \\
+\bfseries f & w & f & n \\
+\bfseries n & w & n & n
+\end{tabular}
+\hfill
+\begin{tabular}{cc}
+\bfseries \code{NOT} & \\
+\bfseries w & f \\
+\bfseries f & w \\
+\bfseries n & n
+\end{tabular}
+\end{center}
+
+\selectlanguage{english}%
+
+\section{Data Retrieval Language\foreignlanguage{ngerman}{ (DRL)}}
+
+\selectlanguage{ngerman}%
+\nomenclature{DRL}{Data Retrieval Language; Untersprache der SQL zur Abfrage von Daten}\ldots{}ist
+die häufigste Nutzungsart, dient zur Abfrage von Daten.
+
+SELECT, WHERE, GROUP BY, HAVING, CASE
+
+
+\subsection{Algebra}
+
+\textbf{\emph{Wichtig!}} Bei Verbund, Vereinigung, Differenz und Durchschnitt müssen die Schemata der Relationen gleich oder zumindest kompatibel sein.
+\begin{description}
+  \item [{Vereinigung}] $R=S\cup T$
+  \begin{itemize}
+    \item Ohne Eliminierung: \sqli!SELECT * FROM s UNION ALL SELECT * FROM t!
+    \item Beschränkung auf gleichnamige Attribute: \sqli!SELECT * FROM s UNION CORRESPONDING SELECT * FROM t!
+  \end{itemize}
+  \item [{Differenz}] $R=S-T$ oder $R=S\setminus T$
+  \begin{itemize}
+    \item Ohne Eliminierung: \sqli!SELECT * FROM s EXCEPT ALL SELECT * FROM t!
+    \item Mit Eliminierung: \sqli!SELECT * FROM s EXCEPT SELECT * FROM t!
+    \item Statt \sqli!EXCEPT! wird in einigen Datenbanksystemen auch \sqli!MINUS! verwendet.
+  \end{itemize}
+  \item [{Kartesisches~Produkt}] $R=S\times T$
+  \item [{Selektion}] $R=\sigma_{F}(S)$ (\sqli!SELECT DISTINCT * FROM s WHERE f!)
+  \item [{Projektion}] $R=\pi_{A,B,\ldots}(S)$ (\sqli!SELECT DISTINCT a,b FROM s!)
+  \item [{Kommutativ}] Falls $P$ nur $R1$-Attribute enthält: $\pi_{R1}\sigma_{P}(R)=\sigma_{P}\pi_{R1}(R)$, $R\bowtie S=S\bowtie R$
+  \item [{Assoziativ}] $R\bowtie(S\bowtie T)=(R\bowtie S)\bowtie T$
+  \item [{Distributiv}] $R\bowtie(S\cup T)=(R\bowtie S)\cup(R\bowtie T)$
+  \item [{Idempotent}] Falls $R1\subseteq R2$: $\pi_{R1}(\pi_{R2}(R))=\pi_{R1}(R)$, $\sigma_{P1}(\sigma_{P2}(R))=\sigma_{P1\cap P2}(R)$
+\end{description}
+
+\subsubsection{Ableitbare Operationen}
+\begin{description}
+  \item [{Verbund}] $R\bowtie_{G}S:=\sigma_{G}(R\times S)$ (\sqli!SELECT * FROM r FULL OUTER JOIN s WHERE g!)
+  \item [{Halbverbund}] $R\ltimes_{G}S$ (\sqli!SELECT * FROM r LEFT OUTER JOIN s WHERE g!)
+  \item [{Durchschnitt}] $R=S\cap T$
+  \begin{itemize}
+    \item Mit Eliminierung: \sqli!SELECT * FROM s INTERSECT SELECT * FROM t!
+    \item Ohne Eliminierung: \sqli!SELECT * FROM s INTERSECT ALL SELECT * FROM t!
+  \end{itemize}
+  \item [{Division}] $R=S\div T$, $(R\div S)\times T\subseteq S$
+\end{description}
+
+\subsection{Quantoren}
+\begin{description}
+  \item [{Existenzquantor}] $\{x\in R\mid\exists y\in S:\ldots\}\equiv\pi_{R}\bigl(\sigma_{\ldots}(R\times S)\bigr)$
+  \item [{Allquantor}] $\{x\in R\mid\forall y\in S:\ldots\}\equiv\bigl(\sigma_{\ldots,(R)}\bigr)\times S$
+\end{description}
+
+\subsection{Reihenfolge der Ausführung}
+
+Bei einem Statement der Form \sqli!SELECT * FROM s WHERE b! werden die Operationen in folgender Reihenfolge ausgeführt:
+\begin{itemize}
+  \item Die Relation wird mit \sqli!FROM s! ausgewählt.
+  \item Das optionale \sqli!WHERE b! wird zur Filterung ausgeführt.
+  \item Die Attribute werden mit \sqli!SELECT *! ausgewählt.
+\end{itemize}
+
+\subsection{Vereinigung}
+
+
+\subsubsection{Outer Join}
+\begin{description}
+  \item [{Left~Outer~Join}] Es werden die nicht verbindbaren Tupel der linken Seite aufgenommen, d.\,h., die linke Tabelle wird komplett ins Ergebnis übertragen und die rechte Seite des Verbunds ggf.~mit \sqli!NULL! aufgefüllt.
+  Notation: $R=S\ltimes T$, \sqli!SELECT * FROM a LEFT OUTER JOIN b ON(a.id=b.id)! bzw.~\sqli!SELECT * FROM a LEFT OUTER JOIN b USING(id)!.
+  \item [{Right~Outer~Join}] Analog: $R=S\rtimes T$, in SQL \sqli!RIGHT OUTER JOIN!.
+   \item [{Full~Outer~Join}] Vereinigung von Left Outer Join und Right Outer Join: $R=S\bowtie T$, in SQL \sqli!FULL OUTER JOIN!.
+\end{description}
+
+\subsubsection{Inner Join}
+
+Es werden keine nicht-verbindbaren Einträge ins Ergebnis übernommen, in SQL \sqli!INNER JOIN!.
+
+
+\subsubsection{Natural Join}
+
+Wie Inner Join, aber es werden Verbundspalten mit gleichen Namen reduziert (d.\,h., sie kommen nicht doppelt vor), in SQL \sqli!NATURAL JOIN!.
+
+
+\subsection{Funktionen}
+
+NVL, AVG, SUM, MIN, MAX, COUNT
+
+\begin{sqlcode}
+SELECT COUNT(*) FROM tbl;
+SELECT SUM(salary) FROM tbl;
+SELECT AVG(salary), department_id
+  FROM tbl
+  GROUP BY department_id;
+SELECT AVG(salary), department_id
+  FROM tbl
+  WHERE name='Schulze'
+  GROUP BY department_id
+  HAVING SUM(salary)>100;
+SELECT NVL(name,'unbekannt') FROM customers;
+SELECT * FROM tbl WHERE id BETWEEN 1 AND 10;
+SELECT * FROM tbl WHERE id IN (2,5,7);
+\end{sqlcode}
+
+
+
+\subsection{Unterabfragen}
+
+IN, ANY, ALL, EXISTS
+\begin{description}
+  \item [{Korrelliert}] Die Unterabfrage verwendet Attribute der äußeren Abfrage; kann zu einer verschachtelten Abfrageschleife führen, daher meist ungünstig.
+\end{description}
+
+
+\sqli!SELECT * FROM a WHERE a.id IN (SELECT id FROM b WHERE c)!
+
+\section{Data Manipulation Language (DML)}
+
+\nomenclature{DML}{Data Modification Language; Untersprache der SQL zur Veränderung von Daten}
+\ldots dient zur Manipulation und Abfrage von Belegungen.
+
+DELETE, INSERT, UPDATE
+
+\begin{sqlcode}
+INSERT INTO tbl VALUES(...); -- geordnet
+INSERT INTO tbl(col1,col2) VALUES(123,456); -- ungeordnet
+DELETE FROM tbl WHERE id=3;
+UPDATE tbl SET col=val;
+UPDATE tbl SET col=val WHERE id=456;
+\end{sqlcode}
+
+
+\section{Data Definition Language (DDL)}
+
+\nomenclature{DDL}{Data Definition Language; Untersprache der SQL zur Definition von Datenstrukturen}
+\ldots dient zur Daten- und Sichtendefinition. 
+
+\begin{sqlcode}
+CREATE TABLE tbl (
+  id INT PRIMARY KEY,
+  name VARCHAR(40),
+  subkey INT UNIQUE NOT NULL DEFAULT 1,
+  chk INT CHECK(fk BETWEEN 1 AND 100),
+  CONSTRAINT fk_spec FOREIGN KEY(subkey) REFERENCES other_tbl(other_col)
+);
+CREATE TABLE IF NOT EXISTS tbl (
+  id INT PRIMARY KEY,
+  ref INT REFERENCES other_tbl(other_col) ON UPDATE CASCADE
+);
+ALTER TABLE tbl ADD(txt CHAR(4));
+ALTER TABLE tbl MODIFY(txt CHAR(10));
+ALTER TABLE tbl DROP COLUMN txt;
+ALTER TABLE tbl RENAME id TO xxx;
+DROP TABLE tbl;
+
+CREATE OR REPLACE VIEW vw AS
+  SELECT txt FROM tbl;
+
+SELECT (
+  CASE WHEN note<2
+  THEN 'Gut'
+  ELSE 'Versagt'
+  END
+) FROM noten;
+\end{sqlcode}
+
+
+CREATE TABLE, ALTER TABLE, DROP TABLE, RENAME, CONSTRAINT, TRIGGER, CREATE VIEW
+
+\section{Data Control Language (DCL)}
+
+\nomenclature{DCL}{Data Control Language; Untersprache der SQL zur Definition von Integritäts-, Zugriffs- und Transaktionskontrolle}
+\ldots dient zur Definition von Integritäts-, Zugriffs- und Transaktionsbedingungen.
+
+PRIMARY KEY, FOREIGN KEY, CHECK
+
+
+\chapter{Das interne Modell}
+
+
+\chapter{Anwendungsinteraktion}
+
+
+\section{JDBC}

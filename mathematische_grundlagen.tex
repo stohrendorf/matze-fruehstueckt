@@ -1,0 +1,417 @@
+% !TeX root = matze_fruehstueckt.tex
+\chapter{\label{chap:mengenlehre}Mengenlehre}
+
+\section{Definitionen}
+\index{Cantor}\index{Menge|(}
+\noindent
+\begin{quotation}
+  Eine Menge ist eine Zusammenfassung von bestimmten wohl unterschiedenen Objekten unserer Anschauung oder un\-ser\-es Denk\-ens---welche die Elemente der Menge genannt werden---zu einem Ganzen.
+  \begin{flushright} (\noun{Cantor}) \end{flushright}
+\end{quotation}
+
+\begin{description}
+  \item	[Explizite Aufzählung] \index{Menge!Aufzählung}\index{Aufzählung|see{Menge}}
+	$M=\{ a,b,c,d,\ldots\} $
+  \item	[Aufzählung nach Eigenschaft] \index{Menge!Eigenschaft}
+	$P=\{ x\mid \hbox{$x$ ist Primzahl}\} $
+  \item [Leere Menge] \index{Menge!leer}
+	$\emptyset$ oder $\{\}$.
+	Achtung: $\{\emptyset\}=\{\{\}\}$ ist eine Menge, die eine leere Menge enthält. Es gilt $\forall M:\emptyset\in M$.
+  \item [(Echte) Teilmenge] \index{Menge!Teilmenge}
+	$A$ ist (echte) Teilmenge von $B$: $A\subset B:=A\neq B\land\forall a\in A:a\in B$.
+  \item [Unechte Teilmenge]
+	$A$ ist (unechte) Teilmenge von $B$: $A\subseteq B:=\forall a\in A:a\in B$.
+    [Da $\subset$ oftmals die Bedeutung von $\subseteq$ hat, kann für echte Teilmengen auch $\subsetneq$ verwendet werden.]
+  \item [Durchschnitt (Schnittmenge)] \index{Menge!Durchschnitt}\index{Menge!Schnittmenge}
+	$A\cap B:=\{ x\mid x\in A\land x\in B\} $
+  \item [Vereinigung] \index{Menge!Vereinigung}
+	$A\cup B:=\{ x\mid x\in A\lor x\in B\} $
+  \item [Differenzmenge] \index{Menge!Differenzmenge}
+	$A\setminus B:=\{ x\mid x\in A\land x\notin B\} $
+\end{description}
+
+\begin{figure}[htb]
+\caption{\noun{Venn}-Diagramme}
+
+\includegraphics{venn-1.pdf}
+\hfill{}
+\includegraphics{venn-2.pdf}
+\hfill{}
+\includegraphics{venn-3.pdf}
+\end{figure}
+
+\index{Menge|)}
+
+\section{Rechenregeln}
+
+Prioritäten, absteigend sortiert: Klammern, Komplement, Durchschnitt,
+Vereinigung.
+\begin{description}
+  \item [Kommutativgesetz] \index{Menge!Kommutativgesetz}
+	$A\cap B=B\cap A$,
+	$A\cup B=B\cup A$
+  \item [Assoziativgesetz] \index{Menge!Assoziativgesetz}
+	$(A\cap B)\cap C=A\cap(B\cap C)$,
+	$(A\cup B)\cup C=A\cup(B\cup C)$
+  \item [Distributivgesetz] \index{Menge!Distributivgesetz}
+	$A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$,
+	$A\cup(B\cap C)=(A\cup B)\cap(A\cup C)$
+  \item [Transitivgesetz] \index{Menge!Transitivgesetz}
+	$A\subset B\land B\subset C\Rightarrow A\subset C$
+  \item [Komplement] \index{Menge!Komplement}
+	$\bar{\mathbb{R}}=\emptyset$,
+	$\bar{\emptyset}=\mathbb{R}$,
+	$\bar{\bar{A}}=A$
+  \item [Mächtigkeit/Kardinalität] \index{Menge!Mächtigkeit}\index{Menge!Kardinalität}
+	Anzahl der eindeutigen Elemente: $\lvert A \rvert$, manchmal auch $\#A$.
+  \item [Potenzmenge] \index{Menge!Potenzmenge}
+	Menge aller Teilmengen einer Menge: $\mathcal P(A)$. Es ist $\lvert \mathcal P(A) \rvert = 2 \uparrow \lvert A \rvert$.
+  \item [Kreuzprodukt] \index{Menge!Kreuzprodukt}\index{Kreuzprodukt|see{Menge}}\index{Menge!Produktmenge}\index{Menge!kartesisches Produkt}\index{kartesisches Produkt|see{Menge}}
+	$A\times B:=\{ (a,b)\mid a\in A\land b\in B\} $
+\end{description}
+
+\subsection{\protect\noun{De Morgan}sche Regeln}
+
+\index{de Morgan}
+\index{Menge!de Morgan}
+\begin{align*}
+  A\setminus(B\cap C)  & =(A\setminus B)\cup(A\setminus C)\\
+  A\setminus(B\cup C)  & =(A\setminus B)\cap(A\setminus C)\\
+  \overline{(A\cup B)} & =\bar{A}\cap\bar{B}\\
+  \overline{(A\cap B)} & =\bar{A}\cup\bar{B}
+\end{align*}
+
+
+
+\section{Relationen}
+
+\index{Relation|see{Menge}}
+\index{Menge!Relation}
+Eine Relation $R$ auf einer Menge $A$ ist eine (unechte) Teilmenge von $A\times A$.
+
+\begin{description}
+  \item [Reflexivität] \index{Reflexivität|see{Äquivalenzrelation}}\index{Menge!reflexiv}
+	$\forall a\in A:(a,a)\in R$
+  \item [Symmetrie] \index{Symmetrie|see{Menge}}\index{Menge!symmetrisch}
+	$\forall a,b\in A:(a,b)\in R \iff (b,a)\in R$
+  \item [Transitivität] \index{Transitivität|see{Menge}}\index{Menge!transitiv}
+	$\forall a,b,c\in A:(a,b)\in R\land(b,c)\in R\Rightarrow(a,c)\in R$
+  \item [Äquivalenzrelation] Eine \index{Äquivalenzrelation|see{Menge}}\index{Menge!Äquivalenzrelation}
+	Äquivalenzrelation $\sim$ auf einer Menge $M$ muss reflexiv, symmetrisch und transitiv (\emph{rst}) sein.
+	Es gilt dann: $(a,b)\in R \iff a\sim b$.
+\end{description}
+
+
+\subsection{Totale und partielle Ordnung}
+\index{totale Ordnung}
+\index{Ordnung!total}
+Eine totale Ordnung auf einer Menge $M$ ist definiert, wenn $\forall x,y,z \in M$ gilt:
+\noindent\begin{center}
+\begin{tabular}{rl}
+	                                        $x \leq x$ & Reflexivität  \\
+	     $x \leq y \land y \leq x\; \Rightarrow\; x=y$ & Antisymmetrie \\
+	$x \leq y \land y \leq z\; \Rightarrow\; x \leq z$ & Transitivität \\
+	                          $x \leq y \lor y \leq x$ & Totalität
+\end{tabular}
+\end{center}
+
+\index{partielle Ordnung}
+\index{topologische Ordnung}
+\index{Ordnung!partiell}
+\index{Ordnung!topologisch}
+Vernachlässigt man die Forderung nach Totalität (d.\,h., dass nicht jedes Element mit jedem Element vergleichbar ist), so erhält man die Definition einer \emph{partiellen} bzw.~\emph{topologischen} Ordnung.
+Z.\,B.~ist das Inhaltsverzeichnis dieses Buches partiell, aber nicht total, nach \enquote{Voraussetzungen} geordnet:
+\noindent\begin{quote}
+    \noindent Grundlagen $\preceq$ Kurvendiskussion $\preceq$ Vektoranalysis
+    \par\hfill $\Rightarrow$ Grundlagen $\preceq$ Vektoranalysis
+
+    \noindent Grundlagen $\preceq$ Matrizen $\preceq$ Lineare Abbildungen
+    \par\hfill $\Rightarrow$ Grundlagen $\preceq$ Lineare Abbildungen
+    
+    \noindent Aber: Matrizen und Vektoranalysis sind nicht vergleichbar.
+\end{quote}
+[Für partielle Ordnungen werden die Begriffe \enquote{Vorgänger} und \enquote{Nachfolger} statt \enquote{kleiner} bzw.~\enquote{größer} verwendet, sowie gekrümmte Operatoren wie $\prec$, $\preceq$ oder~$\asymp$.]
+
+
+\section{Gruppe}
+
+Eine nicht-leere Menge $M$, auf der eine Verknüpfung~$\circ$ definiert
+ist, heißt \index{Gruppe}Gruppe, wenn für $\forall x,y,z\in M$
+gilt:
+\begin{description}
+  \item [Abgeschlossenheit] \index{Abgeschlossenheit|see{Gruppe}}\index{Gruppe!abgeschlossen}
+	$x\circ y\in M$
+  \item [Assoziativität] \index{Assoziativität|see{Gruppe}}\index{Gruppe!assoziativ}
+	$(x\circ y)\circ z=x\circ(y\circ z)$
+  \item [Neutralelement] \index{Neutralelement|see{Gruppe}}\index{Gruppe!Neutralelement}
+	Es existiert \emph{genau ein} Element $n\in M$, für das gilt: $x\circ n=n\circ x=x$
+  \item [Inverses Element] \index{inverses Element|see{Gruppe}}\index{Gruppe!inverses Element}
+	Zu jedem $x\in M$ existiert ein $x^{-1}\in M$, für das
+	$x\circ x^{-1}=x^{-1}\circ x=n$ gilt.
+	[Das inverse Element $x^{-1}$ ist nicht mit dem Kehrwert zu verwechseln.]
+\end{description}
+
+Mit dieser zusätzlichen Bedingung heißt die Gruppe kommutativ oder \noun{Abel}sch:
+\begin{description}
+  \item [Kommutativ] \index{Kommutativ|see{Gruppe}}\index{Abelsch|see{Gruppe}}\index{Gruppe!kommutativ}\index{Gruppe!Abelsch}
+	$x\circ y=y\circ x$
+\end{description}
+
+\section{Ring}
+
+Eine nicht-leere Menge $M$ heißt \index{Ring}Ring, wenn auf ihr zwei Verknüpfungen $\oplus$ und $\odot$ mit folgenden Eigenschaften definiert sind:
+
+\begin{enumerate}
+  \item $M$ ist eine kommutative Gruppe bezüglich $\oplus$.
+  \item Ohne das Neutralelement bzgl.~$\oplus$ erfüllt der Rest von $M$ alle Axiome einer Gruppe bezüglich $\odot$, jedoch \emph{nicht} das Axiom des inversen Elements.
+  \item Es gelten die Distributivgesetze ($\forall x,y,z\in M$):
+	\begin{align*}
+	  (x\oplus y)\odot z & =(x\odot z)\oplus(y\odot z)\\
+	  x\odot(y\oplus z) & =(x\odot y)\oplus(x\odot z)
+	\end{align*}
+\end{enumerate}
+
+[Das neutrale Element bezüglich der \enquote{Addition} $\oplus$ wird oft mit~0 bezeichnet, das neutrale Element bezüglich der \enquote{Multiplikation} $\odot$ oft als~1.]
+
+
+\section{Körper}
+
+Eine nicht-leere Menge $M$ heißt \index{Körper}Körper, wenn sie die Eigenschaften des Ringes erfüllt und zusätzlich ein inverses Element bezüglich $\odot$ besitzt.
+
+
+\section{Abbildungen}
+
+\index{Abbildung|(}
+\begin{description}
+  \item [Funktion/Abbildung] \index{Funktion}
+	$f:A\rightarrow B$ oder $f:A\ni a\rightarrow f(a)\in B$
+  \item [Definitionsbereich] \index{Definitionsbereich}
+	Das $A$ bei $f:A\rightarrow B$.
+  \item [Zielmenge] \index{Zielmenge}
+	Das $B$ bei $f:A\rightarrow B$.
+  \item [Bildmenge] \index{Bildmenge}
+	$f(A)\subseteq B$, auch: Wertemenge\slash{}Bild von $A$ bzgl.~$f$.
+  \item [Urbild] \index{Urbild}
+	$f^{-1}(b):=\{a\in A\mid f(a)=b\}\subseteq A$, Urbild von $b\in B$.
+  \item [Injektivität] \index{Abbildung!injektiv}\index{Injektivität}
+	$f(u)=f(v) \implies u=v$.
+  \item [Surjektivität] \index{Abbildung!surjektiv}\index{Surjektivität}
+	$f(A)=B$.
+  \item [Bijektivität] \index{Abbildung!bijektiv}\index{Bijektivität}
+	Injektiv und surjektiv.
+\end{description}
+
+\subsection{Homomorphismus}
+
+\index{Abbildung!linear}\index{Abbildung!Homomorphismus}\index{Homomorphismus}
+Seien $A$ und $B$ Vektorräume über einem Körper $K$\@.
+Eine Abbildung $f : A\rightarrow B$ heißt \emph{Homomorphismus} bzw.~\emph{lineare Abbildung}, falls gilt:
+\begin{description}
+  \item [Additivität] $\forall x,y\in A : f(x+y)=f(x)+f(y)$
+  \item [Homogenität] $\forall x\in A\;\forall\lambda\in K : f(\lambda\cdot x)=\lambda\cdot f(x)$
+\end{description}
+
+Die Menge der linearen Abbildungen von $A$ nach $B$ wird mit $\hom(A,B)$ bezeichnet.
+\begin{description}
+  \item [Kern] \index{Abbildung!Nullraum}\index{Nullraum}\index{Abbildung!Kern}\index{Kern}
+	von $f$ bzw.~\emph{Nullraum} von $f$ ist definiert als $\ker(f) := \{ x \in A \mid f(x)=0 \}$.
+	Enthält entweder genau ein Element (die 0) oder unendlich viele.
+  \item [Regulär] \index{regulär}\index{Abbildung!regulär}
+	$\ker(f)=\{0\}$
+  \item [Singulär] \index{singulär}\index{Abbildung!singulär}
+	$\lvert\ker(f)\rvert = \infty$
+  \item [Isomorphismus] \index{Isomorphismus}\index{Abbildung!isomorph}
+	ist ein bijektiver Homomorphismus.
+\end{description}
+
+\index{Abbildung|)}
+
+
+\section{Modulo-Arithmetik}
+
+\index{Modulo-Arithmetik}\index{Restklasse}\index{Kongruenz|see{Restklasse}}
+Zwei Zahlen $a,b\in\mathbb{Z}$ heißen zu einer festen Zahl $m\in\mathbb{N}\setminus\{0\}$ kongruent modulo $m$, wenn gilt:
+\[ a\equiv b \pmod m \quad \iff \quad \lvert a-b \rvert = n\cdot m,\,n\in\mathbb{N} \]
+
+Das heißt, dass die Differenz beider Zahlen $a$ und $b$ durch $m$ teilbar ist.
+
+Weiter gelten:
+\begin{align*}
+  (x +     y) \bmod p & =((x\bmod p)+(y\bmod p)) \bmod p \\
+  (x \cdot y) \bmod p & =((x\bmod p)\cdot(y\bmod p))\bmod p\\
+  x^n \bmod p         & = (x\bmod p)^n \bmod p
+\end{align*}
+
+
+
+\chapter{\label{chap:Kombinatorik}Kombinatorik}
+
+\index{Kombinatorik|(}
+Die Kombinatorik beschreibt eine Auswahl von $k$ Objekten aus $n$ Elementen, welche in einer Ergebnismenge\index{Ergebnismenge} zusammengefasst werden.
+Gesucht ist dann die Mächtigkeit\index{Mächtigkeit} $a$ der Ergebnismenge.
+
+\begin{description}
+  \item [Permutation] \index{Permutation}
+	Berücksichtigung der Reihenfolge
+  \item [Kombination] \index{Kombination}
+	Ignorieren der Reihenfolge
+\end{description}
+
+\noindent\begin{center}
+\begin{tabular}{rcc}
+              & \bfseries mit Wdh.
+              & \bfseries ohne Wdh. \\
+  \bfseries Perm.
+              & $\left|\mathrm{PER}^{\mathrm{MW}}(n,k)\right| = n^k$
+              & $\left|\mathrm{PER}^{\mathrm{OW}}(n,k)\right| = \vecc(n;k) k!$ \\[1.6667em]
+  \bfseries Komb.
+              & $\left|\mathrm{KOM}^{\mathrm{MW}}(n,k)\right| = \vecc(n+k-1;k)$
+              & $\left|\mathrm{KOM}^{\mathrm{OW}}(n,k)\right| = \vecc(n;k)$
+\end{tabular}
+
+\vspace{0.66667em}
+\emph{Betragsstriche beachten! Die Funktionen geben die Kombinationen bzw.~Permutationen zurück.}
+\end{center}
+
+\begin{description}
+  \item [Teilchen-/Fächermodell] \index{Teilchenmodell}\index{Fächermodell}\index{Grundmenge}
+	Grundmenge: Fächer, Auswahl: Besetzung der Fäch\-er mit Teilchen.
+
+	Mächtigkeit der Grundmenge ist Anzahl der Fächer, Experiment erfolgt durch Verteilen der Teilchen in die Fächer.
+
+  \item [Urnenmodell] \index{Urnenmodell}
+	Grundmenge: Kugeln in Urne, Auswahl: Ziehung der Kugeln.
+
+	Mächtigkeit der Grundmenge ist Anzahl der Kugeln, Experiment besteht aus Ziehung der Kugeln.
+\end{description}
+
+\index{Kombinatorik|)}
+
+
+\chapter{Komplexe Zahlen}
+\begin{description}
+  \item [Definition] \index{Komplexe Zahl}
+	$z = x+iy = r\cdot e^{i\varphi} = r\cdot (\cos(\varphi)+i\sin(\varphi))$
+  \item [Realteil] $\Re(z) = \mathrm{Re}(z) = x$
+  \item [Imaginärteil] $\Im(z) = \mathrm{Im}(z) = y$
+  \item [Konjugiert komplex] \index{Komplexe Zahl!konjugiert komplex}\index{konjugiert komplex|see{Komplexe Zahl}}
+	$\bar{z} = x-iy$
+  \item [Betrag] \index{Komplexe Zahl!Betrag}\index{Betrag|see{Komplexe Zahl}}
+	$\lvert z \rvert = \sqrt{x^2+y^2} = \sqrt{z\cdot\bar{z}}$
+  \item [Potenzen] \index{Komplexe Zahl!Potenzen}
+	$z^n = r^n \cdot \exp(n\cdot i\varphi)$
+  \item [Wurzeln] \index{Komplexe Zahl!Wurzeln}
+	$\sqrt[n]{z} = \sqrt[n]{r} \cdot \exp \bigl( (i\varphi+2k\pi i)/n\bigr), \quad 0 \leq k < n$
+\end{description}
+
+\section{Polarkoordinaten}
+
+\index{Komplexe Zahl!Polarkoordinaten}\index{Polarkoordinaten|see{Komplexe Zahl}}
+\[
+  \varphi=\begin{cases}
+     \arccos(\mathrm{Re}(c) / \lvert c \rvert) & \hbox{für $\mathrm{Im}(c) \geq 0$}\\
+    -\arccos(\mathrm{Re}(c) / \lvert c \rvert) & \hbox{für $\mathrm{Im}(c) < 0$}
+  \end{cases}
+\]
+
+
+\chapter{Sonstiges}
+
+\section{\label{sec:intervalle}Intervalle}
+
+\begin{align*}
+  \left[a;b\right]   & =\{ x\mid a\leq x\leq b\} =a\leq x\leq b\\
+  \left[a;b\right[   & =\{ x\mid a\leq x<b\}     =a\leq x<b\\
+  \left]a;b\right]   & =\{ x\mid a<x\leq b\}     =a<x\leq b\\
+  \left]a;b\right[   & =\{ x\mid a<x<b\}         =a<x<b
+\end{align*}
+[Für $a=-\infty$ bzw.~$b=\infty$ sind jeweils offene Grenzen zu benutzen.]
+
+
+\section{\label{hornerschema}\noun{Horner}schema}
+\index{Hornerschema}
+Das \noun{Horner}schma kann zur Abspaltung von Linearfaktoren in Polynomen verwendet werden.
+Sei $f(x)=\sum_{0 \leq i \leq n} a_i x^i$ ein Polynom $n$-ten Grades, und $x-x_0$ ein abzuspaltender Linearfaktor, so lässt sich $f(x)$ umschreiben als $f(x)=r+(x-x_0)\cdot\sum_{0 \leq i < n} b_i x^i$:
+
+\noindent\begin{center}
+\begin{tabular}{l|l|l|l|l}
+	$a_n$         & $a_{n-1}$              & $a_{n-2}$              & $\cdots$ & $a_0$                \\ \hline
+	$x_0=\ldots$  & $+(b_{n-1} \cdot x_0)$ & $+(b_{n-2} \cdot x_0)$ & $\cdots$ & $+(b_{0} \cdot x_0)$ \\
+	$b_{n-1}=a_n$ & $=b_{n-2}$             & $=b_{n-3}$             & $\cdots$ & $=r$
+\end{tabular}
+\end{center}
+
+\emph{Achtung:} Fehlende $a_i$ sind mit~$0$ in die Tabelle einzutragen!
+
+[Wenn $r=0$ ist, ist $x_0$ eine Nullstelle von $f(x)$.]
+
+Beispiel für $x_0=2$ und $f(x)=x^5 - 4x^4 + 4x^3 + 3x^2 - 8x + 4$:
+\noindent\begin{center}
+\begin{tabular}{r|r|r|r|r|r}
+	$1$     & $-4$ & $4$  & $3$ & $-8$ & $4$  \\ \hline
+	$x_0=2$ & $2$  & $-4$ & $0$ & $6$  & $-4$ \\
+	$1$     & $-2$ & $0$  & $3$ & $-2$ & $0$
+\end{tabular}
+\end{center}
+Damit: $f(x) = (x^4 - 2x^3 + 0x^2 + 3x - 2)\cdot(x-2) + 0$, also ist $2$ eine Nullstelle von $f(x)$.
+
+
+\section{Regel von \noun{L'Hospital}}
+\index{L'Hospital}
+\index{Regel!von L'Hospital}
+Wenn eine Funktion $u(x)=f(x)/g(x)$ als Ergebnis $0/0$ oder $\pm \infty/\infty$ liefert, ist $u(x)=f'(x)/g'(x)$.
+[\emph{Achtung:} Die Fälle $0/\infty$ und $\infty/0$ sind hiervon \emph{nicht} betroffen.]
+
+
+
+\chapter[Vollständige Induktion]{Beweis durch vollständige Induktion}
+
+\CheckedBox{} Beispiel vorhanden auf \cpageref{sec:bsp-Vollständige-Induktion}.
+\begin{description}
+  \item [Induktionsanfang (IA)] \index{Induktion!vollständige --}
+	Beweise, dass eine Aussage $f(n)=g(n)$ für ein ge\-wählt\-es $n_{0}$ gilt (i.\,d.\,R.~für $n_{0}=1$).
+  \item [Induktionsvoraussetzung (IV)]
+	Gleichsetzen der rekursiven Formel und der expliziten Formel, also $f(n)=g(n)$ explizit aufschreiben.
+  \item [Induktionsbehauptung (IB)]
+	Satz: \enquote{Wenn $f(n)=g(n)$ für ein beliebiges aber festes $n$ gilt, so gilt die Aussage auch für $n+1$.}
+  \item [Induktionsschluss (IS)]
+	Überprüfen, ob $f(n+1)=g(n+1)$ unter Verwendung der IV stets eine wahre Aussage ergibt, d.\,h., eine Seite der Aussage muss mit Hilfe der IV in die andere Seite umgeformt werden.
+	Beim Einsetzen der IV sollte über dem Gleichheitszeichen \enquote{IV} stehen.
+	Schlusssatz: \enquote{Damit ist die IV bewiesen.}
+\end{description}
+
+
+\chapter{\noun{Bool}sche Algebra und Aussagenlogik}
+
+Beachte Ähnlichkeiten zur Mengenlehre, \cpageref{chap:mengenlehre}.
+
+\begin{description}
+    \item[Aussage] $A$, $B$, \ldots bzw.~$a(x)$, $b(x)$\ldots
+    \item[Tautologie] $\models A$ heißt, dass $A$ unabhängig seiner abhängigen Variablen wahr ist.
+    \item[Negation] $\neg A$ oder $\overline{A}$
+    \item[Bikonditional] $A \leftrightarrow B$; $A$ genau dann, wenn $B$. Falls $A \leftrightarrow B$ eine Tautologie ist,
+                         schreibt man $A \Leftrightarrow B$.
+    \item[Konjunktion] $A \land B$; $\neg(A \land B) \leftrightarrow (\neg A \lor \neg B)$
+    \item[Disjunktion] $A \lor B$; $\neg(A \lor B) \leftrightarrow (\neg A \land \neg B)$
+    \item[Implikation] $(A \rightarrow B) := (\neg A \lor B)$, $A \vdash B$, $B \subset A$, auch
+                       \enquote{Konditional} oder \enquote{Subjunktion} genannt; $A$ ist eine hinreichende
+                       Bedingung für $B$, $B$ ist eine notwendige Bedingung für $A$. Falls $A \rightarrow B$ eine Tautologie
+                       ist, schreibt man $A \Rightarrow B$ oder $A \models B$.
+    \item[Kontravalenz] $\neg(A \leftrightarrow B) \leftrightarrow (A \oplus B)$, ausschließendes Oder.
+\end{description}
+
+[\enquote{Doppelstrich-Operatoren} wie $\models$, $\Rightarrow$ oder $\Leftrightarrow$ drücken damit aus, dass eine gegebene
+Aussage unabhängig ihrer abhängigen Variablen wahr ist; die analogen Operatoren $\vdash$, $\rightarrow$ und $\leftrightarrow$ sagen lediglich aus, dass die entsprechende Aussage syntaktisch hergeleitet werden kann, d.\,h.~$A \rightarrow \neg A$ ist korrekt, jedoch $A \Rightarrow \neg A$ nicht.]
+
+
+\begin{table}[htb]
+    \centering\begin{tabular}{rcl}
+    	             $(A \lor A)$ &   $\rightarrow$   & $A$                            \\
+    	                      $B$ &   $\rightarrow$   & $(A \lor B)$                   \\
+    	             $(A \lor B)$ &   $\rightarrow$   & $(B \lor A)$                   \\
+    	    $(A \lor (B \lor C))$ &   $\rightarrow$   & $(B \lor (A \lor C))$          \\
+    	      $(A \rightarrow B)$ &   $\rightarrow$   & $((C \lor A) \lor (C \lor B))$ \\
+    	$(\neg(A \rightarrow B))$ & $\leftrightarrow$ & $(\neg B \rightarrow \neg A)$
+    \end{tabular}
+    \caption{Axiome der Aussagenlogik}
+\end{table}

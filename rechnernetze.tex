@@ -1,0 +1,210 @@
+% !TeX root = matze_fruehstueckt.tex
+\Todo{Stichworte hinzuf{\"u}gen}
+
+\Todo{Netwerktypen}
+
+\Todo{WLAN}
+
+\Todo{Datex, ISDN, DSL}
+
+
+\chapter{Netzwerktypen und -Begriffe}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{rl}
+\bfseries Größe (max.) & \bfseries Name \\
+1 m & PAN---Personal Area Network \\
+100 m & LAN---Local Area Network \\
+10 km & MAN---Metropolitan Area Network \\
+1000 km & WAN---Wide Area Network \\
+10\,000 km & Internet
+\end{tabular}
+\caption{Netzwerkgrößen}
+\end{table}
+
+\begin{description}
+\item [{Switch}] Netzwerkverteiler, welcher Datenpakete gezielt routen kann.
+\item [{Hub}] Netzwerkverteiler, welcher Datenpakete an alle an\-ge\-schloss\-en\-en Geräte verteilt (wie ein Broadcast).
+\item [{Router}] Netzwerkverteiler, welcher Informationen über Netzwerktopologien kennt und Datenpakete auch an nicht direkt angeschlossene Geräte ,,routen`` kann.
+\item [{Backbone}] Router bzw.~Switch, der zwischen großen Teilnetzen vermittelt.
+\end{description}
+
+\section{ISO/OSI Referenzmodell}
+\begin{enumerate}
+\item Physische Schicht (Bitübertragung; Spannungsregelung/Bitcodierung in Kabeln, Pinbelegungen, Übertragungsrichtung, etc.)
+\item Sicherungsschicht (Datenlink; Flusskontrolle, Prüfsummenbildung und Sich\-er\-ung der fehlerfreien Übertragung, konfliktfreier Zugriff auf Leitung, etc.)
+\item Vermittlungsschicht (Netzwerk; Findung von Routing-Informationen, Multiplexing logischer Verbindungen auf einer physischen Leitung, etc.)
+\item Transportschicht (Segmentierung von Datenströmen, Verbindungsaufbau, Aushandlung von Übertragungsgeschwindigkeit, etc.)
+\item Sitzungsschicht (Dialogkontrolle, z.\,B.~Übermittlung des Wiederaufnahmepunktes einer abgebrochenen Dateiübertragung)
+\item Darstellungsschicht (Art der Datenübertragung: XML, JSON, ASCII oder Unicode, etc.)
+\item Anwendungsschicht (Übertragungsprotokoll: HTTP, FTP, SSH, etc.)
+\end{enumerate}
+
+\subsection{Praxis}
+
+Die Schichten 1.~und 2.~sind im Netzwerktreiber implementiert, die Schichten 5.~bis 7.~in der Anwendung.
+Die Schichten 3.~und 4.~sind als IP (\emph{Internet Protocol}) und TCP (\emph{Transmission Control Protocol}, verbindungsorientiert) bzw.~UDP (\emph{User Datagram Protocol}, verbindungslos) implementiert.
+\begin{description}
+\item [{TCP}] Segmentierter Datenstrom, Flusskontrolle, Daten werden garantiert komplett übertragen und in der richtigen Reihenfolge wieder zusammen gesetzt.
+\item [{UDP}] Segmentierter Datenstrom, Pakete können allerdings in unterschiedlicher Reihenfolge oder gar nicht übertragen werden.
+\item [{Socket}] Direkter Zugriff auf die Transportschicht; IP, Portnummer und Verbindungsart (TCP/UDP) müssen angegeben werden, das Protokoll der Übertragung definiert die Anwendung.
+\item [{XML}] Extensible Markup Language; menschenlesbar, unabhängig von Little/Big Endian.
+\item [{Verbindungslos}] Pakete werden einfach ins Netz ,,geschossen``, ohne zu überprüfen, ob die Pakete beim Empfänger ankommen.
+\item [{Verbindungsorientiert}] Verbindungen werden aufgebaut, danach werden Pakete übermittelt und auf die Bestätigung des Empfängers gewartet, danach wird die Verbindung wieder abgebaut.
+\end{description}
+
+\chapter{Datenübertragung}
+\begin{description}
+\item [{Virtuelle~Leitung}] Mehrere Verbindungen auf einer physischen
+Leitung.
+
+\begin{itemize}
+\item Aushandlung von Übertragungsraten, Puffergrößen und Route.
+\item Route nach Aushandlung fest, Paketroute durch Kennung im Paketheader identifizierbar.
+\end{itemize}
+\item [{Frequency~Division~Multiplexing}] mehrere Datenströme werden auf verschiedene Frequenzen aufmoduliert.
+\item [{Time~Division~Multiplexing}] mehrere Datenströme werden abwechselnd übertragen (vgl.~Multithreading).
+\item [{Statistical~Multiplexing}] Aufteilung der Ressourcen je nach Bedarf.
+\item [{Ausfallsicherheit}] Pakete werden im Internet über redundante Wege übermittelt, daher ist die Reihenfolge beim Empfänger nicht garantiert.
+\end{description}
+
+\section{TCP}
+
+Verbindungsorientiert, Adressierung über Ports, reihenfolgetreu, fehlerfrei.
+\begin{itemize}
+\item Segmentierung in Pakete von max.~64\,kB (Datensegmente, Kontrollsegmente)
+\item Bytestrom
+\item Fehlerbehandlung
+\item Flusskontrolle
+\item Voll-Duplex
+\item Punkt-zu-Punkt
+\end{itemize}
+
+\subsection{Ports}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cc}
+\bfseries Bereich & \bfseries Bedeutung \\
+0--1\,023 & Reserviert (HTTP, FTP,\ldots) \\
+1\,024--49\,151 & Quasi-reservierte Ports (de-facto-Standards) \\
+49\,152--65\,535 & Benutzerdefinierbar
+\end{tabular}
+
+\caption{TCP Ports}
+\end{table}
+
+
+\subsection{Three-Way-Handshake}
+\begin{enumerate}
+\item Verbindungsanfrage; \code{CR(seq=x)}
+\item Server bestätigt Verbindungsaufbau; \code{ACK(seq=y; ack=x+1)}
+\item Client bestätigt Verbindungsaufbau; \code{ACK(seq=x+1, ack=y+1)}
+\item Danach Beginn der Datenübertragung mit fortlaufenden Sequenznummern und Quittungsübermittlung zwecks Fehlervermeidung.
+
+\begin{itemize}
+\item Aufteilung des Datenstroms in Segmente.
+\item Segmente enthalten Sequenznummern mit Position der Daten im gesamten Datenstrom.
+\item Für jedes erfolgreich übermittelte Segment wird ein \code{ACK} zurückgesendet.
+\item Letztes Segment enthält das \code{FIN-Flag}.
+\end{itemize}
+\end{enumerate}
+
+\subsection{Flusskontrolle}
+\begin{itemize}
+\item Vereinbarung eines Übertragungsfensters (Größe des Puffers auf der Empfangsseite).
+\item Der Sender sendet maximal so viel wie in den Puffer des Empfängers passt und wartet dann auf die Quittungen; nach jeder Quittung wird das nächste Paket versendet.
+\end{itemize}
+
+\subsection{TCP Header}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+	\hline
+	\multicolumn{2}{|c|}{0} & 8 & 16 & 24\tabularnewline
+\hline 
+\hline 
+\multicolumn{3}{|c|}{Source Port} & \multicolumn{2}{c|}{Destination Port}\tabularnewline
+\hline 
+\multicolumn{5}{|c|}{Sequence Number}\tabularnewline
+\hline 
+\multicolumn{5}{|c|}{Acknowledgement Number}\tabularnewline
+\hline 
+HL & Res. & 6 Flags & \multicolumn{2}{c|}{Window Size}\tabularnewline
+\hline 
+\multicolumn{3}{|c|}{Checksum} & \multicolumn{2}{c|}{Urgent Pointer}\tabularnewline
+\hline 
+\multicolumn{4}{|c|}{Options} & Padding\tabularnewline
+\hline 
+\multicolumn{5}{|c|}{Data\ldots}\tabularnewline
+\hline
+\end{tabular}
+\caption{TCP Header}
+\end{table}
+
+\begin{itemize}
+	\item Header ist 20 Bytes groß, zzgl.~Optionen und Padding.
+	\item Sequenz-/Quittungsnummer zählen einzelne Bytes; Quittungsnummer gibt das nächste erwartete Byte an.
+	\item HL: Header Length; Anzahl der im Header übertragenen Bytes geteilt durch 4.
+	\item Res.: reservierte Flags.
+	\item Flags:
+	\begin{itemize}
+		\item \code{URG}: Urgent; wichtige Daten
+		\item \code{ACK}: Quittung
+		\item \code{PSH}: Push; direkte Weiterleitung
+		\item \code{RST}: Reset; Zurücksetzen der Verbindung
+		\item \code{SYN}: Verbindungsaufbau
+		\item \code{FIN}: Verbindungsabbau
+	\end{itemize}
+	\item Window Size: Größe des Empfangspuffers in Bytes
+	\item Checksum: Prüfsumme der Daten
+	\item Urgent Pointer: Daten ohne Beachtung der Flusskontrolle senden; Wert ist die absolute Byteposition im gesamten Datenstrom
+\end{itemize}
+Weitere Informationen, die beim Verbindungsaufbau ausgehandelt werden:
+\begin{itemize}
+	\item MMS (Maximum Segment Size): Maximale Segmentgröße
+	\item Window Scale: Skalierungsfaktor für die Fenstergröße, maximal 14, Faktor errechnet sich als $2^n$.
+	\item Fehlerbehandlungsmechanismus
+	\item Slow Start/Congestion Avoidance
+	\begin{itemize}
+		\item Exponentielle Steigerung der Anzahl übertragener Segmente bis die Window Size erreicht ist.
+		\item Danach nur noch lineares Wachstum.
+		\item Reduktion der Anzahl bei Paketverlusten.
+	\end{itemize}
+\end{itemize}
+
+\section{UDP}
+
+Verbindungslos, Adressierung über Ports, nicht reihenfolgetreu, nicht fehlerfrei.
+\begin{itemize}
+\item Nur Ports, Message Length und Checksum im Header, damit nur 8 Byte Header.
+\item Keine Kontrollmechanismen: Reihenfolge der Pakete sowie Paketverlust und -duplizierung erst auf Anwendungsebene abfangbar.
+\end{itemize}
+
+\chapter{Internet}
+
+
+\section{IP}
+\begin{description}
+\item [{Class~A}] Erstes Byte für Netzmaske, fängt mit dem Bitwert 0 an.
+\item [{Class~B}] Erste 2 Bytes für Netzmaske, fängt mit den Bitwerten 10 an.
+\item [{Class~C}] Erste 3 Bytes für Netzmaske, fängt mit den Bitwerten 110 an.
+\item [{Class~D}] Multicast, fängt mit den Bitwerten 1110 an.
+\item [{Class~E}] Reserviert, fängt mit den Bitwerten 1111\,0 an.
+\end{description}
+
+\subsection{Routing}
+
+Router enthält Informationen, über welchen Netzwerkanschluss welche IPs erreicht werden können.
+
+Spezielle Adressen:
+\begin{description}
+\item [{0.0.0.0}] Eigener Host.
+\item [{0\ldots{}HOST}] Host im eigenen Netz.
+\item [{255.255.255.255}] Broadcast (lokal)
+\item [{NETMASK.111\ldots{}111}] Broadcast (entfernt)
+\item [{127.x.x.x}] Loopback
+\end{description}
+

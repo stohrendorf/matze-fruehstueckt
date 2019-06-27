@@ -1,0 +1,1776 @@
+% !TeX document-id = {b3112cd4-7d8f-4bd0-a566-42a9f362048b}
+% !TeX encoding = UTF-8
+% !TeX spellcheck = de_DE
+% !TeX program = latexmk -silent -lualatex -shell-escape | txs:///view-pdf-internal --embedded
+% !TeX TXS-program:latexmk = latexmk -silent -xelatex -shell-escape
+\documentclass[english,ngerman,fontsize=9pt,intoc,index=totoc,refpage,listof=totoc,draft]{scrbook}
+
+\usepackage{morewrites}
+
+% Betrifft: Numerik, Datenbanken, Rechnernetze
+\newif\ifincludeincomplete
+\includeincompletefalse
+
+\usepackage[a5paper]{geometry}
+\usepackage[final,hiresbb]{graphicx}
+\usepackage{etex}
+
+\usepackage{pdfpages}
+
+\usepackage{tocloft}
+\addtolength\cftpartnumwidth{3pt}
+\addtolength\cftsecnumwidth{3pt}
+\addtolength\cftfignumwidth{5pt}
+\renewcommand{\cftpartfont}{\sffamily\huge\color{ttblue}}
+\renewcommand{\cftpartpagefont}{\sffamily\huge\color{ttblue}}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\usepackage{esint}
+\usepackage[matrix,dvips,arrow]{xy}
+\usepackage{color}
+\usepackage{colortbl}
+
+\usepackage[german=guillemets]{csquotes}
+\usepackage{polyglossia}
+\setmainlanguage{german}
+\setotherlanguage{english}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{fancybox}
+
+\usepackage{courier}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{rotating}
+\usepackage{calc}
+\usepackage{units}
+\usepackage{textcomp}
+\usepackage{bbding}
+\usepackage{url}
+\usepackage{multirow}
+\usepackage{wasysym}
+\usepackage[normalem]{ulem}
+\usepackage{glossaries}
+\setacronymstyle{long-short}
+\usepackage[unicode=true,pdfencoding=auto,
+ bookmarks=true,bookmarksnumbered=false,bookmarksopen=true,bookmarksopenlevel=0,
+ breaklinks=true,pdfborder={0 0 0},backref=false,colorlinks=false,final]
+ {hyperref}
+\usepackage{enumitem}
+
+%\ifxetex % wegen inline-preview
+%\usepackage{fontspec}
+%\setmainfont[
+%  Ligatures=TeX,
+%  Extension=.otf,
+%  BoldFont=cmunbx,
+%  ItalicFont=cmunti,
+%  BoldItalicFont=cmunbi,
+%]{cmunrm}
+%\fi
+\usepackage{fontspec}
+\setmainfont[Ligatures=TeX]{TeX Gyre Pagella}
+\setmonofont{TeX Gyre Cursor}
+%\defaultfontfeatures{Ligatures=TeX}
+
+\usepackage[nothing]{todo}
+
+\usepackage{caption}
+\captionsetup{labelfont={bf},textfont={it},labelsep=endash}
+
+\usepackage[k-tight,tight,listfiles]{minitoc}
+\mtcsetfont{parttoc}{*}{\sffamily}
+\mtcsetfont{parttoc}{chapter}{\large\bfseries\sffamily}
+\mtcsettitlefont{parttoc}{\Large\bfseries\sffamily}
+
+\usepackage{struktex}
+\usepackage{qtree}
+\usepackage{diagbox,lscape}
+\usepackage{lettrine}
+\usepackage{ccicons}
+
+\usepackage[backend=biber,style=alphabetic,sortlocale=de_DE,language=ngerman]{biblatex}
+\addbibresource{refs.bib}
+
+\usepackage{shellesc}
+\usepackage{minted}
+\usemintedstyle{friendly}
+
+\usepackage[xindy]{imakeidx}
+\makeindex
+
+\geometry{verbose,tmargin=2cm,bmargin=2.5cm,lmargin=2cm,rmargin=1.5cm}
+\pagestyle{fancy}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+
+\hypersetup{
+  pdftitle={Matze frühstückt},
+  pdfauthor={Steffen Ohrendorf},
+  pdfkeywords={Lineare Algebra, Analysis, Stochastik, Numerik, IT Grundlagen, IT-Systeme, Algorithmen, Datenstrukturen, Datenbanken, Rechnernetze}
+}
+
+\makeatletter
+
+%\providecommand{\LyX}{\texorpdfstring%
+%  {L\kern-.1667em\lower.25em\hbox{Y}\kern-.125emX\@}
+%  {LyX}
+%}
+
+\newcommand{\noun}[1]{\textsc{#1}}
+\DeclareRobustCommand*{\lyxarrow}{%
+  \@ifstar
+  {\leavevmode\,$\triangleleft$\,\allowbreak}
+  {\leavevmode\,$\triangleright$\,\allowbreak}%
+}
+
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+\floatstyle{ruled}
+\newfloat{algorithm}{tbp}{loa}[chapter]
+\providecommand{\algorithmname}{Algorithmus}
+\floatname{algorithm}{\protect\algorithmname}
+
+\numberwithin{equation}{section}
+%\numberwithin{figure}{section}
+\newlength{\lyxlabelwidth}      % auxiliary length 
+\newcommand{\lyxaddress}[1]{
+  \par {\raggedright #1 \vspace{1.4em} \noindent\par}
+}
+% labeling-like list based on enumitem's description list with
+% mandatory second argument (label-pattern):
+\newenvironment{elabeling}[2][]%
+{
+  \settowidth{\lyxlabelwidth}{#2}
+  \begin{description}[font=\normalfont, style=sameline, leftmargin=\lyxlabelwidth, #1]
+}
+{
+  \end{description}
+}
+
+\newenvironment{mathalgo}[1]
+{
+  \begin{algorithm}[H]
+    \caption{#1}
+    \def\>{ \textcolor{gray}{\rmfamily >>}\ \ \relax}%
+    \def\={\ifmmode\leftarrow\else$\leftarrow$\fi}%
+    \newcommand{\cmt}[1]{%
+      \textsl{\rmfamily// ##1}%
+    }%
+    \obeylines \ttfamily\hss%
+}
+{%
+  \end{algorithm}
+}
+
+\newcommand{\code}[1]{\texttt{#1}}
+
+\@ifundefined{date}{}{\date{}}
+
+\setlength{\columnseprule}{0.5pt}
+
+\let\myTOC\tableofcontents
+\renewcommand\tableofcontents{%
+  \frontmatter
+  \pdfbookmark[1]{\contentsname}{}
+  \myTOC
+  \mainmatter }
+
+\let\oldcleardoublepage\cleardoublepage
+\let\cleardoublepage\clearpage
+
+\definecolor{lightgray}{rgb}{0.8,0.8,0.8}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+\definecolor{ttblue}{RGB}{26,97,169}
+
+%\renewcommand{\nomname}{Glossar}
+%\renewcommand{\eqdeclaration}[1]{\ (siehe Gleichung\nobreakspace(#1))}
+%\renewcommand{\pagedeclaration}[1]{\ (Seite\nobreakspace{}#1)}
+
+\newcommand{\xySep}[1]{% 
+  \xydef@\xymatrixrowsep@{#1}%
+  \xydef@\xymatrixcolsep@{#1}%
+}
+
+\newlength{\oldtcs}
+
+\newcommand{\clearevenpage}{%
+  \ \vfill\pagebreak%
+  \ifthenelse{\isodd{\thepage}}{%
+    \noindent\emph{Diese Seite ist mit Absicht leer.}\vfill\pagebreak%
+  }
+  {}
+}
+
+\newcommand*{\bord}[1]{\multicolumn{1}{c|}{#1}}
+%\newcommand\bigzero{\makebox(0,0){\text{\huge0}}}
+
+\newcommand{\mcolor}[2]{\color{#1}{#2}}
+
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.~#1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\scriptsize\thesection.~#1}{}}
+
+\setlength{\unitlength}{10mm}
+
+\usepackage{atbegshi}
+
+\newcommand{\blob}{\textcolor{black}{\rule[-2mm]{5mm}{5mm}}}
+\newcommand{\blobctr}{\numexpr\value{part}+2\relax}
+
+\newcommand{\rblob}{%
+\AtBeginShipoutNext{\AtBeginShipoutUpperLeft{%
+  \setlength{\unitlength}{10mm}%
+  \put(%
+    14.3,%
+    -\blobctr%
+  ){\blob}%
+}}%
+}
+%\newcommand{\rblob}{\begin{picture}(0,0)
+%  \put(1,-\value{part}){\blob}
+%\end{picture}}
+
+\newcommand{\lblob}{%
+\AtBeginShipoutNext{\AtBeginShipoutUpperLeft{%
+  \setlength{\unitlength}{10mm}%
+  \put(%
+    0,%
+    -\blobctr%
+  ){\blob}%
+}}%
+}
+%\newcommand{\lblob}{\begin{picture}(0,0)
+%  \put(-3,-\value{part}){\blob}
+%\end{picture}}
+
+\fancyhead[LE]{\lblob\slshape \leftmark}
+\fancyhead[RO]{\slshape \leftmark\rblob}
+\fancyhead[LO,RE]{\slshape \nouppercase{\rightmark}}
+\fancyfoot[LE,RO]{\thepage}
+\fancyfoot[C]{\ccbyncnd}
+
+\fancypagestyle{plain}{%
+  \fancyhead[LE]{\lblob\slshape \leftmark}
+  \fancyhead[RO]{\slshape \leftmark\rblob}
+  \fancyhead[LO,RE]{\slshape \nouppercase{\rightmark}}
+  \fancyfoot[LE,RO]{\thepage}
+  \fancyfoot[C]{\ccbyncnd}
+}
+\fancypagestyle{blank}{%
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyhead[LE]{}
+	\fancyhead[RO]{}
+	\fancyfoot[C]{}
+}
+
+%\renewcaptionname{ngerman}{\seename}{siehe}
+%\renewcaptionname{english}{\seename}{siehe}
+%\renewcaptionname{american}{\seename}{siehe}
+
+\makeatletter
+\renewcommand{\part}{%
+  \if@openright
+    \oldcleardoublepage
+  \else
+    \clearpage
+  \fi
+  \thispagestyle{empty}%
+  \if@twocolumn
+    \onecolumn
+    \@tempswatrue
+  \else
+    \@tempswafalse
+  \fi
+  \null\vfil
+  \secdef\@part\@spart}
+\makeatother
+
+\global\def\nomname{Glossar}
+
+\AtBeginDocument{
+  \def\labelitemii{\(\circ\)}
+  \def\labelitemiii{\(\triangleright\)}
+  \def\labelitemiv{\normalfont\bfseries{--}}
+}
+
+\makeatother
+
+%\addto\captionsamerican{\renewcommand{\algorithmname}{Algorithm}}
+\addto\captionsenglish{\renewcommand{\algorithmname}{Algorithm}}
+\addto\captionsngerman{\renewcommand{\algorithmname}{Algorithmus}}
+
+\usepackage{ifdraft}
+
+\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\rg}{rg}
+\DeclareMathOperator{\bild}{bild}
+\DeclareMathOperator{\adiv}{div}
+\DeclareMathOperator{\rot}{rot}
+\DeclareMathOperator{\cov}{cov}
+\DeclareMathOperator{\spur}{spur}
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Ps}{Ps}
+\DeclareMathOperator{\Bin}{Bin}
+\DeclareMathOperator{\Exp}{Exp}
+\DeclareMathOperator{\Hyp}{Hyp}
+\DeclareMathOperator{\N}{N}
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\adj}{adj}
+\DeclareMathOperator{\sign}{sign}
+\newcommand{\intd}{\,\mathrm{d}}
+
+\makeatletter
+\let\t@old=\t
+\renewcommand*{\t}{\ifmmode^T\negthickspace\else\t@old\fi}
+
+\ifdefined\T
+  \let\T@old=\T
+  \renewcommand{\T}{\ifmmode^T\negthinspace\else\T@old\fi}
+\else
+  \newcommand{\T}{\ifmmode^T\negthinspace\fi}
+\fi
+\makeatother
+
+\global\long\def\vecc(#1;#2){%
+  \begin{pmatrix}
+    #1 \\ #2
+  \end{pmatrix}%
+}
+
+\global\long\def\veccc(#1;#2;#3){%
+  \begin{pmatrix}
+    #1 \\ #2 \\ #3
+  \end{pmatrix}%
+}
+
+\newcounter{mathtableformulacounter}
+\newenvironment{mathtable}[1][1.6667em]
+{
+  \noindent\begin{center}
+    \setcounter{mathtableformulacounter}{1}
+    \newcommand{\cell}{
+      \ifnum\value{mathtableformulacounter}>1
+	\ifodd\value{mathtableformulacounter}
+	  \\[#1]
+	\else
+	  &
+	\fi
+      \fi
+      \stepcounter{mathtableformulacounter}
+    }
+    \begin{tabular}{l|l}
+}
+{
+    \end{tabular}
+  \end{center}
+}
+
+% \gdef\pdef #1:{\par\smallskip\hangindent=1em\hangafter=1\noindent\textbf{\textsf{#1}\hskip 0.3333em}}
+% \newcommand{\pbreak}{\hfil\break\indent}
+
+\setlist{itemsep=2pt, parsep=2pt}
+% TODO \usepackage{breakurl}
+
+\usepackage{setspace}
+
+\newcommand{\ratingstar}{{\footnotesize \FiveStarShadow}}
+\newcommand{\rating}[4]{\noindent\begin{flushright}
+  \null\hfilneg%
+  \ifnum #1>0 \ratingstar \fi
+  \ifnum #1>1 \ratingstar \fi
+  \ifnum #1>2 \ratingstar \fi
+  \ifnum #1>3 \ratingstar \fi
+  \ifnum #1>4 \ratingstar \fi
+  \hspace{0.6667em}
+  \textbf{\sffamily #2 \hfil\mbox{}}%
+  \hspace{0.6667em}
+  \cite{#3}; \emph{#4}
+\end{flushright}}
+
+\usepackage{datenumber}
+\usepackage{cleveref}
+
+\renewcommand*{\dictumwidth}{.5\textwidth}
+\renewcommand*{\dictumauthorformat}[1]{#1}
+\setkomafont{dictumtext}{\normalfont\normalcolor\sffamily\itshape}
+
+\usepackage{enumitem}
+\setlist[description]{leftmargin=\parindent}
+\setlist[itemize]{leftmargin=\parindent}
+\setlist[enumerate]{leftmargin=1.2\parindent}
+
+\makenoidxglossaries
+\newcommand*{\englishlang}[1]{\foreignlanguage{english}{#1}}
+\newglossaryentry{md5}{name={MD5},description={\englishlang{Message Digest Algorithm 5}}}
+\newglossaryentry{sha1}{name={SHA-1},description={\englishlang{Secure Hash Algorithm}}}
+\newglossaryentry{crc32}{name={CRC-32},description={\englishlang{Cyclic Redundancy Check}}}
+\newglossaryentry{alu}{name={ALU},description={\englishlang{Cyclic Redundancy Check}}}
+\newglossaryentry{cpu}{name={CPU},description={\englishlang{Central Processing Unit}}}
+\newglossaryentry{ram}{name={RAM},description={\englishlang{Random Access Memory}}}
+\newglossaryentry{rom}{name={ROM},description={\englishlang{Read Only Memory}}}
+\newglossaryentry{pc}{name={PC},description={\englishlang{Program Counter}}}
+\newglossaryentry{sram}{name={SRAM},description={\englishlang{Static Random Access Memory}}}
+\newglossaryentry{dram}{name={DRAM},description={\englishlang{Dynamic Random Access Memory}}}
+\newglossaryentry{dma}{name={DMA},description={\englishlang{Direct Memory Access}}}
+\newglossaryentry{risc}{name={RISC},description={\englishlang{Reduced Instruction Set Computer}}}
+\newglossaryentry{cisc}{name={CISC},description={\englishlang{Complex Instruction Set Computer}}}
+\newglossaryentry{smp}{name={SMP},description={\englishlang{Symmetric Multi Processing}}}
+\longnewglossaryentry{ccnuma}{name={ccNUMA}}{%
+    \englishlang{Cache-coherent non-uniform memory architecture}; beschreibt eine Architektur,
+    in der sich mehrere Prozessorkerne denselben Cache teilen können, und der Hauptspeicher aufgeteilt
+    und durch einen \emph{\englishlang{Interconnect}} verbunden ist.
+}
+\longnewglossaryentry{mpi}{name={MPI}}{%
+    \englishlang{Message Passing Interface}; Schnittstellen- und API-Spezifikation zur Kommunikation zwischen
+    Prozessen auf verschiedenen Rechnern. Wird im Cluster Computing eingesetzt.
+}
+\longnewglossaryentry{hal}{name={HAL}}{%
+    \englishlang{Message Passing Interface}; Schnittstellen- und API-Spezifikation zur Kommunikation zwischen
+    Prozessen auf verschiedenen Rechnern. Wird im Cluster Computing eingesetzt.
+}
+\newglossaryentry{hak}{name={HAL},description={\englishlang{Hardware Abstraction Layer}}}
+\newglossaryentry{fcfs}{name={fcfs},description={\englishlang{First Come, First Serve}}}
+\newglossaryentry{fifo}{name={FIFO},description={\englishlang{First In, First Out}}}
+\newglossaryentry{sjf}{name={SJF},description={\englishlang{Shortest Job First}}}
+\newglossaryentry{lru}{name={LRU},description={\englishlang{Least Recently Used}}}
+\newglossaryentry{lfu}{name={LFU},description={\englishlang{Least Frequently Used}}}
+\newglossaryentry{nru}{name={NRU},description={\englishlang{Not Recently Used}}}
+\newglossaryentry{ssd}{name={SSD},description={\englishlang{Solid State Disk}}}
+\newglossaryentry{slc}{name={SLC},description={\englishlang{Single Level Cells}}}
+\newglossaryentry{mlc}{name={MLC},description={\englishlang{Multi Level Cells}}}
+\newglossaryentry{cdrom}{name={CD-ROM},description={\englishlang{Compact Disc, Read Only Memory}}}
+\newglossaryentry{efm}{name={EFM},description={\englishlang{Eight to Fourteen Modulation}}}
+\newglossaryentry{raid}{name={RAID},description={\englishlang{Redundant Array of Independent Discs}}}
+\newglossaryentry{bdsg}{name={BDSG},description={Bundesdatenschutzgesetz}}
+\newglossaryentry{xss}{name={XSS},description={\englishlang{Cross Site Scripting}}}
+\newglossaryentry{csrf}{name={CSRF},description={\englishlang{Cross Site Request Forgery}}}
+\newglossaryentry{asm}{name={ASM},description={\englishlang{Assembler}}}
+\longnewglossaryentry{x86}{name={x86}}{%
+    Bezeichnung für die 32-Bit-Generation der Prozessoren.
+    Die ersten 32-Bit-Prozessoren von Intel hatten noch Zahlen als Bezeichnung, der erste seiner Art war der 80386\@.
+    Es folgten der~80486 und der als Pentium~I bekannte~80586\@.
+}
+\longnewglossaryentry{ia64}{name={ia-64}}{%
+    Intel: Bezeichnung für die 64-Bit-Generation der Prozessoren von Intel,
+    die nicht kompatibel zur 32-Bit-Architektur sind. IA-64 wird hauptsächlich bei Servern eingesetzt.
+}
+\longnewglossaryentry{amd64}{name={amd64}}{%
+    AMD: Bezeichnung für die 64-Bit-Generation der Prozessoren, die eine Abwärtskompatibilität zur 32-Bit-Architektur haben.
+}
+\longnewglossaryentry{x64}{name={x64}}{%
+    Generelle Bezeichnung für die 64-Bit-Generation der Prozessoren.
+}
+\newglossaryentry{lgs}{name={LGS},description={Lineares Gleichungssystem}}
+
+\begin{document}
+\gdef\emph{\textsl}
+\doparttoc
+
+\begin{titlepage}
+\newgeometry{top=0pt,left=0pt,right=0pt,inner=0pt,outer=0pt,marginparsep=0pt,marginparwidth=0pt}%
+\noindent\kern-\parindent\vbox to 0pt{\kern-1em\includegraphics[height=210mm]{matse-cover-v3-3.jpg}}
+\restoregeometry
+\end{titlepage}
+
+
+\clearpage\thispagestyle{empty}
+\dictum[\url{http://german-bash.org/83851}]{Als Informatiker sollte man immer Linux zu Hause haben. Falls mal Besuch kommt.}
+
+\vspace{1cm}
+\dictum[Ian Sommerville, \cite{Sommerville}]{Bücher spiegeln naturgemäß die Meinungen und Vorurteile ihrer Autoren wider.
+Es wird sich nicht vermeiden lassen, dass manche Leser mit meiner Einschätzung der Dinge und dem von mir ausgewählten Material nicht einverstanden sind.}
+
+\vspace{4cm}
+\begin{onehalfspace}
+    \Large\sffamily
+    Sollten Sie dieses Dokument käuflich erworben haben, ohne zu wissen, dass dies alles \textsl{kostenlos} im Internet verfügbar ist, sind Sie wohl Opfer eines Betrugs geworden.
+\end{onehalfspace}
+
+\vfill
+\begin{flushright}
+  Revision 32, \datemonthname\ \the\year
+\end{flushright}
+
+\clearpage
+
+\thispagestyle{empty}
+%
+\ifthispageodd{}{\hbox{\ }\eject\thispagestyle{empty}}%
+%
+\newgeometry{top=0pt,left=0pt,right=0pt,inner=0pt,outer=0pt,marginparsep=0pt,marginparwidth=0pt}%
+\noindent\kern-\parindent\vbox to 0pt{\kern-1em\includegraphics{uebersicht-page.pdf}}
+\restoregeometry
+\thispagestyle{empty}%
+\clearpage
+
+\hyphenation{ü-ber-tra-gen ü-ber-mitt-elt ü-ber-mitt-eln}
+
+
+\chapter*{Urheberrecht}
+
+\fancypagestyle{empty}{%
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\fancyhead[LE]{\lblob}
+	\fancyhead[RO]{\rblob}
+	\fancyfoot[C]{\ccbyncnd}
+}
+\thispagestyle{empty}
+\hfil{\Huge\ccbyncnd}\hfil
+
+\bigskip{}
+
+Dieses Material steht unter der Creative-Commons-Lizenz Namensnennung -- Nicht kommerziell -- Keine Bearbeitungen 4.0 International.
+Um eine Kopie dieser Lizenz zu sehen, besuchen Sie \url{http://creativecommons.org/licenses/by-nc-nd/4.0/deed.de}.
+
+Dies bedeutet für Sie, dass Sie dieses Dokument unter folgenden Bedingungen gerne vervielfältigen dürfen:%
+\footnote{Sei es nun eine einfache digitale Kopie, das Abtippen, das Binden als Buch, oder gar eine handschriftliche Kopie.}
+
+\begin{itemize}
+  \item Sie müssen meinen Namen nennen.
+  \item Sie dürfen keine kommerzielle Verwertung dieses Dokuments durch\-führ\-en.
+  \item Sie dürfen bei der Vervielfältigung inhaltlich nichts verändern.
+\end{itemize}
+
+Dies war nur eine grobe, nicht sehr genaue Zusammenfassung. Für Details
+sehen Sie bitte unter dem oben angegebenen Link nach.
+
+\clearpage\frontmatter
+\tableofcontents{}
+\mainmatter
+
+\addchap{Vorwort}
+
+Dieses Dokument ist \emph{nicht} als Skript zu verstehen und sollte nicht als alleinige Basis zum Lernen dienen.
+Es ist als begleitendes Material gedacht, um eventuell das vorhandene Wiss\-en aufzufrischen.
+Es ist eine sehr kompakte Zusammenfass\-ung der Pflichtkurse des Studienganges \emph{Scientific Programm\-ing} und enthält nur die Ergebnisse einiger Tausend Seiten Fachliteratur und vielen hundert Stunden Vorlesungen; daher erfordert dieses Dokument entweder gutes Begleitmaterial in Form von Vorlesungen oder Büchern, oder aber
+den starken Willen und den großen Geist, sich die Beweise und Anwendungsgebiete der Formeln selbst herzuleiten.
+
+Sie werden in diesem Buch übrigens kein Kapitel über Software Engineering finden, da dieses Thema weitaus komplexer ist, als dass es sich auf ein paar Seiten zusammenfassen ließe.
+Eine bereits kompakte Zusammenfassung des Themas ist \enquote{Software Engineering} von Ian Sommerville (\cite{Sommerville}), und dieses Buch ist bereits über 800~Seiten dick.
+Ich empfehle dringend, dieses Buch so früh wie möglich anzuschaffen, sofern Sie auch nur den Hauch mit Software-Entwicklung zu tun haben.
+
+Als Ausgleich hierfür habe ich versucht, die anderen Themen etwas breiter zu fächern und etwas tiefer zu behandeln, weshalb Sie hier und da Dinge finden werden, die nicht in Ihren Vorlesungen behandelt werden.
+Auf der anderen Seite kann ich nicht garantieren, dass Sie hier alles finden werden, was für Sie wichtig ist; sollten Sie also etwas vermissen, weisen Sie mich bitte darauf hin, so dass ich die Lücke füllen kann.
+
+Wer beim Durchlesen oder Nachschlagen ein Thema nicht voll versteht, sollte \emph{auf jeden Fall} noch einmal einen Blick in die Literatur des entsprechenden Themas werfen.
+Alternativ wäre die Wahl eines anderen Studiums sinnvoll.
+
+\paragraph*{Ein kurzes Wort zu Revision 32}
+Gegenüber der uralten Revision 31 hat sich so einiges getan.
+Insbesondere habe ich das komplette Buch vollständig umgekrempelt und versucht, alles professioneller aussehen zu lassen.
+Inhaltlich hat sich auch so einiges getan, unter anderem habe ich \emph{IT Systeme} in \emph{IT Grundlagen} eingearbeitet und den neuen Teil \emph{Algorithmen und Datenstrukturen} hinzugefügt.
+Viele neue Abbildungen sind hinzugekommen, und die alten habe ich versucht zu verbessern; Struktogramme sind auf das Minimum reduziert und durch Pseudocode-Algorithmen ersetzt worden, da ich diese Darstellung für zielführender halte; sämtliche Formeln wurden überarbeitet, um konsistente Darstellung sicherzustellen, und insgesamt ist der Inhalt wesentlich kompakter geworden.
+Zum Vergleich: Gegenüber Revision 31 wurde der Inhalt pro Seite um ca.~30--40\% erhöht, und die Seitenzahl nähert sich der Verdoppelung.
+Obwohl ich erst die Hälfte des Weges gegangen bin (es fehlen immerhin noch die Teile Numerik, Rechnernetze und Datenbanken), bin ich stolz auf Revision 32, und hoffe, Sie finden Freude daran.
+
+\Todo{Noch zu schreiben: Datenbanken}
+
+\Todo{Noch zu schreiben: Rechnernetze}
+
+\Todo{Noch zu schreiben: Analysis---Differenzialgleichungen}
+
+\Todo{Zu überarbeiten: Analysis---Funktionen höherer Ordnung}
+
+\addchap{Danksagung}
+
+Ich möchte folgenden Personen für die Vorlesungen, Präsentationen, Notizen und Inspirationen danken:
+\begin{itemize}
+  \item Jens Hollmann (Analysis)
+  \item Dr.~Alexander Voß (IT Grundlagen)
+  \item Prof.~Dr.~Hans~Joachim Pflug (Java, sowie Algorithmen und Datenstrukturen)
+  \item Benno Willemsen, M.\,Sc.\ (Lineare Algebra)
+  \item Bastian Küppers, M.\,Sc.\ (IT-Systeme)
+  \item Prof.~Dr.~Martin Reißel (Numerik)
+  \item Prof.~Dr.~Volker Sander (Datenbanken)
+  \item Prof.~Dr.~Horst Schäfer (Stochastik)
+  \item Prof.~Dr.~rer.~nat.~Jörg Striegnitz (Rechnernetze)
+  \item Prof.~Dr.~Andreas Terstegge (Software Engineering)
+\end{itemize}
+
+Weiterhin gilt mein Dank denjenigen, die mir unentgeltlich Material, Zeit und andere gute Sachen zur Verfügung gestellt haben:
+
+\begin{itemize}
+  \item Tim Böhmer für den Teil \enquote{Kombinatorik} (\cpageref{chap:Kombinatorik}).
+  \item Frederic Klein für einen wichtigen Teil von \enquote{Lineare Gleichungssysteme} (\cpageref{sec:Lineare-Gleichungssysteme}).
+  \item Mike Boddin für das Korrekturlesen von Revision 21.
+  \item Einem Spender, der mich dazu angespornt hat, den Teil \enquote{Lineare Algebra} noch einmal zu überarbeiten und zu vervollständigen.
+  \item Dipl.-Math.~Frank Schürmann für das intensive Korrigieren des Teils \enquote{Lineare Algebra} für Revision~32.
+\ifincludeincomplete
+  \item Anita Ludermann für die Vorlagen von \enquote{Datenbanken} (\cpageref{part:Datenbanken}).
+\fi
+\end{itemize}
+
+\setpartpreamble{
+  \dictum[Doctor Who]{All of Time and Space;\\
+  everywhere and anywhere;\\
+  every star that ever was.\\
+  Where do you want to start?}
+  \vspace{2em}\par%
+  \dictum[Morpheus]{Ich kann Dir nur die Tür zeigen.
+  Hindurchgehen musst Du alleine.}
+}
+\part{Mathematische Grundlagen}
+\parttoc
+\include{mathematische_grundlagen}
+
+\setpartpreamble{
+  \dictum[\noun{René Descartes}]{Denn es ist nicht genug, einen guten Kopf zu haben; die Hauptsache ist, ihn richtig anzuwenden.}
+}
+\part{Lineare Algebra}
+\parttoc
+\include{lineare_algebra}
+
+\setpartpreamble{%
+    \vspace{2em}\par%
+    \dictum[\noun{Novalis}, 1802]{Nichts ist dem Geist erreichbarer als das Unendliche.}
+    \vspace{2em}\par%
+    \dictum[\noun{Marcus Lucius Annaeus Seneca}, ca.~40 v.~Chr.]{Nichts ist unendlich.}
+    \vspace{2em}\par%
+    \dictum[\noun{Albert Einstein}]{Zwei Dinge sind unendlich: Das Universum und die menschliche Dummheit.  Beim Universum bin ich mir allerdings nicht sicher.}
+}%preamble
+\part{Analysis}
+\parttoc
+\include{analysis}
+
+\setpartpreamble{
+  \dictum[\noun{Albert Einstein}]{Gott würfelt nicht.}
+}
+\part{Stochastik}
+\parttoc
+\include{stochastik}
+
+\ifincludeincomplete
+\part{Numerik}
+\parttoc
+\include{numerik}
+\fi
+
+\setpartpreamble{
+  \dictum[\noun{Donald~E.~Knuth}]{People who are more than casually interested in computers should have at least some idea of what the underlying hardware is like.  Otherwise the programs they write will be pretty weird.}
+}
+\part{\label{part:IT-Grundlagen-und}IT Grundlagen und --Systeme}
+\parttoc
+\include{it_grundlagen_systeme}
+
+\setpartpreamble{
+  \dictum[\noun{Edsger Wybe Dijkstra}]{It is practically impossible to teach good programming to students that have had a prior exposure to BASIC: As potential programmers they are mentally mutilated beyond hope of regeneration.}
+  \vspace{2em}\par%
+  \dictum[\noun{Donald~E.~Knuth}]{Beware of bugs in the above code; I have only proved it correct, not tried it.}
+}
+\part{Algorithmen und Datenstrukturen}
+\parttoc
+\include{algorithmen}
+
+\ifincludeincomplete
+\partquote{english}
+  {C}{ontrolling complexity}
+  { is the essence of computer programming.}
+  {Brian Kernighan}
+\part{\label{part:Datenbanken}Datenbanken}
+\parttoc
+\include{datenbanken}
+\fi
+
+\ifincludeincomplete
+\partquote{ngerman}
+  {D}{as Internet}
+  { ist ein großer Misthaufen, in dem man allerdings auch kleine Schätze und Perlen finden kann.}
+  {Joseph Weizenbaum}
+\part{Rechnernetze}
+\parttoc
+\include{rechnernetze}
+\fi
+
+\appendix
+
+\setpartpreamble{
+  \dictum[Russisches Sprichwort]{Das Ende ist die Krönung einer Sache.}
+}
+\part{Anhang}
+
+\chapter{Quellenrezensionen}
+
+An dieser Stelle möchte ich einige der im Literaturverzeichnis (\cpageref{literaturverzeichnis}) angegebenen Quellen besprechen, um den geneigten Leser bei der Entscheidung über eine Anschaffung zu unterstützen.
+
+Die Bewertungen habe ich versucht so zu wählen, dass sie sowohl die Qualität der Literatur an sich als Einzelwerk als auch die Relevanz für die Ausbildung widerspiegeln, wobei ich der Qualität eine höhere Gewichtung gegeben habe, da ein schlechtes Buch trotz Relevanz praktisch gesehen wertlos ist.
+
+
+\rating{5}{Mathematik für Ingenieure und Naturwissenschaftler}
+{Papula1,Papula2,Papula3,PapulaFS}
+{Mathematische Grundlagen, Lineare Algebra, Analysis, Stochastik}
+
+Lothar Papula wurde für diese Bände ausgezeichnet, und dies zu Recht.
+Es ist eines der wenigen Literaturwerke, welche eine Vorlesung komplett ersetzen können.
+
+Die Bände enthalten alle Themen aus Lineare Algebra, Analysis und Stoch\-as\-tik.
+Die Themen werden ausführlich und einfach erklärt und sind mit vielen guten Beispielen angereichert, weiterhin finden sich viele herausfordernde aber dennoch schaffbare Aufgaben mit Lösungen in den Büchern.
+Positiv hervorzuheben ist, dass durch sämtliche Bücher hindurch wichtige Sätze, Beweise, Vorgehensweisen, etc.~deutlich in grau hinterlegten Kästen erkennbar sind, was das schnelle Nachschlagen enorm vereinfacht.
+
+Die Formelsammlung enthält weiterhin nicht nur die Formeln, sondern auch kurze Erklärungen dazu, ohne aber zu sehr ins Detail zu gehen.
+Wer sich also Vorgehensweisen, nicht jedoch die exakten Formeln dazu merken kann, ist mit der Formelsammlung allein gut beraten.
+
+
+\rating{3}{Mathematik für Informatiker}
+{Teschl1,Teschl2}
+{Mathematische Grundlagen, Lineare Algebra, Analysis, Stoch\-as\-tik}
+
+Es handelt sich bei diesen Bänden zwar um keine Meisterwerke, allerdings auch nicht um schlechte Ware.
+Negativ hervorzuheben ist die Verwendung von Mathematica als Softwarelösung---zwar ist Mathematica eine gute Software, allerdings wird diese nicht in der MATSE-Ausbildung verwendet.
+
+Der Stoff ist stellenweise relativ knapp gehalten; es ist zwar mit ein bisschen Anstrengung möglich, die Bücher ohne Vorlesungen durchzuarbeiten, allerdings empfehle ich, die Bücher während oder nach den Veranstaltungen zu lesen.
+Aufgaben und Lösungen sind vorhanden, und diese können durchaus zur Klausurvorbereitung genutzt werden.
+
+Leider werden einige interessante Themen nur am Rande erwähnt, dafür aber andere Themen wie z.\,B.~Aussagenlogik wesentlich ausführlicher behandelt.
+Alles in Allem ein solides Werk.
+
+
+\rating{4}{Repetitorium höhere Mathematik}
+{Merziger2011}
+{Mathematische Grundlagen, Lineare Algebra, Analysis, Stochastik}
+
+Ein kompaktes Werk, welches alle Themen bis auf die Numerik enthält.
+Beispiele in Form von Aufgaben mit Lösungen sind zahlreich vorhanden und füllen etwa die Hälfte des Buches, wodurch es sich sehr gut zum Lernen eignet.
+Man merkt den Autoren an, dass sie seit Jahren an diesem Buch arbeiten und es immer weiter verbessert haben, wobei sie jedes Thema knapp aber vollständig niedergeschrieben haben.
+
+Ohne Begleitung ist dieses Buch nicht zu empfehlen, da es ein Hybrid aus Formelsammlung, Klausurvorbereitung und Lehrbuch ist, wobei der Lehr\-buch\-an\-teil auf das absolute Minimum beschränkt ist.
+
+Nachteilig ist, dass die Themen und Seiten teilweise unübersichtlich aufgebaut sind, daher ein Stern weniger.
+
+
+\rating{5}{Formeln + Hilfen höhere Mathematik}
+{Merziger2010}
+{Mathematische Grundlagen, Lineare Algebra, Analysis, Stochastik}
+
+Kurz, kürzer, dieses Buch.
+Quasi die Essenz des \emph{Repetitoriums höherer Mathematik}.
+Bis auf Themen der Numerik habe ich bislang alles gefunden, was ich brauchte.
+Es ist quasi die vollständige Version des mathematischen Teils des Dokuments, welches Sie gerade lesen, und ist vom Stil ähnlich.
+Außerdem wird es in einem schicken, schwarzen Kunststoffeinband geliefert.
+
+
+\rating{1}{Grundkurs Software Engineering mit UML (2. Auflage)}
+{Kleuker11}
+{Software Engineering}
+
+Warum dieses Buch von Stephan Kleuker es geschafft hat, eine zweite Auflage zu erfahren, ist mir ein Rätsel.
+Es ist schlecht geschrieben, und meiner Meinung nach liegt das an einer fehlerhaften Projektplanung.
+
+Der Satzbau ist an vielen Stellen unglücklich gewählt, und Bezeichner aus Diagrammen oder Codeschnipseln sind nicht durch eine andere Schrift hervorgehoben---da der Autor jedoch für diese Dinge deutsche Bezeichner gewählt hat, ist es viel zu oft mehrdeutig, ob an dieser Satzstelle nun dieser Bezeichner gemeint ist, oder ob das Wort einfach nur ein an dieser Stelle platziertes Adjektiv ohne Bezug zum Bezeichner ist.
+
+An vielen Stellen werden Behauptungen viel zu schnell übersprungen, und man sucht vergeblich nach Referenzen, um diese Behauptungen nachprüfen bzw.~verstehen zu können.
+
+Die Diagramme sind weiterhin mit recht primitiven Werkzeugen erstellt worden und von niedriger Qualität; so hatte ich mehr als einmal das Problem, den Überblick verloren zu haben.
+
+Ich möchte hierbei den Autor nicht schlechtreden---es ist viel Arbeit, ein Buch zu schreiben, und noch viel mehr Arbeit, ein so komplexes Thema wie Software Engineering geeignet zusammenzufassen, allerdings muss ich sagen, dass Herr Kleuker hier eine schlechte Figur macht.
+
+
+\rating{4}{Numerische Mathematik}
+{deGruyter1,deGruyter2}
+{Numerik}
+
+Es ist kein Meisterwerk, aber eines der besseren Bücherreihen über Numerik.
+
+Die Themen werden relativ gut erklärt und sind mit erklärenden Bildern angereichert.
+Übungsaufgaben sind gegeben und gehen über das reine Prüfen der vorgestellten Methoden hinaus, allerdings finden sich keine Lösungen der Aufgaben.
+
+Die Themen sind ohne große Abschweifen geschrieben, und man muss diese aufmerksam durcharbeiten.
+Gute Kenntnisse in linearer Algebra und Analysis sowie Basiskenntnisse in Stochastik müssen vorhanden sein.
+
+
+\rating{3}{Analysis 2}
+{Analysis2}
+{Analysis}
+
+Wer bunte Bilder mag, wird dieses Buch wohl lieben.
+Beim ersten Durchblättern fällt schon auf, dass mit Farben nicht gespart wird, um Abbildungen, Aufgaben, Sätze, wichtige Begriffe, etc.~unterschiedlich hervorzuheben; weniger wäre hier definitiv mehr gewesen.
+Diese \enquote{Verspieltheit} zieht sich wie ein roter Faden durch das Buch, da (trotz 12.~Auflage) relativ viele Rechtschreib- und Grammatikfehler vorhanden sind und immer wieder sehr ungenaue Beschreibungen mathematischer Eigenschaften auftreten, und ungünstige Satzkonstellationen für zusätzliche Verwirrung sorgen (können).
+Eine willkürlich wirkende Abwechslung zwischen \enquote{man}, \enquote{wir} und \enquote{Sie} lässt das Werk zudem \enquote{zusammengeschustert} erscheinen.
+
+Der Inhalt geht des öfteren über das hinaus, was \enquote{normalerweise} in den Vorlesungen behandelt wird; dies ist allerdings positiv zu bewerten, da hier Anwendungsgebiete der behandelten Themen vermittelt werden.
+Das Potenzial dieses Ansatzes wird jedoch stark durch die Tatsache geschmälert, dass viele interessante Themen nur sehr rudimentär (falls überhaupt) erklärt werden, und in manchen Bereichen sehr auf physikalische Phänomene eingegangen wird, die gute Kenntnisse eines Physik-LKs voraussetzen.
+
+Es mag sein, dass alles nur ein \enquote{Marketing-Trick} ist, um den Leser das kritische Aufnehmen von Informationen üben zu lassen, jedoch möchte ich das stark bezweifeln.
+Nichts desto trotz sind die Inhalte sehr relevant und werden auch zügig vermittelt; normalerweise würde ich hierfür 5~Sterne geben, die überraschend vielen Unzulänglichkeiten fordern meiner Meinung nach jedoch einen Abzug von 2~Sternen.
+
+
+\rating{5}{The Art of Computer Programming}
+{TAOCP1,TAOCP2,TAOCP3,TAOCP4a}
+{IT Grundlagen, Algorithmen und Datenstrukturen, Kombinatorik}
+
+Auch wenn diese Reihe auf Englisch geschrieben ist und einige Teile noch auf den Anfängen der Computergeschichte von 1965 beruhen, zeichnet sie sich durch tiefe Fachkundigkeit aus, die man unbedingt mindestens in Ansätzen verstehen sollte.
+Der Inhalt besteht primär aus tiefgreifenden Diskussionen der mathematischen Seite von Algorithmen, beschreibt jedoch auch Vor- und Nachteile verschiedener Herangehensweisen an Probleme und beleuchtet diese in einem breiten Spektrum; der Autor selbst erwähnt im Vorwort, dass \enquote{Analysis of Algorithms} ein guter Kandidat für sein Werk war.
+Die Themen, die behandelt werden, sind so zahlreich, dass ich gar nicht erst eine Zusammenfassung versuchen möchte.
+
+Es ist eine definitive Kaufempfehlung für alle, die sich nach ihrem Studium weiter mit der mathematischen Seite von Computer-Algorithmen beschäftigen wollen (oder müssen).
+Allen anderen empfehle ich, zumindest den ersten Band anzuschaffen, da dort wichtige Grundlagen vermittelt werden, die bei der Entwicklung, Analyse und Optimierung von Algorithmen wichtig sind.
+
+
+%\twocolumn
+\chapter{Formelsammlung}
+
+\section{Reihen}
+
+\subsection{Wichtige Grenzwerte}
+
+\begin{mathtable}
+    \cell $\displaystyle \sqrt[n]{a}\rightarrow1 $
+    \cell $\displaystyle \sqrt[n]{n}\to1 $
+    \cell $\displaystyle \sqrt[n]{n!}\to\infty $
+    \cell $\displaystyle \left(1+\frac{1}{n}\right)^n \to e $
+    \cell $\displaystyle \left(1+\frac{a}{n}\right)^n \to e^a $
+    \cell $\displaystyle \left(1-\frac{a}{n}\right)^n \to e^{-a} $
+    \cell $\displaystyle \frac{1}{n}\sqrt[n]{n!}\to\frac{1}{e} $
+    \cell $\displaystyle \frac{a^n}{n!}\to0 $
+    \cell $\displaystyle \frac{n^n}{n!}\to\infty $
+    \cell $\displaystyle \vecc(a;n) \to 0,\; a>-1 $
+    \cell $\displaystyle \frac{a^n}{n^k}\to\infty,\; a>1\,\land\, k=\hbox{const.} $
+    \cell $\displaystyle \frac{a^n}{n^k} \to 0,\; \lvert a \rvert<1\,\land\, k=\hbox{const.} $
+\end{mathtable}
+
+\subsection{Potenzreihen}
+
+\begin{mathtable}
+  \cell $\displaystyle \exp(x)              = \sum_{n\geq0}  \frac{1}{n!}x^n,\; x\in\mathbb{R} $
+  \cell $\displaystyle \sin(x)              = \sum_{n\geq0}  \frac{(-1)^n}{(2n+1)!} x^{2n+1},\; x\in\mathbb{R} $
+  \cell $\displaystyle \cos(x)              = \sum_{n\geq0}  \frac{(-1)^n}{(2n)!} x^{2n},\; x\in\mathbb{R} $
+  \cell $\displaystyle \sinh(x)             = \sum_{n\geq0}  \frac{1}{(2n+1)!} x^{2n+1},\; x\in\mathbb{R} $
+  \cell $\displaystyle \cosh(x)             = \sum_{n\geq0}  \frac{1}{(2n)!} x^{2n},\; x\in\mathbb{R} $
+  \cell $\displaystyle \arctan(x)           = \sum_{n\geq0}  \frac{(-1)^n}{2n+1} x^{2n+1},\; \lvert x \rvert\leq1 $
+  \cell $\displaystyle \ln(1+x)             = \sum_{n\geq1}  \frac{(-1)^{n+1}}{n} x^n,\; x\in \left]-1,1\right] $
+  \cell $\displaystyle \ln(1-x)             = -\sum_{n\geq1} \frac{1}{n}x^n,\; x\in\left[-1,1\right[ $
+  \cell $\displaystyle \sqrt{1+x}           = \sum_{n\geq0}  \vecc(\frac{1}{2};n) x^n,\; \lvert x \rvert\leq1 $
+  \cell $\displaystyle \frac{1}{\sqrt{1+x}} = \sum_{n\geq0}  \vecc(-\frac{1}{2};n) x^n,\; \lvert x \rvert<1 $
+\end{mathtable}
+
+\subsection{Andere Reihen}
+\begin{description}
+  \item [{Geometrische~Reihe}]
+	$\sum_{n\geq0} x^n = 1 / (1-x), \quad \lvert x \rvert<1$
+  \item [{Endliche~geometrische~Reihe}]
+	$\sum_{0 \leq n \leq k} x^n = (1-x^{k+1}) / (1-x), \quad x\neq1$
+  \item [{Harmonische~Reihe}]
+	$\mathrm{H}_n := \sum_{n\geq1} x^{-n}$, konvergiert falls $x>1$
+  \item [{Binomische~Reihe}]
+	$\sum_{n\geq0} \vecc(r;n) x^n = (1+x)^{r}$,
+	nur wenn $\lvert x \rvert \leq1\land r>0$ oder $\lvert x \rvert <1\land r<0$
+\end{description}
+
+\section{Wichtige Grenzwerte}
+Jeweils für $n\to\infty$:
+\nopagebreak
+\begin{mathtable}
+  \cell $\displaystyle \sqrt[n]{a}=1 $
+  \cell $\displaystyle \sqrt[n]{n}=1 $
+  \cell $\displaystyle \sqrt[n]{n!}=\infty $
+  \cell $\displaystyle \left(1-\frac{1}{n}\right)^n = \frac{1}{n}\sqrt[n]{n!}=e^{-1} $
+  \cell $\displaystyle \left(1-\frac{x}{n}\right)^n = e^{-x} $
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+  	\left(\frac{n+1}{n}\right)^n = \left(1+\frac{1}{n}\right)^n \\
+  	                             = \frac{n}{\sqrt[n]{n!}} = \sum_{0 \leq k \leq n} k!^{-1}=e
+  \end{multline*}}
+  \cell $\displaystyle \left(1+\frac{x}{n}\right)^n = e^x $
+  \cell $\displaystyle \vecc(a;n) = 0,\; a >- 1 $
+  \cell $\displaystyle \frac{a^n}{n!}=0 $
+  \cell $\displaystyle \frac{n^n}{n!}=\infty $
+  \cell $\displaystyle \frac{a^n}{n^k}=\infty,\; a>1\land k=\hbox{const.} $
+  \cell $\displaystyle a^n n^k = 0,\;\lvert a \rvert<1\land k=\hbox{const.} $
+\end{mathtable}
+
+%\onecolumn
+\section{Integrale und Ableitungen}
+
+\subsection{Regeln}
+\begin{description}
+  \item [{Produktregel}]
+	$(uv)'=u'v+uv'$, $(uvw)'=u'vw+uv'w+uvw'$, etc., gleiches für Vektoren (sowohl Skalarprodukt als auch Kreuzprodukt).
+  \item [{Quotientenregel}]
+	$\left(\frac{u}{v}\right)' = \frac{u'v-uv'}{v^2}$
+  \item [{Kettenregel}]
+	$\Bigl(y\bigl(x(t)\bigr)\Bigr)' = y'\bigl(x(t)\bigr) \cdot x'(t)$,
+	$\Bigl(\vec{u}\bigl(\lambda(t)\bigr)\Bigr)' = \vec{u}'\bigl(\lambda(t)\bigr)\cdot\lambda'(t)$
+  \item [{Substitutionsregel}]
+	$\int f(x)\intd x = \int f(g(u))g'(u)\intd u$
+	mit $x=g(u)$ und $\mathrm{d}x = g'(u)\intd u$
+  \item [{Partielle~Integration}]
+	$\int u'v \intd x=uv-\int uv'\intd x$
+\end{description}
+\[
+    \int x^n\intd x = \frac{1}{n+1} x^{n+1},\; n\neq1
+    \qquad
+    \int\frac{f'(x)}{f(x)}\intd x=\ln\bigl( \lvert f(x) \rvert \bigr)
+\]
+
+%\twocolumn
+\subsection{Einfache Integrale}
+\begin{mathtable}
+  \cell $\displaystyle \int nx^{n-1}\intd x=x^n $
+  \cell $\displaystyle \int\frac{-n}{x^{n+1}}\intd x=x^{-n} $
+  \cell $\displaystyle \int\frac{1}{x+a}\intd x=\ln\bigl(\lvert x+a \rvert\bigr) $
+  \cell $\displaystyle \int\frac{1}{2\sqrt{x}}\intd x=\sqrt{x} $
+  \cell $\displaystyle \int\frac{1}{n\sqrt[n]{x^{n-1}}}\intd x=\sqrt[n]{x} $
+\end{mathtable}
+
+\subsection{Exponentialfunktionen}
+\begin{mathtable}
+  \cell $\displaystyle \int e^{ax}\intd x=\frac{1}{a}e^{ax} $
+  \cell $\displaystyle \int xe^{ax}\intd x=\frac{ax-1}{a^2}e^{ax} $
+  \cell $\displaystyle \int a^x\ln(a)\intd x=a^x $
+  \cell $\displaystyle \int x^x(1+\ln(x))\intd x=x^x $
+\end{mathtable}
+
+\subsection{Logarithmusfunktionen}
+\begin{mathtable}
+  \cell $\displaystyle \int\ln(x)\intd x=x\ln(x)-x $
+  \cell $\displaystyle \int x\ln(x)\intd x=x^2\left(\frac{\ln(x)}{2}-\frac{1}{4}\right) $
+  \cell $\displaystyle \int\ln^2(x)\intd x=x\ln^2(x)-2x\ln(x)+2x $
+\end{mathtable}
+
+\subsection{Trigonometrische Funktionen}
+\begin{mathtable}
+  \cell $\displaystyle \int\cos(x)\intd x=\sin(x) $
+  \cell $\displaystyle \int-\sin(x)\intd x=\cos(x) $
+  \cell $\displaystyle \int\tan(x)\intd x=-\ln\bigl(\lvert \cos(x) \rvert\bigr) $
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int\sin^{2}(ax)\intd x\\
+    =\frac{1}{2}x-\frac{1}{4a}\sin(2ax)
+  \end{multline*}}
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int\cos^{2}(ax)\intd x\\
+    =\frac{1}{2}x+\frac{1}{4a}\sin(2ax)
+  \end{multline*}}
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int\sin(ax)\cos(ax)\intd x\\
+    =\frac{1}{2a}\sin^{2}(ax)
+  \end{multline*}}
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int\frac{1}{\sin(ax)\cos(ax)}\intd x\\
+    =\frac{1}{a}\ln\bigl(\lvert\tan(ax)\rvert\bigr)
+  \end{multline*}}
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int x\sin(ax)\intd x=\frac{1}{a^{2}}\sin(ax)\\
+    -\frac{x}{a}\cos(ax)
+  \end{multline*}}
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int x\cos(ax)\intd x=\frac{1}{a^{2}}\cos(ax)\\
+    +\frac{x}{a}\sin(ax)
+  \end{multline*}}
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int e^{ax}\sin(bx)\intd x\\
+    =\frac{e^{ax}}{a^2+b^2}\bigl(a\sin(bx)-b\cos(bx)\bigr)
+  \end{multline*}}
+  \cell \parbox{0.5\linewidth}{\begin{multline*}
+    \int e^{ax}\cos(bx)\intd x\\
+    =\frac{e^{ax}}{a^2+b^2}\bigl(a\cos(bx)+b\sin(bx)\bigr)
+  \end{multline*}}
+  \cell $\displaystyle \int\frac{1}{\cos^2(x)}\intd x=\tan(x) $
+  \cell $\displaystyle \int\frac{-1}{\sin^2(x)}\intd x=\cot(x) $
+  \cell $\displaystyle \int\frac{1}{\sqrt{1-x^2}}\intd x=\arcsin(x) $
+  \cell $\displaystyle \int\frac{-1}{\sqrt{1-x^2}}\intd x=\arccos(x) $
+  \cell $\displaystyle \int\frac{1}{1+x^2}\intd x=\arctan(x) $
+  \cell $\displaystyle \int\frac{-1}{1+x^2}\intd x=\mathrm{arccot}(x) $
+\end{mathtable}
+
+\subsection{Hyperbolische Funktionen}
+\begin{mathtable}
+  \cell $\displaystyle \int\cosh(x)\intd x=\sinh(x) $
+  \cell $\displaystyle \int\sinh(x)\intd x=\cosh(x) $
+  \cell $\displaystyle \int\frac{1}{\cosh^2(x)}\intd x=\tanh(x) $
+  \cell $\displaystyle \int\frac{-1}{\sinh^2(x)}\intd x=\coth(x) $
+  \cell $\displaystyle \int\frac{1}{\sqrt{x^2+1}}\intd x=\mathrm{arsinh}(x) $
+  \cell $\displaystyle \int\frac{1}{\sqrt{x^2-1}}\intd x=\mathrm{arcosh}(x),\; x>1 $
+  \cell $\displaystyle \int\frac{1}{1-x^2}\intd x=\mathrm{artanh}(x),\; \lvert x \rvert<1 $
+  \cell $\displaystyle \int\frac{1}{1-x^2}\intd x=\mathrm{arcoth}(x),\; \lvert x \rvert>1 $
+\end{mathtable}
+
+\[ u=\sqrt{x^2+a^2}:\quad\int u\intd x=\frac{1}{2}\left(xu+a^2\mathrm{arsinh}\left(\frac{x}{a}\right)\right)=\frac{1}{2}\bigl(xu+a^2\ln(x+u)\bigr) \]
+\[ u=\sqrt{x^2-a^2}:\quad\int u\intd x=\frac{1}{2}\left(xu-a^2\mathrm{arcosh}\left(\frac{x}{a}\right)\right)=\frac{1}{2}(xu) \]
+\[ u=\sqrt{a^2-x^2}:\quad\int u\intd x=\frac{1}{2}\left(xu+a^2\arcsin\left(\frac{x}{a}\right)\right) \]
+
+Des Weiteren mit
+\begin{itemize}
+  \item $X=ax^{2}+bx+c$
+  \item $\varDelta=4ac-b^{2}$
+  \item $a\neq0$
+\end{itemize}
+\[
+  \int\frac{1}{X}\intd x=
+  \begin{cases}
+  	\frac{2}{\sqrt{\varDelta}}\arctan\left(\frac{2ax+b}{\sqrt{\varDelta}}\right)                       & \varDelta>0 \\
+  	\frac{-2}{\sqrt{-\varDelta}}\mathrm{artanh}\left(\frac{2ax+b}{\sqrt{-\varDelta}}\right)            & \varDelta<0 \\
+  	\frac{1}{\sqrt{-\varDelta}}\ln\left(\frac{2ax+b-\sqrt{-\varDelta}}{2ax+b+\sqrt{-\varDelta}}\right) & \varDelta<0 \\
+  	\frac{-2}{2ax+b}                                                                                   & \varDelta=0
+  \end{cases}
+\]
+\[ \int\frac{1}{X^2}\intd x=\frac{2ax+b}{\varDelta X}+\frac{2a}{\varDelta}\int\frac{1}{X}\intd x \]
+\[ \int\frac{x}{X}\intd x=\frac{1}{2a}\ln\bigl(\lvert X \rvert\bigr)-\frac{b}{2a}\int\frac{1}{X}\intd x \]
+
+
+\chapter{Stochastik Tabellen}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{cc}
+$p$     & $u_p$    \\
+$0.900$ & $1.2816$ \\
+$0.950$ & $1.6449$ \\
+$0.975$ & $1.9600$ \\
+$0.990$ & $2.3263$ \\
+$0.995$ & $2.5758$ \\
+$0.999$ & $3.0902$
+\end{tabular}
+
+$u_{1-p}=-u_{p}$
+\caption{\label{tab:Quantile-Standardnormalvtlg}Quantile der Standardnormalverteilung}
+\end{table}
+
+
+\clearevenpage
+\begin{landscape}
+
+\begin{center}
+$\Phi(y.yx)=0.z$\qquad{}$\Phi(-u)=1-\Phi(u)$\qquad{}$u\geq4:\Phi(u)\cong1$%
+\begin{longtable}{c|ccccc|ccccc}
+\caption{\index{Standardnormalverteilung}\index{Normalverteilung}\index{Verteilung!Normal--}\label{tab:Standardnormalverteilung}Standardnormalverteilung}
+\tabularnewline
+\diagbox{$y$}{$x$} & 0 & 1 & 2 & 3 & \multicolumn{1}{c}{4} & 5 & 6 & 7 & 8 & 9\tabularnewline
+\hline 
+\endfirsthead
+\diagbox{$y$}{$x$} & 0 & 1 & 2 & 3 & \multicolumn{1}{c}{4} & 5 & 6 & 7 & 8 & 9\tabularnewline
+\hline 
+\endhead
+0.0 & \emph{500000} & 503989 & 507978 & 511966 & 515953 & 519939 & 523922 & 527903 & 531881 & 535856\tabularnewline
+\rowcolor{lightgray}
+0.1 & 539828 & 543795 & 547758 & 551717 & 555670 & 559618 & 563559 & 567495 & 571424 & 575345\tabularnewline
+0.2 & 579260 & 583166 & 587064 & 590954 & 594835 & 598706 & 602568 & 606420 & 610261 & 614092\tabularnewline
+\rowcolor{lightgray}
+0.3 & 617911 & 621720 & 625516 & 629300 & 633072 & 636831 & 640576 & 644309 & 648027 & 651732\tabularnewline
+0.4 & 655422 & 659097 & 662757 & 666402 & 670031 & 673645 & 677242 & 680822 & 684386 & 687933\tabularnewline
+\rowcolor{lightgray}
+0.5 & 691462 & 694974 & 698468 & 701944 & 705401 & 708840 & 712260 & 715661 & 719043 & 722405\tabularnewline
+0.6 & 725747 & 729069 & 732371 & 735653 & 738914 & 742154 & 745373 & 748571 & 751748 & 754903\tabularnewline
+\rowcolor{lightgray}
+0.7 & 758036 & 761148 & 764238 & 767305 & 770350 & 773373 & 776373 & 779350 & 782305 & 785236\tabularnewline
+0.8 & 788145 & 791030 & 793892 & 796731 & 799546 & 802337 & 805105 & 807850 & 810570 & 813267\tabularnewline
+\rowcolor{lightgray}
+0.9 & 815940 & 818589 & 821214 & 823814 & 826391 & 828944 & 831472 & 833977 & 836457 & 838913\tabularnewline
+1.0 & \emph{841345} & 843752 & 846136 & 848495 & 850830 & 853141 & 855428 & 857690 & 859929 & 862143\tabularnewline
+\rowcolor{lightgray}
+1.1 & 864334 & 866500 & 868643 & 870762 & 872857 & 874928 & 876976 & 879000 & 881000 & 882977\tabularnewline
+1.2 & 884930 & 886861 & 888768 & 890651 & 892512 & 894350 & 896165 & 897958 & 899727 & 901475\tabularnewline
+\rowcolor{lightgray}
+1.3 & 903200 & 904902 & 906582 & 908241 & 909877 & 911492 & 913085 & 914657 & 916207 & 917736\tabularnewline
+1.4 & 919243 & 920730 & 922196 & 923641 & 925066 & 926471 & 927855 & 929219 & 930563 & 931888\tabularnewline
+\rowcolor{lightgray}
+1.5 & 933193 & 934478 & 935745 & 936992 & 938220 & 939429 & 940620 & 941792 & 942947 & 944083\tabularnewline
+1.6 & 945201 & 946301 & 947384 & 948449 & 949497 & 950529 & 951543 & 952540 & 953521 & 954486\tabularnewline
+\rowcolor{lightgray}
+1.7 & 955435 & 956367 & 957284 & 958185 & 959070 & 959941 & 960796 & 961636 & 962462 & 963273\tabularnewline
+1.8 & 964070 & 964852 & 965620 & 966375 & 967116 & 967843 & 968557 & 969258 & 969946 & 970621\tabularnewline
+\rowcolor{lightgray}
+1.9 & 971283 & 971933 & 972571 & 973197 & 973810 & 974412 & 975002 & 975581 & 976148 & 976705\tabularnewline
+\newpage
+2.0 & \emph{977250} & 977784 & 978308 & 978822 & 979325 & 979818 & 980301 & 980774 & 981237 & 981691\tabularnewline
+\rowcolor{lightgray}
+2.1 & 982136 & 982571 & 982997 & 983414 & 983823 & 984222 & 984614 & 984997 & 985371 & 985738\tabularnewline
+2.2 & 986097 & 986447 & 986791 & 987126 & 987455 & 987776 & 988089 & 988396 & 988696 & 988989\tabularnewline
+\rowcolor{lightgray}
+2.3 & 989276 & 989556 & 989830 & 990097 & 990358 & 990613 & 990863 & 991106 & 991344 & 991576\tabularnewline
+2.4 & 991802 & 992024 & 992240 & 992451 & 992656 & 992857 & 993053 & 993244 & 993431 & 993613\tabularnewline
+\rowcolor{lightgray}
+2.5 & 993790 & 993963 & 994132 & 994297 & 994457 & 994614 & 994766 & 994915 & 995060 & 995201\tabularnewline
+2.6 & 995339 & 995473 & 995604 & 995731 & 995855 & 995975 & 996093 & 996207 & 996319 & 996427\tabularnewline
+\rowcolor{lightgray}
+2.7 & 996533 & 996636 & 996736 & 996833 & 996928 & 997020 & 997110 & 997197 & 997282 & 997365\tabularnewline
+2.8 & 997445 & 997523 & 997599 & 997673 & 997744 & 997814 & 997882 & 997948 & 998012 & 998074\tabularnewline
+\rowcolor{lightgray}
+2.9 & 998134 & 998193 & 998250 & 998305 & 998359 & 998411 & 998462 & 998511 & 998559 & 998605\tabularnewline
+3.0 & \emph{998650} & 998694 & 998736 & 998777 & 998817 & 998856 & 998893 & 998930 & 998965 & 998999\tabularnewline
+\rowcolor{lightgray}
+3.1 & 999032 & 999065 & 999096 & 999126 & 999155 & 999184 & 999211 & 999238 & 999264 & 999289\tabularnewline
+3.2 & 999313 & 999336 & 999359 & 999381 & 999402 & 999423 & 999443 & 999462 & 999481 & 999499\tabularnewline
+\rowcolor{lightgray}
+3.3 & 999517 & 999534 & 999550 & 999566 & 999581 & 999596 & 999610 & 999624 & 999638 & 999651\tabularnewline
+3.4 & 999663 & 999675 & 999687 & 999698 & 999709 & 999720 & 999730 & 999740 & 999749 & 999758\tabularnewline
+\rowcolor{lightgray}
+3.5 & 999767 & 999776 & 999784 & 999792 & 999800 & 999807 & 999815 & 999822 & 999828 & 999835\tabularnewline
+3.6 & 999841 & 999847 & 999853 & 999858 & 999864 & 999869 & 999874 & 999879 & 999883 & 999888\tabularnewline
+\rowcolor{lightgray}
+3.7 & 999892 & 999896 & 999900 & 999904 & 999908 & 999912 & 999915 & 999918 & 999922 & 999925\tabularnewline
+3.8 & 999928 & 999931 & 999933 & 999936 & 999938 & 999941 & 999943 & 999946 & 999948 & 999950\tabularnewline
+\rowcolor{lightgray}
+3.9 & 999952 & 999954 & 999956 & 999958 & 999959 & 999961 & 999963 & 999964 & 999966 & 999967\tabularnewline
+\end{longtable}
+\end{center}
+
+\end{landscape}
+
+%\clearevenpage
+\begin{landscape}{\small%
+\setlength{\tabcolsep}{0.3333em}
+\vfil
+\begin{table}
+\centering
+\caption{\label{tab:Quantile-Chi-Quadrat}Quantile der Chi-Quadrat-Verteilung}
+\begin{tabular}{r|rrrrr|rrrrr}
+\diagbox{$f$}{$\alpha$} & 0.005\hphantom{00} & 0.01\hphantom{000} & 0.025\hphantom{00} & 0.05\hphantom{000} & 0.10\hphantom{000} & 0.90\hphantom{000} & 0.95\hphantom{000} & 0.975\hphantom{00} & 0.99\hphantom{000} & 0.995\hphantom{00}\tabularnewline
+\hline 
+1 & 0.00004 & 0.00016 & 0.00098 & 0.00393 & 0.01579 & 2.70554 & 3.84146 & 5.02389 & 6.63490 & 7.87944\tabularnewline
+\rowcolor{lightgray}
+2 & 0.01003 & 0.02010 & 0.05064 & 0.10259 & 0.21072 & 4.60517 & 5.99146 & 7.37776 & 9.21034 & 10.59663\tabularnewline
+3 & 0.07172 & 0.11483 & 0.21580 & 0.35185 & 0.58437 & 6.25139 & 7.81473 & 9.34840 & 11.34487 & 12.83816\tabularnewline
+\rowcolor{lightgray}
+4 & 0.20699 & 0.29711 & 0.48442 & 0.71072 & 1.06362 & 7.77944 & 9.48773 & 11.14329 & 13.27670 & 14.86026\tabularnewline
+5 & 0.41174 & 0.55430 & 0.83121 & 1.14548 & 1.61031 & 9.23636 & 11.07050 & 12.83250 & 15.08627 & 16.74960\tabularnewline
+\rowcolor{lightgray}
+6 & 0.67573 & 0.87209 & 1.23734 & 1.63538 & 2.20413 & 10.64464 & 12.59159 & 14.44938 & 16.81189 & 18.54758\tabularnewline
+7 & 0.98926 & 1.23904 & 1.68987 & 2.16735 & 2.83311 & 12.01704 & 14.06714 & 16.01276 & 18.47531 & 20.27774\tabularnewline
+\rowcolor{lightgray}
+8 & 1.34441 & 1.64650 & 2.17973 & 2.73264 & 3.48954 & 13.36157 & 15.50731 & 17.53455 & 20.09024 & 21.95495\tabularnewline
+9 & 1.73493 & 2.08790 & 2.70039 & 3.32511 & 4.16816 & 14.68366 & 16.91898 & 19.02277 & 21.66599 & 23.58935\tabularnewline
+\rowcolor{lightgray}
+10 & 2.15586 & 2.55821 & 3.24697 & 3.94030 & 4.86518 & 15.98718 & 18.30704 & 20.48318 & 23.20925 & 25.18818\tabularnewline
+11 & 2.60322 & 3.05348 & 3.81575 & 4.57481 & 5.57778 & 17.27501 & 19.67514 & 21.92005 & 24.72497 & 26.75685\tabularnewline
+\rowcolor{lightgray}
+12 & 3.07382 & 3.57057 & 4.40379 & 5.22603 & 6.30380 & 18.54935 & 21.02607 & 23.33666 & 26.21697 & 28.29952\tabularnewline
+13 & 3.56503 & 4.10692 & 5.00875 & 5.89186 & 7.04150 & 19.81193 & 22.36203 & 24.73560 & 27.68825 & 29.81947\tabularnewline
+\rowcolor{lightgray}
+14 & 4.07467 & 4.66043 & 5.62873 & 6.57063 & 7.78953 & 21.06414 & 23.68479 & 26.11895 & 29.14124 & 31.31935\tabularnewline
+15 & 4.60092 & 5.22935 & 6.26214 & 7.26094 & 8.54676 & 22.30713 & 24.99579 & 27.48839 & 30.57791 & 32.80132\tabularnewline
+\hline
+\end{tabular}
+\end{table}
+\vfil
+
+\newpage
+
+\vfil
+\begin{table}
+\centering
+%\caption{Quantile der Chi-Quadrat-Verteilung}
+\begin{tabular}{r|rrrrr|rrrrr}
+\diagbox{$f$}{$\alpha$} & 0.005\hphantom{00} & 0.01\hphantom{000} & 0.025\hphantom{00} & 0.05\hphantom{000} & 0.10\hphantom{000} & 0.90\hphantom{000} & 0.95\hphantom{000} & 0.975\hphantom{00} & 0.99\hphantom{000} & 0.995\hphantom{00}\tabularnewline
+\hline 
+16 & 5.14221 & 5.81221 & 6.90766 & 7.96165 & 9.31224 & 23.54183 & 26.29623 & 28.84535 & 31.99993 & 34.26719\tabularnewline
+\rowcolor{lightgray}
+17 & 5.69722 & 6.40776 & 7.56419 & 8.67176 & 10.08519 & 24.76904 & 27.58711 & 30.19101 & 33.40866 & 35.71847\tabularnewline
+18 & 6.26480 & 7.01491 & 8.23075 & 9.39046 & 10.86494 & 25.98942 & 28.86930 & 31.52638 & 34.80531 & 37.15645\tabularnewline
+\rowcolor{lightgray}
+19 & 6.84397 & 7.63273 & 8.90652 & 10.11701 & 11.65091 & 27.20357 & 30.14353 & 32.85233 & 36.19087 & 38.58226\tabularnewline
+20 & 7.43384 & 8.26040 & 9.59078 & 10.85081 & 12.44261 & 28.41198 & 31.41043 & 34.16961 & 37.56623 & 39.99685\tabularnewline
+\rowcolor{lightgray}
+22 & 8.64272 & 9.54249 & 10.98232 & 12.33801 & 14.04149 & 30.81328 & 33.92444 & 36.78071 & 40.28936 & 42.79565\tabularnewline
+24 & 9.88623 & 10.85636 & 12.40115 & 13.84843 & 15.65868 & 33.19624 & 36.41503 & 39.36408 & 42.97982 & 45.55851\tabularnewline
+\rowcolor{lightgray}
+26 & 11.16024 & 12.19815 & 13.84390 & 15.37916 & 17.29188 & 35.56317 & 38.88514 & 41.92317 & 45.64168 & 48.28988\tabularnewline
+28 & 12.46134 & 13.56471 & 15.30786 & 16.92788 & 18.93924 & 37.91592 & 41.33714 & 44.46079 & 48.27824 & 50.99338\tabularnewline
+\rowcolor{lightgray}
+30 & 13.78672 & 14.95346 & 16.79077 & 18.49266 & 20.59923 & 40.25602 & 43.77297 & 46.97924 & 50.89218 & 53.67196\tabularnewline
+40 & 20.70654 & 22.16426 & 24.43304 & 26.50930 & 29.05052 & 51.80506 & 55.75848 & 59.34171 & 63.69074 & 66.76596\tabularnewline
+\rowcolor{lightgray}
+50 & 27.99075 & 29.70668 & 32.35736 & 34.76425 & 37.68865 & 63.16712 & 67.50481 & 71.42020 & 76.15389 & 79.48998\tabularnewline
+60 & 35.53449 & 37.48485 & 40.48175 & 43.18796 & 46.45889 & 74.39701 & 79.08194 & 83.29767 & 88.37942 & 91.95170\tabularnewline
+\rowcolor{lightgray}
+70 & 43.27518 & 45.44172 & 48.75756 & 51.73928 & 55.32894 & 85.52704 & 90.53123 & 95.02318 & 100.42518 & 104.21490\tabularnewline
+80 & 51.17193 & 53.54008 & 57.15317 & 60.39148 & 64.27784 & 96.57820 & 101.87947 & 106.62857 & 112.32879 & 116.32106\tabularnewline
+\rowcolor{lightgray}
+90 & 59.19630 & 61.75408 & 65.64662 & 69.12603 & 73.29109 & 107.56501 & 113.14527 & 118.13589 & 124.11632 & 128.29894\tabularnewline
+100 & 67.32756 & 70.06489 & 74.22193 & 77.92947 & 82.35814 & 118.49800 & 124.34211 & 129.56120 & 135.80672 & 140.16949\tabularnewline
+\end{tabular}
+\end{table}
+\vfil
+}\end{landscape}
+
+\begin{center}
+\begin{longtable}{r|rrrrr}
+\caption{\label{tab:Quantile-t-Verteilung}Quantile t-Verteilung nach Student}
+\tabularnewline
+\diagbox{$f$}{$\alpha$} & 0.90\hphantom{0000} & 0.95\hphantom{0000} & 0.975\hphantom{000} & 0.99\hphantom{0000} & 0.995\hphantom{000}\tabularnewline
+\hline 
+\endfirsthead
+\diagbox{$f$}{$\alpha$} & 0.90\hphantom{0000} & 0.95\hphantom{0000} & 0.975\hphantom{000} & 0.99\hphantom{0000} & 0.995\hphantom{000}\tabularnewline
+\hline 
+\endhead
+1 & 3.077684 & 6.313752 & 12.706205 & 31.820516 & 63.656741\tabularnewline
+\rowcolor{lightgray}
+2 & 1.885618 & 2.919986 & 4.302653 & 6.964557 & 9.924843\tabularnewline
+3 & 1.637744 & 2.353363 & 3.182446 & 4.540703 & 5.840909\tabularnewline
+\rowcolor{lightgray}
+4 & 1.533206 & 2.131847 & 2.776445 & 3.746947 & 4.604095\tabularnewline
+5 & 1.475884 & 2.015048 & 2.570582 & 3.364930 & 4.032143\tabularnewline
+\rowcolor{lightgray}
+6 & 1.439756 & 1.943180 & 2.446912 & 3.142668 & 3.707428\tabularnewline
+7 & 1.414924 & 1.894579 & 2.364624 & 2.997952 & 3.499483\tabularnewline
+\rowcolor{lightgray}
+8 & 1.396815 & 1.859548 & 2.306004 & 2.896459 & 3.355387\tabularnewline
+9 & 1.383029 & 1.833113 & 2.262157 & 2.821438 & 3.249836\tabularnewline
+\rowcolor{lightgray}
+10 & 1.372184 & 1.812461 & 2.228139 & 2.763769 & 3.169273\tabularnewline
+11 & 1.363430 & 1.795885 & 2.200985 & 2.718079 & 3.105807\tabularnewline
+\rowcolor{lightgray}
+12 & 1.356217 & 1.782288 & 2.178813 & 2.680998 & 3.054540\tabularnewline
+13 & 1.350171 & 1.770933 & 2.160369 & 2.650309 & 3.012276\tabularnewline
+\rowcolor{lightgray}
+14 & 1.345030 & 1.761310 & 2.144787 & 2.624494 & 2.976843\tabularnewline
+15 & 1.340606 & 1.753050 & 2.131450 & 2.602480 & 2.946713\tabularnewline
+\rowcolor{lightgray}
+16 & 1.336757 & 1.745884 & 2.119905 & 2.583487 & 2.920782\tabularnewline
+17 & 1.333379 & 1.739607 & 2.109816 & 2.566934 & 2.898231\tabularnewline
+\rowcolor{lightgray}
+18 & 1.330391 & 1.734064 & 2.100922 & 2.552380 & 2.878440\tabularnewline
+19 & 1.327728 & 1.729133 & 2.093024 & 2.539483 & 2.860935\tabularnewline
+\rowcolor{lightgray}
+20 & 1.325341 & 1.724718 & 2.085963 & 2.527977 & 2.845340\tabularnewline
+22 & 1.321237 & 1.717144 & 2.073873 & 2.508325 & 2.818756\tabularnewline
+\rowcolor{lightgray}
+24 & 1.317836 & 1.710882 & 2.063899 & 2.492159 & 2.796940\tabularnewline
+26 & 1.314972 & 1.705618 & 2.055529 & 2.478630 & 2.778715\tabularnewline
+\rowcolor{lightgray}
+28 & 1.312527 & 1.701131 & 2.048407 & 2.467140 & 2.763262\tabularnewline
+30 & 1.310415 & 1.697261 & 2.042272 & 2.457262 & 2.749996\tabularnewline
+\rowcolor{lightgray}
+40 & 1.303077 & 1.683851 & 2.021075 & 2.423257 & 2.704459\tabularnewline
+50 & 1.298714 & 1.675905 & 2.008559 & 2.403272 & 2.677793\tabularnewline
+\rowcolor{lightgray}
+60 & 1.295821 & 1.670649 & 2.000298 & 2.390119 & 2.660283\tabularnewline
+100 & 1.290075 & 1.660234 & 1.983972 & 2.364217 & 2.625891\tabularnewline
+\rowcolor{lightgray}
+200 & 1.285799 & 1.652508 & 1.971896 & 2.345137 & 2.600634\tabularnewline
+300 & 1.284380 & 1.649949 & 1.967903 & 2.338842 & 2.592316\tabularnewline
+\rowcolor{lightgray}
+400 & 1.283672 & 1.648672 & 1.965912 & 2.335706 & 2.588176\tabularnewline
+500 & 1.283247 & 1.647907 & 1.964720 & 2.333829 & 2.585698\tabularnewline
+\rowcolor{lightgray}
+$\infty$ & 1.281552 & 1.644854 & 1.959964 & 2.326348 & 2.575829\tabularnewline
+\end{longtable}
+\end{center}
+
+
+\chapter{Kleines Lexikon des IT-Jargons}
+
+\newcommand{\jargon}[2]{{\bfseries #1}\quad#2}
+
+\section*{A}
+
+\jargon{Architectural Masturbation}{Total nutzlose Software, die der Programmierer aber total geil findet.}
+
+\jargon{Automanually}{Eine Automatisierung, die regelmäßige manuelle Intervention erfordert.}
+
+\section*{B}
+
+\jargon{Baklava}{\textbf{1.}~Süßgebäck des Nahen Ostens, gewöhnlich aus 40~bis 80~Ebenen Blätterteig; \quad\textbf{2.}~Code mit mindestens 40~bis 80~Layern.}
+
+\jargon{Barfcode}{Wenn jemand Notepad anbellt und dann auf \enquote{Speichern} klickt.}
+
+\jargon{Baseball Exception Handling}{Exceptions werden für verschleierte \code{goto}s missbraucht oder sind essenzieller Bestandteil der Programmlogik;\quad\emph{Advanced Baseball Exception Handling} beschreibt den zusätzlichen Transport wichtiger Daten in den Exceptions, um darauf basierend jeweils andere Programmlogik durchzuführen.}
+
+\jargon{Bicrement}{\code{i+=2;}}
+
+\jargon{Black Magic Hacks}{Domänenfremde Algorithmen zur Lösung von Problemen verwenden.}
+
+\jargon{Bohrbug}{Ein guter, solider Bug, der schnell zu bestimmen ist.}
+
+\jargon{Bucket Variable}{Eine Variable, die so ziemlich alles enthält was irgendwann vielleicht mal wichtig sein könnte.}
+
+\jargon{Bug Bait}{Richtlinien, die unsauberes Programmieren fördern.}
+
+\section*{C}
+
+\jargon{Counterbug}{Wenn der Kollege einen Bug meldet, kann der Bug-Verursacher dem Kollegen einen anderen Bug entgegen halten.}
+
+\jargon{Code Slush}{Abgeschwächte Version des \emph{Code Freeze} um letzte Änderungswünsche des Managements einarbeiten zu können.}
+
+\jargon{Common Law Feature}{Ein Bug, der bereits so lange existiert, dass er Teil der erwarteten Funktionalität ist.}
+
+\jargon{Company Whore}{Ein Softwaremodul, an dessen Entwicklung bislang (fast) jeder Entwickler des Unternehmens beteiligt war.}
+
+\jargon{Confuckuration}{\textbf{1.}~Konfigurationsfehler;\quad\textbf{2.}~Schwer zu begreifende Softwarekonfiguration.}
+
+\jargon{Crumment}{Nutzloser Kommentar, der die Aussagen des Codes wiederholt.}
+
+\section*{D}
+
+\jargon{Darwin Programming}{Deterministisches oder zufälliges Ändern von Code, bis er tut, was er tun soll.}
+
+\jargon{Doubleton}{Denn ein Singleton ist nicht genug.}
+
+\jargon{Drug Report}{Der Ersteller des Bug Reports hat zuvor eine besorgniserregende Menge illegaler Substanzen konsumiert; der Inhalt ist kaum leserlich und enthält keine relevanten Informationen.}
+
+\section*{F}
+
+\jargon{Fairy Magic}{Die manuelle Bearbeitung einer automatisierbaren Aufgabe, da das Schreiben einer Software dazu zu aufwändig wäre.}
+
+\jargon{Faith Based Programming}{Der Glaube, dass es eine Lösung gibt.}
+
+\jargon{Fubar}{Fucked Up Beyond All Recognition.}
+
+\section*{G}
+
+\jargon{Ghetto Code}{Code aus den dreckigsten Hacker-Slums, der trotzdem den Anforderungen entspricht.}
+
+\jargon{Gremlin}{Unerklärbarer Bug.}
+
+\section*{H}
+
+\jargon{Heisenbug}{Ein Bug, dessen Verhalten sich bei Debug-Versuchen ändert.}
+
+\jargon{Higgs Bugson}{\emph{[Loch Ness Monster Bug]}\quad Ein hypothetischer Bug, dessen Existenz aufgrund vereinzelter, unspezifischer Berichte angenommen wird, jedoch bislang noch nie gefunden wurde.}
+
+\jargon{Hindenbug}{Katastrophaler Bug, der Daten zerstört.}
+
+\jargon{Hope Driven Development}{Lange ungeplante Entwicklung einer kaum spezifierten Software mit minimalem Testing und der Hoffnung, bei Release wie gewünscht zu funktionieren.}
+
+\jargon{Hydra Code}{Der Fix eines Bugs produziert zwei neue Bugs.}
+
+\section*{I}
+
+\jargon{Impedigen}{Ein Programmierer, der durch seine Art zu arbeiten konstante Behinderungen seiner Kollegen erzeugt.}
+
+\section*{J}
+
+\jargon{Jenga Code}{Nicht anfassen, sonst bricht alles zusammen!}
+
+\jargon{Jimmy}{Der neue \enquote{Greenhorn}-Entwickler.}
+
+\jargon{Jimmy-Proof}{Beschreibung für ein absolut idiotensicheres Framework.}
+
+\section*{M}
+
+\jargon{Mad Girlfriend Bug}{Ein offensichtlicher Bug, der jedoch von der Software als \enquote{alles OK} gemeldet wird.}
+
+\jargon{Mandelbug}{Die Ursachen eines solchen Bugs sind extrem mannigfaltig, und die Recherchen nach einer Lösung fördern neue Bugs zutage.}
+
+\section*{N}
+
+\jargon{Ninja Comments}{Mythische Kommentare einer unbesiegbaren Kommentargilde, die bislang kein Mensch gesehen hat.}
+
+\jargon{Notwork}{Ein nicht funktionierendes Netzwerk.}
+
+\section*{O}
+
+\jargon{Object Oriented Pasta}{Objektorientierter Spaghetticode.}
+
+\section*{P}
+
+\jargon{Pixie}{Unerklärbarer Bugfix.}
+
+\jargon{Pok\'emon Exception Handling}{Schnapp' sie Dir alle!}
+
+\jargon{Progasm}{Wenn der Programmierer seinen eigenen Code sehr gern hat.}
+
+\jargon{Programmer Fuel}{Kaffee.}
+
+\jargon{Protoduction}{Prototypen in der Produktionsumgebung.}
+
+\section*{R}
+
+\jargon{Reality 101 Failure}{Die Software entspricht 100\%~der Spezifikation, löst jedoch in keiner Weise das offensichtlich nicht verstandene Problem.}
+
+\jargon{Refuctoring}{Durch Refactoring die Wartbarkeit reduzieren.}
+
+\jargon{Rubberducking}{Einer Gummiente ein Problem beschreiben und dadurch eine Lösung des Problems finden.}
+
+\section*{S}
+
+\jargon{Sandwich}{Der Kontrollfluss springt kaum bis gar nicht nachvollziehbar zwischen verschiedenen Frameworks/Implementierungen hin und her.}
+
+\jargon{Schrödinbug}{Bug, der sich manifestiert, nachdem der Programmierer festgestellt hat, dass der entsprechende Code niemals hätte funktionieren können.}
+
+\jargon{Ship in a Bottle}{Eine API, die für die dahinter liegende Logik zu einfach ist.}
+
+\jargon{Shrug Report}{Keine Fehlermeldung, keine Möglichkeit zur Reproduktion, enthält gewöhnlich die Worte \enquote{funktioniert nicht}.}
+
+\jargon{Smug Report}{Ein Bug Report, der bereits viele (falsche) technische Details, mögliche (falsche) Ursachen und deren mögliche (falsche) Lösungen enthält.}
+
+\jargon{Smurf Naming Convention}{Der \code{smurfLogger} wird vom \code{smurfWidget} über einen \code{smurfObserver} angetriggert und wirft im Falle eines \code{smurfConstraintError}s eine \code{smurfException}.}
+
+\jargon{Stringly Typed}{Wer braucht schon \code{int}s, \code{enum}s oder \code{boolean}s wenn es \code{string} gibt?}
+
+\section*{T}
+
+\jargon{TLA}{Three Letter Acronym}
+
+\section*{U}
+
+\jargon{Using the Force}{Durch Intuition die Ursache eines Bugs finden.}
+
+\section*{X}
+
+\jargon{XMHell}{Mehr Konfigurationsdateien als eigentlicher Programmcode.}
+
+\section*{Y}
+
+\jargon{Yoda Condition}{\code{if( \textquotedbl blue\textquotedbl\ == skyColor ) ...} -- Falls blau die Himmelsfarbe ist\dots}
+
+    
+
+
+\chapter{Beispiele}
+
+\newcommand{\exercise}[1]{
+  \begin{center}
+    \fboxsep 1em
+    \framebox{\parbox[t]{0.9\columnwidth}{
+      {\bfseries Aufgabe}
+      \par\medskip
+      #1
+    }}
+  \end{center}
+  \medskip
+}
+
+\section{\label{sec:bsp-Konvergenz-einer-Folge}Konvergenz einer Folge}
+
+\exercise{
+  Zur Folge \[ a_{n+1} = 5 - \frac{4}{a_n} \] ist zu zeigen, dass sie konvergent ist. Außerdem soll der Grenzwert bestimmt werden.
+}
+
+$a_0=2$, $a_1=3$, daher Vermutung, dass die Folge streng monoton steigend ist. Beweis mittels vollständiger Induktion:
+\begin{description}
+  \item [{Anfang}]
+	$a_1>a_0$
+  \item [{Voraussetzung}]
+	$\exists n_0\geq0\;\forall n\geq n_0:a_{n+1}>a_n$
+  \item [{Behauptung}]
+	$a_{n+2}>a_{n+1}$
+  \item [{Schluss}]
+	$a_{n+2}=5-\frac{4}{a_{n+1}}>5-\frac{4}{a_n}=a_{n+1}$
+\end{description}
+
+Für den Grenzwert muss gelten:
+\[ a = 5-\frac{4}{a} \iff a^2 - 5a + 4 = 0 \iff (a-1)(a-4) = 0 \]
+
+
+Beweis, dass die Folge durch 4 beschränkt ist mittels vollständiger Induktion:
+\begin{description}
+  \item [{Anfang}]
+	$a_0<4$
+  \item [{Voraussetzung}]
+	$\exists n_0 \geq 0 \; \forall n \geq n_0 : a_n < 4$
+  \item [{Behauptung}]
+	$a_{n+1} < 4$
+  \item [{Schluss}]
+	$a_{n+1} = 5 - \frac{4}{a_n} < 5 - \frac{4}{4} = 4$
+\end{description}
+
+\section{\label{sec:bsp-Konvergenz-einer-Reihe}Konvergenz einer Reihe}
+
+\exercise{
+  Analysiere die Konvergenz von \[ \sum_{n\geq1} \frac{2^n n^n}{ (n!)^2 } \]
+}
+
+Quotientenkriterium:%
+\footnote{Betragsstriche können weggelassen werden, da die Reihenglieder alle positiv sind.}
+\begin{align*}
+  \lim_{n\to\infty} \frac{2^{n+1}(n+1)^{n+1}}{((n+1)!)^2} \cdot \frac{(n!)^2}{2^n n^n}
+    & = \lim_{n\to\infty} \frac{2(n+1)}{(n+1)^2} \cdot \left(\frac{n+1}{n}\right)^n\\
+    & = \lim_{n\to\infty} \frac{2}{n+1} \cdot \left(1+\frac{1}{n}\right)^n\\
+    & = 0 \cdot e < 1
+\end{align*}
+
+
+\section{\label{sec:bsp-Extremwerte-einer-Funktion}Extremwerte einer Funktion mehrerer Veränderlicher}
+
+\exercise{
+  Berechne die Extremwerte von $f(x,y) = x^4 - 2x^2 + (2x^2-1) y^2$ und bestimme deren Art.
+}
+
+Suche nach kritischen Punkten, die $f' = 0$ erfüllen:
+\[
+    f'(x,y) = \begin{pmatrix}
+          4x \cdot (x^2 - 1 + y^2)\\
+          2 \cdot (2x^2 - 1) \cdot y
+    \end{pmatrix}
+    \stackrel{!}{=} 0
+\]
+
+
+\begin{center}
+\Tree[.{ $f_y = 0$ \\ $2(2x^2 - 1)y=0$ }
+	[.$y=0$
+		[.{ $f_x=0$ \\ $4x(x^2 - 1)=0$ }
+			{$x=0$}
+			{$x=\pm 1$}
+		]
+	]
+	[.$x=\sqrt{\frac{1}{2}}=:w$
+		[.$4w\left(y^2-\frac{1}{2}\right)$
+			{$y=\pm w$}
+		]
+	]
+	[.$x=-\sqrt{\frac{1}{2}}=-w$
+		[.$-4w\left(y^2-\frac{1}{2}\right)$
+			{$y=\pm w$}
+		]
+	]
+]	
+\end{center}
+
+Ergibt die Kritischen Punkte $(0,0)$, $(\pm1,0)$, $(\sqrt{\frac{1}{2}},\pm\sqrt{\frac{1}{2}})$ und $(-\sqrt{\frac{1}{2}},\pm\sqrt{\frac{1}{2}})$.
+Überprüfung der Definitheit der \noun{Hesse}-Matrix nach dem \noun{Hurwitz}-Kriterium:
+
+\begin{align*}
+f'' & = \begin{pmatrix}
+	f_{xx} & f_{xy} \\
+	f_{yx} & f_{yy}
+\end{pmatrix}\\
+ & =\begin{pmatrix}
+ 	12x^2+4y^2-4 & 8xy       \\
+ 	8xy          & 2(2x^2-1)
+ \end{pmatrix}\\
+f''(0,0) & = \begin{pmatrix}
+	-4 & 0  \\
+	0  & -2
+\end{pmatrix}\\
+f''(\pm1,0) & =\begin{pmatrix}
+	8 & 0 \\
+	0 & 2
+\end{pmatrix}\\
+f''\biggl(\sqrt{\frac{1}{2}},\sqrt{\frac{1}{2}}\biggr) & =\begin{pmatrix}
+	4 & 4 \\
+	4 & 0
+\end{pmatrix}\\
+f''\biggl(\sqrt{\frac{1}{2}},-\sqrt{\frac{1}{2}}\biggr) & =\begin{pmatrix}
+	4 & -4 \\
+	-4 & 0
+\end{pmatrix}\\
+f''\biggl(-\sqrt{\frac{1}{2}},\sqrt{\frac{1}{2}}\biggr) & =\begin{pmatrix}
+	4 & -4 \\
+	-4 & 0
+\end{pmatrix}\\
+f''\biggl(-\sqrt{\frac{1}{2}},-\sqrt{\frac{1}{2}}\biggr) & =\begin{pmatrix}
+	4 & 4 \\
+	4 & 0
+\end{pmatrix}
+\end{align*}
+
+
+Damit:
+\begin{itemize}
+  \item Maximum bei $(0,0)$
+  \item Minimum bei $(\pm1,0)$
+  \item Sattelpunkte bei $(\pm w,\pm w)$ und $(\pm w,\mp w)$
+\end{itemize}
+
+
+\section{\label{sec:bsp-Vollständige-Induktion}Vollständige Induktion}
+
+\exercise{
+  Beweise, dass $\sum_{1 \leq i \leq n} i=\frac{n\cdot(n+1)}{2}$ gilt.%
+}
+\begin{description}
+  \item [{IA}] Für $n_0=1$ gilt: $1=\frac{1\cdot(1+1)}{2}=\frac{2}{2}=2$.
+  \item [{IV}] $\sum_{1 \leq i \leq n} i = \frac{n\cdot(n+1)}{2}$
+  \item [{IB}] Wenn die IV für ein beliebiges aber festes $n$ gilt, so gilt sie auch für $n+1$.
+  \item [{IS}]~
+	\begin{align*}
+		\sum_{i=1}^{n+1} i                                                                              & = \frac{(n+1)\cdot(n+2)}{2} \\
+		\Leftrightarrow(n+1)+\sum_{i=1}^n i                                                             & = \frac{(n+1)\cdot(n+2)}{2} \\
+		\stackrel{\scriptstyle IV}{\Leftrightarrow}(n+1) + \frac{n\cdot(n+1)}{2} = \frac{n^{2}+3n+2}{2} & =\frac{n^2+3n+2}{2}         \\
+		\Rightarrow                                                                                     & \top
+	\end{align*}
+
+	Damit ist die IV bewiesen.
+\end{description}
+
+\section{\label{sec:bsp-Schnittmengenbestimmung}Schnittmengenbestimmung}
+
+\exercise{
+  Es seien $P=(1,-1,2)$, $Q=(1,1,1)$ und $\vec{n}=(1,2,3)^T$ gegeben.
+  Bestimme den Schnittpunkt der Gerade durch $P$ mit Richtung $\vec{n}$ und der Ebene in $Q$ senkrecht zu $\vec{n}$.%
+}
+\begin{enumerate}
+  \item Gerade in Parameterform bringen
+	\begin{align}
+		\vec{x} & = \veccc(x;y;z) = \veccc(1;-1;2) + \gamma\veccc(1;2;3) \label{eq:5-0} \\
+		x       & = 1 + \gamma \label{eq:5-1}                                           \\
+		y       & = -1 + 2\gamma \label{eq:5-2}                                         \\
+		z       & = 2 + 3\gamma \label{eq:5-3}
+	\end{align}
+  \item Ebene in paramterlose Form bringen
+	\begin{align}
+	  \langle \vec{x},\vec{n} \rangle  & =\langle \vec{q},\vec{n} \rangle \nonumber \\
+	  x + 2y + 3z                      & = 6 \label{eq:5-4}
+	\end{align}
+  \item Einsetzen von \cref{eq:5-1,eq:5-2,eq:5-3} in \cref{eq:5-4}
+	\begin{align*}
+		1 + \gamma + 2(-1+2\gamma) + 3(2+3\gamma) & =6                 \\
+		5 + 14\gamma                              & =6                 \\
+		\gamma                                    & = \nicefrac{1}{14}
+	\end{align*}
+  \item Einsetzen von $\gamma$ in \cref{eq:5-0}
+	\begin{align*}
+		\vec{x} & = \veccc(1;-1;2) + \frac{1}{14} \veccc(1;2;3) \\
+		        & = \frac{1}{14} \veccc(15;-12;31)
+	\end{align*}
+\end{enumerate}
+
+
+\section{\label{sec:bsp-LGS-unendlich}Lösung eines LGS}
+
+\exercise{
+  Bestimmen Sie die Lösung des LGS
+  \[
+    \left(\begin{array}{ccc|c}
+      2 & -4 &  1 & 8\\
+      1 & -1 & -7 & 6
+    \end{array}\right)
+  \]
+}
+
+\begin{enumerate}
+  \item Stufenform bestimmen:
+  \[
+    \left(\begin{array}{ccc|c}
+      1 & 0 & -15 & 8\\
+      0 & 1 &  -8 & 2
+    \end{array}\right)
+  \]
+  \item Umformung in Gleichung aus Vektoren:
+  \[
+    \vecc(x;y) = \vecc(8;2) + z \cdot \vecc(15;8)
+  \]
+  \item Erweiterung um die freien Variablen:
+  \[
+    \veccc(x;y;z) = \veccc(8;2;0) + z \cdot \veccc(15;8;1)
+  \]
+\end{enumerate}
+
+
+\section{\label{sec:bsp-Mehrdimensionale-Extrema}Mehrdimensionale Extrema mit Randbedingung}
+\exercise{
+  Bestimme die Extrema von $f(x,y)=x$ unter der Randbedingung $g(x,y) = y^2-x^3 = 0$.%
+}
+
+\noun{Lagrange}-Hilfsfunktion: 
+\begin{align*}
+  L(x,y,\lambda) & = x + \lambda \cdot (y^2 - x^3) \\
+  \grad L        & = \veccc(1 - 3\lambda x^2; 2\lambda y; y^2-x^3) \stackrel{!}{=} 0
+\end{align*}
+
+
+Kritische Punkte suchen:
+
+\noindent\begin{center}
+\Tree[.$L_y=2\lambda y\stackrel{!}{=}0$
+	[.$\lambda=0$
+		{$L_x=1 \neq 0$}
+	]
+	[.$y=0$
+		[.$L_\lambda=g=-x^3\stackrel{!}{=}0$
+			[.$x=0$
+				{$L_x=1 \neq 0$}
+			]
+		]
+	]
+]	
+\end{center}
+
+Prüfen der Rangbedingung:
+\[ \grad g = (-3x^2,2y) \stackrel{!}{=} 0 \implies (x,y)=(0,0) \]
+
+\Todo{Beispiel beenden}
+
+
+\chapter{Notationen}
+
+\noindent\begin{center}
+\noindent\begin{longtable}{l|l}
+	\hfil\textbf{Notation}\hfil              & \hfil\textbf{Bedeutung}\hfil                                                  \\[0.666em]
+	$\int_\mathbb{R} f(x) \intd x$           & $=\int_{x=-\infty}^\infty f(x) \intd x$                                       \\[0.666em]
+	$\sum_{P(k)} x_k$                        & Summiere alle Elemente $x_k$ auf, für die die Aussage $P(k)$                  \\
+	                                         & zutrifft. [z.\,B.~ist $\sum_{1 \leq k \leq n} = \sum_{k=1}^n$.]               \\[0.666em]
+	$\exists! x : P(x)$                      & Es existiert \emph{genau ein} $x$, für das $P(x)$ gilt.                       \\[0.666em]
+	$f \circ g \circ h (x) $                 & Verknüpfung von Funktionen: $f(g(h(x)))$.                                     \\[0.666em]
+	$a \circ b$, $a * b$                     & Platzhalter für Operator                                                      \\[0.666em]
+	$a \uparrow b \uparrow c$                & Rechtsassoziative Exponenzierung ($= a \uparrow (b \uparrow c) = a^{(b^c)}$). \\[0.666em]
+	$\prec$, $\preceq$, $\asymp$, etc.       & Relationen in partiellen Ordnungen                                            \\[0.666em]
+	$\Pr(X \leq x)$                          & Wahrscheinlichkeit von $X \leq x$                                             \\[0.666em]
+	$\max f(x)$, $\min f(x)$                 & Größter/kleinster Wert, den $f(x)$ annehmen kann;                             \\
+	                                         & es \emph{muss} ein $x$ geben, für das $\max f(x) = f(x)$                      \\
+	                                         & bzw.~$\min f(x) = f(x)$ gilt. [In $I = \left]a,b\right]$ ist z.\,B.~$\min I$  \\
+	                                         & undefiniert, da $a \notin I$.]                                                \\[0.666em]
+	$\sup f(x)$, $\inf f(x)$                 & Kleinste obere (Supremum) bzw.~größte untere                                  \\
+	                                         & Schranke (Infimum) von $f(x)$.                                                \\
+	                                         & [In $I = \left]a,b\right]$ ist $\inf I = a$.]                                 \\[0.666em]
+	$\limsup f(x) = \varlimsup f(x)$,        & Größter/kleinster Häufungswert von $f(x)$.                                    \\
+	$\liminf f(x) = \varliminf f(x)$         & [Limes superior/inferior.]                                                    \\[0.666em]
+	$\arg\max f(x)$                          & $:= \{ x \mid f(x) = \max f(x) \}$, analog $\arg\min f(x)$                    \\[0.666em]
+	$\lim_{x \searrow x_0}$                  & $:= \lim_{x \to x_0} \mid x>x_0$, Annäherung an $x_0$ \enquote{von rechts},         \\
+	                                         & $\lim_{x \nearrow x_0}$ analog.                                               \\[0.666em]
+	$\mathrm{id}_M : M \to M,\; x \mapsto x$ & Identische Abbildung bzw. Identität in $M$, z.\,B.                            \\
+	                                         & $\exp(\ln x)=\mathrm{id} \mid x>0$
+\end{longtable}
+\end{center}
+
+
+\backmatter
+
+\listof{algorithm}{Algorithmenverzeichnis}
+\listof{figure}{Abbildungsverzeichnis}
+\listof{table}{Tabellenverzeichnis}
+
+
+% \addchap{Stichworte}
+\footnotesize
+\printindex
+\normalsize
+
+\cleardoublepage
+\selectlanguage{ngerman}
+\markboth{\nomname}{\nomname}
+
+\printnoidxglossary{}
+
+\label{literaturverzeichnis}
+\phantomsection\addcontentsline{toc}{chapter}{\bibname}\nocite{*}
+\printbibliography
+
+
+\todos{}
+
+\clearpage\pagestyle{blank}
+\ifthispageodd{\hbox{}\clearpage}{}
+
+{\huge\sffamily Über das Buch\ldots}
+
+\renewcommand*{\dictumwidth}{.9\textwidth}
+\renewcommand*{\dictumrule}{}
+\setkomafont{dictumauthor}{\normalfont\sffamily}
+\vspace*{1em}
+\dictum[Tony Stark]{\enquote{Ohne \enquote{Matze frühstückt} wäre ich heute nicht da, wo ich bin.}}
+\vspace*{.6667em}
+\dictum[Albert Einstein]{\enquote{Zweifellos das einzig absolut zentrale Werk der mathematischen Literatur.}}
+\vspace*{.6667em}
+\dictum[Ford Prefect]{\enquote{Dieses Buch überragt jedes noch so große Handtuch.}}
+\vspace*{.6667em}
+\dictum[Hamlet]{\enquote{Scheiß auf \enquote{sein oder nicht sein}! Das heißt jetzt \enquote{gelesen oder nicht gelesen}!}}
+\vspace*{.6667em}
+\dictum[Praktikant in Area 51]{\enquote{Wir nutzen es immer als Lockmittel wenn uns die Aliens ausgehen.}}
+\vspace*{.6667em}
+\dictum[Pippi Langstrumpf]{\enquote{Die Wahrheit tut weh.}}
+
+\vspace*{2em}
+{\huge\sffamily Über den Autor\ldots}
+
+\vspace*{1em}
+\dictum[Bäcker um die Ecke]{\enquote{Der kauft hier immer seine Brötchen.}}
+\vspace*{.6667em}
+\dictum[Chef]{\enquote{Freak.}}
+\vspace*{.6667em}
+\dictum[Mann in Fußgängerzone]{\enquote{Wer?}}
+\vspace*{.6667em}
+\dictum[Hüte heute]{\enquote{Fünfmaliger Preisträger des jährlich verliehenen \enquote{Attraktivster Hutträger}-Preises in Folge.}}
+\vspace*{.6667em}
+\dictum[Dr.~Dr.~Sheldon Lee Cooper]{\enquote{Ein charmanter Verbreiter von unbändiger Freude und Glückseligkeit, wo immer er auftaucht.}}
+\vspace*{.6667em}
+\dictum[Thor]{\enquote{Ich habe ihm gezeigt wo der Hammer hängt. Er meinte, er liegt gut in der Hand.}}
+
+\end{document}
