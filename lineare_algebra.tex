@@ -922,7 +922,7 @@ Sei $A\in\mathbb{R}^{n\times n}$, so gilt für die Eigenwerte $\lambda_{i}$:
 Seien $V$, $W$ Vektorräume über einem Körper $K$ ($f:V\to W$), dann heißt $f$ \emph{lineare Abbildung} bzw.~\emph{Homomorphismus},
 wenn $\forall x,y\in V$ und $\forall\lambda\in K$ gilt:
 \[ f(x+\lambda y)=f(x)+\lambda f(y) \]
-Die Menge aller Homomorphismen über zwei Vektorräume $V$, $W$ wird als $\hom(V,W)$ bezeichnet.
+Die Menge aller Homomorphismen über zwei Vektorräume $V$, $W$ wird als~$\hom(V,W)$ oder~$\mathcal L(V, W)$ bezeichnet.
 \index{Dualraum}\index{Funktional}\index{Linearform}\index{1-Form}
 [Die Menge aller linearen Abbildungen~$V^* := V \to K$ wird als Dualraum bezeichnet; die Elemente~$f \in V^*$ werden Funktionale, Linearformen oder 1-Formen genannt.]
 \begin{description}
@@ -960,21 +960,15 @@ Die Menge aller Homomorphismen über zwei Vektorräume $V$, $W$ wird als $\hom(V
 
 \subsection{Tensoren}
 \index{Tensor}
-Ein Tensor beschreibt eine mathematische Funktion, die eine Abbildung von $n$ Vektoren aus einem Vektorraum~$V$ über $\{\mathbb{R}, \mathbb{C}\}$ in den zugrundeliegenden Körper beschreibt. Der Rang bzw.\,die Stufe eines Tensors ist die Anzahl der entgegen genommen Vektoren, d.\,h., ein Tensor~$T : V^n \to \mathbb{R}$ hat den Rang~$n$. [Tensoren sind also Operatoren, die mehrere Vektoren verknüpfen.]
+Ein Tensor beschreibt eine mathematische Funktion, die eine Abbildung von $n$ Vektoren aus einem Vektorraum~$V$ über $\{\mathbb{R}, \mathbb{C}\}$ in den zugrundeliegenden Körper beschreibt. Der Rang bzw.~die Stufe eines Tensors ist die Anzahl der entgegen genommen Vektoren, d.\,h., ein Tensor~$T : V^n \to \mathbb{R}$ hat den Rang~$n$. [Tensoren sind also Operatoren, die mehrere Vektoren verknüpfen.]
 
 Tensoren sind multilinear, d.\,h., sie stellen für jeden entgegen genommene Vektor eine lineare Abbildung dar, also~$T(v_1, \ldots, v_k + cw, \ldots, v_n) = T(v_1, \ldots, v_n) + cT(v_1, \ldots, v_{k-1}, w, v_{k+1}, \ldots, v_n) \forall k$.
 
-Das Vektorprodukt~$a \times b$ kann als Tensor zweiter Stufe dargestellt werden als:
-\[
-    a \times b := T(a,b) = \begin{pmatrix}
-    	0    & -a_3 & a_2  \\
-    	a_3  & 0    & -a_1 \\
-    	-a_2 & a_1  & 0
-    \end{pmatrix} \veccc(b_1;b_2;b_3)
-    = \veccc(a_2 b_3 - a_3 b_2; a_3 b_1 - a_1 b_3; a_2 b_3 - a_3 b_2)
-\]
+\index{k-Form}\index{Determinante}
+Die Menge aller multilinearen Abbildungen, die $k$~Vektoren eines Vektorraums über~$K \in \{\mathbb R, \mathbb C\}$ entgegen nehmen, wird als~$\mathcal L^k(K^n, K)$ bezeichnet, die Elemente heißen $k$-Formen. Eine Funktion~$f \in \mathcal L^k(K^n, K)$ heißt antisymmetrisch bzw.~äußere $k$-Form, wenn jede Vertauschung zweier verschiedener Eingangsvektoren von~$f$ eine Negation von~$f$ nach sich zieht. [Tensoren $k$-ter Stufe sind also $k$-Formen, die Determinante ist sogar eine äußere $k$-Form.]
 
-Entsprechend lässt sich ein Tensor bilden, um das Skalarprodukt~$\langle a, b \rangle$ abzubilden mit $T(a,b) := a\T b$. [Das dyadische Produkt~$a \otimes b$ ist definiert als~$ab\T$.]
+\index{Skalarprodukt}\index{Dyadisches Produkt}
+Es lässt sich entsprechend ein Tensor bilden, um das Skalarprodukt~$\langle a, b \rangle$ abzubilden mit $T(a,b) := a\T b$; das Vektorprodukt~$a \times b$ ist jedoch nicht als Tensor darstellbar, da das Ergebnis kein Skalar ist.
 
 \section{Überprüfung auf Linearität}
 
