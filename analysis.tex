@@ -112,16 +112,16 @@ Daraus folgen:
     \item[Konvergenz/Divergenz] \index{Divergenz}\index{Reihe!Divergenz}\index{Konvergenz}\index{Reihe!Konvergenz}
         Kann das Konvergenzverhalten von $(s_n)$ bestimmt werden, so gilt $(s_n) \in c \Rightarrow (a_n) \in c_0$.
     \item [Harmonische Reihe] \index{Reihe!harmonische}
-        $q>1 \Rightarrow \bigl(\sum 1/n^q\bigr)_n \in c$
+        $q>1 \Rightarrow \bigl(\sum_{k \leq n} 1/k^q\bigr)_n \in c$
     \item [Geometrische Reihe] \index{Reihe!geometrische}
-        $\lvert q \rvert<1 \Rightarrow \bigl(\sum q^n\bigr)_n \to 1/(1-q)$
+        $\lvert q \rvert<1 \Rightarrow \bigl(\sum_{k \leq n} q^k\bigr)_n \to 1/(1-q)$
     \item [Endliche geometrische Reihe] \index{Reihe!geometrische!endliche}
-        $q\neq1 \Rightarrow \sum q^n = (1-q^{n+1})/(1-q)$
+        $q\neq1 \Rightarrow \sum_{k \leq n} q^k = (1-q^{n+1})/(1-q)$
     \item [\noun{Leibniz}kriterium] \index{Leibnizkriterium}\index{Reihe!Leibnizkriterium}
         Ist $(a_n)$ alternierend, gilt $(s_n) \in c$ nur, wenn $(\lvert a_n \rvert) \in c_0$ und $(\lvert a_n \rvert)$ monoton ist.
         [Ist $(a_n)$ nicht trivial alternierend, d.\,h.~$\exists n : a_n \cdot a_{n+1} > 0$, so muss $(a_n)$ zunächst geeignet umgeformt werden, indem aufeinanderfolgende positive bzw.~negative Folgeglieder aufsummiert werden.]
     \item [Absolute Konvergenz] \index{Reihe!absolute Konvergenz}
-        $(s_n)$ heißt absolut konvergent, wenn $\bigl( \sum \lvert a_n \rvert \bigr) \in c$.
+        $(s_n)$ heißt absolut konvergent, wenn $\bigl( \sum_{k \leq n} \lvert a_k \rvert \bigr) \in c$ ist.
 \end{description}
 
 \subsection{Rechenregeln}
@@ -130,7 +130,7 @@ Daraus folgen:
 Sind $\sum_{k \leq n} a_k \to a$, $\sum_{k \leq n} b_k \to b$ konvergente Reihen, so gilt:
 \begin{description}
   \item [Addition] \index{Reihe!Addition}
-	$\sum_{k \leq n} a_k + \sum_{k \leq n} a_k = \sum_{k \leq n} (a_k+b_k) \;\to\; a+b$
+	$\sum_{k \leq n} a_k + \sum_{k \leq n} b_k = \sum_{k \leq n} (a_k+b_k) \;\to\; a+b$
   \item [Skalierung] \index{Reihe!Multiplikation}\index{Reihe!Skalierung}
 	$\sum_{k \leq n} r \cdot a_k = r \cdot \sum_{k \leq n} a_k \;\to\; r \cdot a, \quad r\in\mathbb{R}$
   \item [\noun{Cauchy}-Produkt] \index{Cauchy-Produkt}\index{Reihe!Cauchy-Produkt}\label{Cauchy-Produkt}
