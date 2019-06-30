@@ -45,13 +45,13 @@ Dabei nennt man die $x$, $y$ \emph{Vektoren} und die $\lambda$, $\mu$ \index{Ska
   \item [Linearkombination]
         $\sum_{1 \leq i \leq n} \lambda_i \vec v_i$ heißt Linearkombination von $\vec v_1, \ldots, \vec v_n$.
   \item [linear unabhängig]
-        $n$ Vektoren $\vec v_1, \ldots, \vec v_n$sind genau dann linear unabhängig, wenn $\sum_i \lambda_i \vec v_i = 0 \Rightarrow \lambda_1,\ldots,\lambda_n = 0$ ist.
+        $n$ Vektoren $\vec v_1, \ldots, \vec v_n$ sind genau dann linear unabhängig, wenn $\sum_i \lambda_i \vec v_i = 0 \Longrightarrow \lambda_i = 0 \forall i$ ist.
   \item [Lineare Hülle]
 	Die Menge aller Linearkombinationen
-	\[ L=\biggl\{ \sum_i \lambda_i \vec v_i \biggm| \lambda_i \in K\biggr\} \subseteq V \]
-	heißt lineare Hülle von $\vec{v}_{1},\ldots,\vec{v}_{n}$.
+	\[ L = \Span\{\vec v_i \forall i\} := \biggl\{ \sum_i \lambda_i \vec v_i \biggm| \lambda_i \in K\biggr\} \subseteq V \]
+	heißt lineare Hülle bzw.~Spann von $\vec{v}_{1},\ldots,\vec{v}_{n}$.
   \item [Erzeugendensystem]
-	Gilt $L(\vec v_1,\ldots,\vec v_n)=V$, so bilden die Vektoren ein Erzeugendensystem.
+	Gilt $\Span\{\vec v_1,\ldots,\vec v_n\} = V$, so bilden die Vektoren ein Erzeugendensystem.
   \item [Basis]
 	Auch: \emph{minimales Erzeugendensystem}.
 	Ist ein Erzeugendensystem, bei dem die Vektoren linear unabhängig sind.
@@ -68,7 +68,7 @@ Eine nicht-leere Teilmenge $U$ eines Vektorraums $V$ über einem Körper $K$ ist
 
 \subsection{Skalarprodukt}
 \index{Skalarprodukt}\index{Vektorraum!Skalarprodukt}
-$V$ sei bel.~Vektorraum über einem Körper $K\in\{\mathbb{R},\mathbb{C}\}$ und $a,\, b,\, c\in V$ sowie $\lambda\in K$, dann heißt $\langle \ast,\ast \rangle : V\times V\to K$ Skalarprodukt falls gilt:
+Sei $V$ ein beliebiger $K$-Vektorraum mit $K\in\{\mathbb{R},\mathbb{C}\}$ und $a,\, b,\, c\in V$ sowie $\lambda\in K$, dann heißt $\langle \ast,\ast \rangle : V\times V\to K$ Skalarprodukt falls gilt:
 \begin{description}
   \item [{SP1}]
 	$\langle a,b\rangle =\overline{\langle b,a\rangle}$
@@ -82,13 +82,13 @@ $V$ sei bel.~Vektorraum über einem Körper $K\in\{\mathbb{R},\mathbb{C}\}$ und 
   \item [{SP4}]
 	$\langle a,a \rangle = 0 \iff a=0$
 	und $\langle a,a \rangle > 0 \iff a\ne0$
-  \item [{Standardskalarprodukt}] $\langle \vec{a},\vec{b}\rangle :=\sum_{i} a_i b_i$
+  \item [{Standardskalarprodukt}] $\langle a,b \rangle := \sum_i a_i b_i$
 \end{description}
 
 \subsection{\label{sub:Vektornorm}Norm}
 
 \index{Norm}\index{Vektor!Norm}
-Sei $V$ ein Vektorraum über $K \in \{\mathbb R, \mathbb C\}$ sowie $a,b \in V$ und $\lambda \in K$, dann heißt $\lVert*\rVert : V \to \mathbb R$ Norm falls $\forall a,b \in V$ und $\forall\lambda \in K$ gilt:
+Sei $V$ ein $K$-Vektorraum mit $K \in \{\mathbb R, \mathbb C\}$ sowie $a,b \in V$ und $\lambda \in K$, dann heißt $\lVert*\rVert : V \to \mathbb R$ Norm falls $\forall a,b \in V$ und $\forall\lambda \in K$ gilt:
 \begin{description}
   \item [{N1}]
 	$\lVert a\rVert\geq0$
@@ -105,7 +105,7 @@ Sei $V$ ein Vektorraum über $K \in \{\mathbb R, \mathbb C\}$ sowie $a,b \in V$ 
   \item [{Maximumnorm}] \index{Vektor!Maximumnorm}\index{Norm!Maximum--}
 	$\lVert a\rVert_{\infty} = \max\bigl\{\lvert a_i \rvert \bigr\}$
   \item [{Einheitsvektor}] \index{Vektor!Einheits--}\index{Einheitsvektor}
-	$\lVert a\rVert=1$
+	$\lVert a\rVert=1$, auch normierter Vektor genannt
   \item [{Kanonischer~Einheitsvektor}] \index{Vektor!kanonischer Einheits--}\index{Einheitsvektor!kanonisch}
 	$\lVert a\rVert=1\land\exists! a_i : a_i=1$
 \end{description}
@@ -146,6 +146,7 @@ for $k \= 1$ to $m-1$:
 	\quad$\langle \vec{a},\vec{b}\rangle =\lVert\vec{a}\rVert\cdot\lVert\vec{b}\rVert\cdot\cos(\varphi)$
   \item [\noun{Schwarz}sche Ungleichung]
 	$\lvert\langle \vec{a},\vec{b}\rangle\rvert \leq \lVert\vec{a}\rVert\cdot\lVert\vec{b}\rVert$
+    [Dies ergibt sich aus der Winkelbestimmung, da~$\cos(\varphi) \in [-1;1] \forall \varphi$.]
   \item [Dreiecksungleichung]
 	$\lVert\vec a + \vec b \rVert \leq \lVert\vec a \rVert + \lVert \vec b \rVert$
 \end{description}
@@ -215,7 +216,7 @@ Die Funktionen $p_n = \{1,x,x^2,\dots,x^n\}$ bilden eine Basis von $P_n$ (Polyno
 \section{Ebenengleichungen}
 
 \index{Ebene|(}
-Sei $V$ ein $n$-dimensionaler Vektorraum über einem Körper $K \in \{\mathbb R, \mathbb C\}$, $\vec x$, $\vec p$, $\vec n$ sowie $\vec r_{1,\ldots,n-1} \in V$ und $\lambda_{1,\ldots,n-1} \in K$; $\vec p$ ist der Ortsvektor der (Hyper-)Ebene, $\vec r_{1,\ldots,n-1}$ sind die Richtungsvektoren, $\vec n$ ist die Normale.
+Sei $V$ ein $n$-dimensionaler $K$-Vektorraum mit $K \in \{\mathbb R, \mathbb C\}$, $\vec x$, $\vec p$, $\vec n$ sowie $\vec r_{1,\ldots,n-1} \in V$ und $\lambda_{1,\ldots,n-1} \in K$; $\vec p$ ist der Ortsvektor der (Hyper-)Ebene, $\vec r_{1,\ldots,n-1}$ sind die Richtungsvektoren, $\vec n$ ist die Normale.
 Ein Körper der Dimension $n-1$ in $V$ wird als Hyperebene bezeichnet, für $n=2$ als Gerade und für $n=3$ einfach als Ebene.
 
 \begin{description}
@@ -360,7 +361,7 @@ Die Menge aller $m\times n$-Matrizen über einem Körper $K$ wird als $M(m\times
 	  \end{cases}
 	\]
   \item [{Transponierte~Matrix}] \index{transponierte Matrix}\index{Matrix!transponiert}
-	Die transponierte Matrix $A^T$ einer Matrix $A$ erhält man durch Vertauschung von Zeilen und Spalten.
+	Die transponierte Matrix $A^T$ einer Matrix $A$ erhält man durch Vertauschung von Zeilen und Spalten, bzw.~Spiegelung an der Hauptdiagonalen.
   \item [{Inverse~Matrix}] \index{inverse Matrix}\index{Matrix!invers}
 	Für die inverse Matrix $A^{-1}$ einer Matrix $A \in K^{n \times n}$ gilt $AA^{-1}=A^{-1}A=E$. Es gibt nicht immer ein $A^{-1}$.
   \item [{Quadratisch}] \index{quadratische Matrix}\index{Matrix!quadratisch}
@@ -368,7 +369,7 @@ Die Menge aller $m\times n$-Matrizen über einem Körper $K$ wird als $M(m\times
   \item [{Zeilenmatrix}] \index{Matrix!Zeilen--}\index{Zeilenmatrix}
 	$m=1$
   \item [{Spaltenmatrix}] \index{Matrix!Spalten--}\index{Spaltenmatrix}
-	$n=1$
+	$n=1$ [Ein Vektor mit skalaren Komponenten ist eine Spaltenmatrix; unter Anwendung der Transponierung gilt z.\,B.~$\langle a,b \rangle = a\T b$.]
   \item [{Rang}] \index{Rang}\index{Matrix!Rang}
 	Der Rang einer Matrix ist die Dimension der größten Untermatrix $U$, für die $\det(U)\neq0$ ist; dies entspricht der Dimension der Spalten- bzw.~Zeilenvektoren.
 
@@ -421,14 +422,14 @@ Hier ein Beispiel für
 \vbox{
 \emph{Schritt 1:} Die rechte Matrix etwas höher aufschreiben als die linke.
 \[
-\xySep{5pt}\xymatrix{
-                &  & \,\ar@{-}[ddddd] & 1 & 2 \\
-                &  &                  & 0 & 1 \\
-\,\ar@{-}[rrrr] &  &                  &   & \,\\
-1               & 4\\
-2               & 5\\
-3               & 6                   & \,
-}
+\begin{tikzcd}[sep=tiny]
+                     &   & \,\arrow[ddddd, dash] & 1 & 2 \\
+                     &   &                       & 0 & 1 \\
+\,\arrow[rrrr, dash] &   &                       &   & \,\\
+                   1 & 4\\
+                   2 & 5\\
+                   3 & 6 & \,
+\end{tikzcd}
 \]
 }
 
@@ -437,38 +438,36 @@ Hier ein Beispiel für
 \vbox{
 \emph{Schritt 2:} Quasi die Skalarprodukte aus den Zeilen von $A$ und den Spalten von $B$ bilden.
 \[
-\xySep{5pt}\xymatrix{
-                &   & \,\ar@{-}[ddddd] & 1\ar@{..>}[ddd] & 2\\
-                &   &                  & 0               & 1\\
-\,\ar@{-}[rrrr] &   &                  &                 & \,\\
-1\ar@{..>}[rrr] & 4 &                  & {\color{red}1}\\
-2               & 5\\
-3               & 6 & \,
-}
+\begin{tikzcd}[sep=tiny]
+                      &   & \,\arrow[dash]{ddddd} & 1\arrow[dotted]{ddd} & 2\\
+                      &   &                       & 0                    & 1\\
+\,\arrow[dash]{rrrr}  &   &                       &                      & \,\\
+1 \arrow[dotted]{rrr} & 4 &                       & {\color{red}1}\\
+2                     & 5\\
+3                     & 6 & \,
+\end{tikzcd}
 %
 \quad
 %
-\xySep{5pt}
-\xymatrix{
-                &   & \,\ar@{-}[ddddd] & 1\ar@{..}[ddddd] & 2 \\
-                &   &                  & 0                & 1 \\
-\,\ar@{-}[rrrr] &   &                  &                  & \,\\
-1               & 4 &                  & 1                    \\
-2\ar@{..}[rrr]  & 5 &                  & {\color{red}2}       \\
-3\ar@{..}[rrr]  & 6 & \,               & {\color{red}3}
-}
+\begin{tikzcd}[sep=tiny]
+                     &   & \,\arrow[dash]{ddddd} & 1\arrow[dotted]{ddddd} & 2 \\
+                     &   &                       & 0                      & 1 \\
+\,\arrow[dash]{rrrr} &   &                       &                        & \,\\
+1                    & 4 &                       & 1                          \\
+2\arrow[dotted]{rrr} & 5 &                       & {\color{red}2}             \\
+3\arrow[dotted]{rrr} & 6 & \,                    & {\color{red}3}
+\end{tikzcd}
 %
 \quad
 %
-\xySep{5pt}
-\xymatrix{
-                &   & \,\ar@{-}[ddddd] & 1 & 2\ar@{..}[ddddd]\\
-                &   &                  & 0 & 1               \\
-\,\ar@{-}[rrrr] &   &                  &   & \,              \\
-1\ar@{..}[rrrr] & 4 &                  & 1 & {\color{red}6}  \\
-2\ar@{..}[rrrr] & 5 &                  & 2 & {\color{red}9}  \\
-3\ar@{..}[rrrr] & 6 & \,               & 3 & {\color{red}12}
-}
+\begin{tikzcd}[sep=tiny]
+                      &   & \,\arrow[dash]{ddddd} & 1 & 2\arrow[dotted]{ddddd}\\
+                      &   &                       & 0 & 1               \\
+\,\arrow[dash]{rrrr}  &   &                       &   & \,              \\
+1\arrow[dotted]{rrrr} & 4 &                       & 1 & {\color{red}6}  \\
+2\arrow[dotted]{rrrr} & 5 &                       & 2 & {\color{red}9}  \\
+3\arrow[dotted]{rrrr} & 6 & \,                    & 3 & {\color{red}12}
+\end{tikzcd}
 \]
 }
 
@@ -496,15 +495,15 @@ C = \begin{pmatrix}
 \end{description}
 \Todo{Darstellung Haupt-/Nebendiagonalen reparieren}
 \[
-  \xySep{5pt}
-  \left(\vcenter{\xymatrix{
-  H\ar[ddddrrrr]    & n\ar@{.>}[dddrrr] & \circ & \circ & n\ar@{.>}[ddddllll] \\
-  n\ar@{.>}[dddrrr] & \circ             & \circ & \circ & \circ               \\
-  \circ             & \circ             & \circ & \circ & \circ               \\
-  \circ             & \circ             & \circ & \circ & n                   \\
-  n                 & \circ             & \circ & n     & H
-  }
-  }\right)
+  \left(
+\begin{tikzcd}[sep=tiny]
+        H\arrow{ddddrrrr}                   & n\arrow[dotted, rightarrow]{dddrrr} & \circ & \circ & n\arrow[dotted, rightarrow]{ddddllll} \\
+        n\arrow[dotted, rightarrow]{dddrrr} & \circ                               & \circ & \circ & \circ               \\
+        \circ                               & \circ                               & \circ & \circ & \circ               \\
+        \circ                               & \circ                               & \circ & \circ & n                   \\
+        n                                   & \circ                               & \circ & n     & H
+\end{tikzcd}
+\right)
 \]
 
 \begin{description}
@@ -678,12 +677,12 @@ Bis zur Größe $3\times3$ gibt es spezielle Gleichungen.
 
 Letzteres lässt sich mit der Regel von \noun{Sarrus} veranschaulichen:
 \[
-\xySep{5pt}\xymatrix{
-        & a_1\ar@{.>}[dddrrr] & b_1\ar@{.>}[dddrrr] & c_1\ar@{.>}[dddlll]\ar@{.>}[dddrrr] & a_1\ar@{.>}[dddlll] & b_1\ar@{.>}[dddlll]\\
-        & a_2                 & b_2                 & c_2                                 & a_2                 & b_2\\
-        & a_3                 & b_3                 & c_3                                 & a_3                 & b_3\\
+\begin{tikzcd}[sep=tiny]
+        & a_1\arrow[dotted, rightarrow]{dddrrr} & b_1\arrow[dotted, rightarrow]{dddrrr} & c_1\arrow[dotted, rightarrow]{dddlll}\arrow[dotted, rightarrow]{dddrrr} & a_1\arrow[dotted, rightarrow]{dddlll} & b_1\arrow[dotted, rightarrow]{dddlll}\\
+& a_2                 & b_2                 & c_2                                 & a_2                 & b_2\\
+& a_3                 & b_3                 & c_3                                 & a_3                 & b_3\\
 \color{red}\ominus & \color{red}\ominus & \color{red}\ominus & & \color{green}\oplus & \color{green}\oplus & \color{green}\oplus
-}
+\end{tikzcd}
 \]
 
 \subsection{Rechenregeln}
@@ -835,10 +834,10 @@ Seien $A$ und $A'$ Basen des $\mathbb{R}^{m}$ sowie $B$ und $B'$ Basen des $\mat
   M_{B'}^{A'}(\Phi)  & = T_{B'}^B\cdot M_B^A(\Phi)\cdot T_A^{A'}
 \end{align*}
 \[
-  \xySep{12pt}\vcenter{\xymatrix{
-    K_A(\vec{x})\ar@{->}[r]^{M_B^A}                                & K_B(\Phi(\vec{x}))\ar@{->}[d]^{T_{B'}^B}\\
-    K_{A'}(\vec{x})\ar@{->}[u]_{T_A^{A'}}\ar@{->}[r]_{M_{B'}^{A'}} & K_{B'}(\Phi(\vec{x}))
-  }}
+\begin{tikzcd}
+    K_A(\vec{x}) \arrow[rightarrow]{r}{M_B^A}                                & K_B(\Phi(\vec{x})) \arrow[rightarrow]{d}{T_{B'}^B}\\
+    K_{A'}(\vec{x}) \arrow[rightarrow]{u}{T_A^{A'}} \arrow[rightarrow]{r}{M_{B'}^{A'}} & K_{B'}(\Phi(\vec{x}))
+\end{tikzcd}
 \]
 
 
@@ -919,7 +918,7 @@ Sei $A\in\mathbb{R}^{n\times n}$, so gilt für die Eigenwerte $\lambda_{i}$:
 
 \section{Definitionen}
 
-Seien $V$, $W$ Vektorräume über einem Körper $K$ ($f:V\to W$), dann heißt $f$ \emph{lineare Abbildung} bzw.~\emph{Homomorphismus},
+Seien $V$, $W$ Vektorräume über einem Körper $K$ mit $f:V\to W$, dann heißt $f$ \emph{lineare Abbildung} bzw.~\emph{Homomorphismus},
 wenn $\forall x,y\in V$ und $\forall\lambda\in K$ gilt:
 \[ f(x+\lambda y)=f(x)+\lambda f(y) \]
 Die Menge aller Homomorphismen über zwei Vektorräume $V$, $W$ wird als~$\hom(V,W)$ oder~$\mathcal L(V, W)$ bezeichnet.

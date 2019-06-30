@@ -1,8 +1,8 @@
 % !TeX document-id = {b3112cd4-7d8f-4bd0-a566-42a9f362048b}
 % !TeX encoding = UTF-8
 % !TeX spellcheck = de_DE
-% !TeX program = latexmk -silent -lualatex -shell-escape -f | txs:///view-pdf-internal --embedded
-% !TeX TXS-program:latexmk -silent -lualatex -shell-escape -f
+% !TeX program = latexmk -silent -lualatex -shell-escape | txs:///view-pdf-internal --embedded
+% !TeX TXS-program:latexmk -silent -lualatex -shell-escape
 \documentclass[english,ngerman,fontsize=9pt,intoc,index=totoc,refpage,listof=totoc,draft]{scrbook}
 
 \usepackage{morewrites}
@@ -28,7 +28,7 @@
 \usepackage{amssymb}
 
 \usepackage{esint}
-\usepackage[matrix,dvips,arrow]{xy}
+\usepackage{tikz-cd}
 \usepackage{color}
 \usepackage{colortbl}
 
@@ -324,6 +324,7 @@
 \DeclareMathOperator{\diag}{diag}
 \DeclareMathOperator{\adj}{adj}
 \DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Span}{span}
 \newcommand{\intd}{\,\mathrm{d}}
 
 \makeatletter
