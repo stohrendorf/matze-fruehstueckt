@@ -3,8 +3,8 @@
 
 \noindent\begin{center}
     \begin{tabular}{cc}
-    	   \textbf{Folge}     &        \textbf{Reihe}         \\
-    	$(a_n),\; a_n = f(n)$ & $(s_n) = \sum_{k \leq n} a_k$
+    	\textbf{Folge} &               \textbf{Reihe}                \\
+    	   $(a_n)$     & $(s_n) = \bigl(\sum_{k \leq n} a_k\bigr)_n$
     \end{tabular}
 \end{center}
 
@@ -38,6 +38,7 @@ Gelegentlich taucht auch die Notation $\langle s_n \rangle$ auf.]
   \item [Häufungs-/Grenzwert] \index{Häufungswert}\index{Folge!Häufungswert} \index{Grenzwert}\index{Folge!Grenzwert}
         Eine Zahl $h$ heißt Häufungswert, wenn sie $\forall \varepsilon>0 \; \exists n_0 \; \forall n \geq n_0 : \lvert h-a_{s(n)} \rvert < \varepsilon$ erfüllt.
         Ist $h$ der einzige Häufungswert einer Folge, so ist er auch der Grenzwert der Folge; eine Folge mit mehreren Häufungswerten ist divergent.
+        Jeder Grenzwert ist demnach ein Häufungswert.
         [Siehe dazu auch die Notationen auf \cpageref{sec:intervalle}.]
   \item [Konvergenz/Divergenz] \index{Divergenz}\index{Folge!Divergenz}\index{Konvergenz}\index{Folge!Konvergenz}
         Eine Folge heißt konvergent, wenn sie einen Grenzwert besitzt, sonst divergent.
@@ -46,6 +47,7 @@ Gelegentlich taucht auch die Notation $\langle s_n \rangle$ auf.]
   \item[Folgenraum] \index{Folgenraum}\index{Folge!Raum}
         Die Menge aller Folgen über einem Körper $K \in \{\mathbb{R}, \mathbb{C}\}$ wird Folgenraum genannt und mit $\omega$ bezeichnet.
         Der Folgenraum aller gegen~$0$ konvergierenden Folgen wird $c_0$ genannt; der Folgenraum aller konvergierenden Folgen wird $c$ genannt; der Folgenraum aller beschränkten Folgen wird $\ell^\infty$ genannt.
+        Damit gilt~$c_0 \subset c \subset \ell^\infty \subset \omega$, und dass jede monotone Folge in~$\ell^\infty$ auch in~$c$ liegt.
   \item [Satz von \noun{Bolzano-Weierstraß}] \index{Bolzano-Weierstraß}\index{Folge!Bolzano-Weierstraß}
         Jede Folge in~$\ell^\infty$ hat einen Häufungswert.
   \item [(\noun{Bolzano}-)\noun{Cauchy}-Kriterium] \index{Cauchy-Kriterium}\index{Bolzano-Cauchy-Kriterium}\index{Kriterium!Bolzano-Cauchy--}
@@ -59,13 +61,6 @@ Gelegentlich taucht auch die Notation $\langle s_n \rangle$ auf.]
 \end{description}
 
 [Statt $\lim_{n \to \infty} a_n \to a$ sind auch die Schreibweisen $a_n \xrightarrow{n\to\infty} a$ und, falls eindeutig, auch einfach $a_n \to a$ üblich.]
-
-Daraus folgen:
-\begin{enumerate}
-    \item Jeder Grenzwert ist ein Häufungswert.
-    \item Jede monotone Folge in~$\ell^\infty$ liegt auch in $c$.
-    \item $c_0 \subset c \subset \ell^\infty \subset \omega$
-\end{enumerate}
 
 \subsection{Rechenregeln}
 
