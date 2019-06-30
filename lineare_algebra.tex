@@ -66,6 +66,14 @@ Dabei nennt man die $x$, $y$ \emph{Vektoren} und die $\lambda$, $\mu$ \index{Ska
 Eine nicht-leere Teilmenge $U$ eines Vektorraums $V$ über einem Körper $K$ ist ein Untervektorraum, wenn gilt:
 \[ \forall x,y\in U,\; \forall\lambda\in K\ :\ x+y\in U\land\lambda x\in U \]
 
+\subsubsection{Affiner Raum}
+
+\index{Affiner Raum}\index{Raum!affin}
+Ein affiner Raum~$A$ ist definiert als die ,,Verschiebung`` eines Vektorraums~$V$ um~$x_0 \in V$:
+\[ A = x_0 + V := \{ x+x_0 \mid x \in V \} \]
+
+[Für~$\dim(V)=1$ spricht man von affinen Geraden, für~$\dim(V)=2$ von affinen Ebenen; $A$~ist im Normalfall \emph{kein} Vektorraum mehr.]
+
 \subsection{Skalarprodukt}
 \index{Skalarprodukt}\index{Vektorraum!Skalarprodukt}
 Sei $V$ ein beliebiger $K$-Vektorraum mit $K\in\{\mathbb{R},\mathbb{C}\}$ und $a,\, b,\, c\in V$ sowie $\lambda\in K$, dann heißt $\langle \ast,\ast \rangle : V\times V\to K$ Skalarprodukt falls gilt:
@@ -84,6 +92,8 @@ Sei $V$ ein beliebiger $K$-Vektorraum mit $K\in\{\mathbb{R},\mathbb{C}\}$ und $a
 	und $\langle a,a \rangle > 0 \iff a\ne0$
   \item [{Standardskalarprodukt}] $\langle a,b \rangle := \sum_i a_i b_i$
 \end{description}
+
+[Gelegentlich wird auch~$\langle a,b \rangle = a \cdot b = ab$ geschrieben, in selteneren Fällen auch~$\langle a,b \rangle = a \bullet b$.]
 
 \subsection{\label{sub:Vektornorm}Norm}
 
@@ -845,7 +855,9 @@ Seien $A$ und $A'$ Basen des $\mathbb{R}^{m}$ sowie $B$ und $B'$ Basen des $\mat
 \section{\label{sec:Orthogonale-Matrizen}Orthogonale Matrizen}
 
 \index{Matrix!orthogonal}\index{orthogonale Matrix}
+\index{Matrix!hermitesch}\index{hermitesche Matrix}
 Eine Matrix $A\in M(n\times n,\mathbb{R})$ heißt orthogonal, wenn $A\t A=E$ bzw.~$A\t=A^{-1}$ gilt.
+[Falls~$\overline{A}\t = A$ gilt, so heißt die Matrix hermitesch.]
 Man schreibt $A\in O(n)$.
 \begin{itemize}
   \item Die Spalten- bzw.~Zeilenvektoren von $A$ bilden jeweils ein Orthonormalsystem, daher gilt $\lvert\det(A)\rvert=1$.
